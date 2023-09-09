@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="Insania.Controls.Generators.GeneratorResource"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             Height="680px"
+             Width="1520px"
+             Background="#FF2B2B2B">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60px"></RowDefinition>
+        </Grid.RowDefinitions>
+        <ComboBox x:Name="Countries"
+                  Grid.Row="0"
+                  Height="60px"
+                  Width="400px"
+                  FontFamily="Georgia"
+                  HorizontalAlignment="Left"
+                  FontSize="20px"
+                  Foreground="#FF969696"
+                  BorderBrush="#FFFFFFFF"
+                  VerticalContentAlignment="Center">
+        </ComboBox>
+    </Grid>
+</UserControl>

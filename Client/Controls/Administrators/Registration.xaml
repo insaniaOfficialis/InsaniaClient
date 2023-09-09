@@ -128,7 +128,10 @@
                     <Style TargetType="{x:Type Border}"/>
                 </TextBox.Resources>
             </TextBox>
-            <ComboBox Template="{DynamicResource ComboBoxTemplate1}" x:Name="Roles"
+            <ComboBox Style="{DynamicResource ComboBoxStyle1}"
+                      DisplayMemberPath="Name"
+                      SelectedValuePath="Id"
+                      x:Name="Roles"
                       Grid.Row="14"
                       Text="Роли"
                       IsEditable="True"

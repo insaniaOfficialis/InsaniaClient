@@ -39,48 +39,22 @@
                 <RowDefinition Height="40px"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
-            <Button Style="{DynamicResource ButtonStyle2}"
+            <Button Style="{StaticResource SytemButton}"
                     Grid.Column="1"
-                    Grid.Row="1"
-                    Background="#4D4D4D"
-                    BorderBrush="#4D4D4D"
-                    Padding="10,10,10,10">
+                    Grid.Row="1">
                 <Image Source="/Dependens/Images/info.png" />
-                <Button.Resources>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="CornerRadius" Value="10"/>
-                    </Style>
-                </Button.Resources>
             </Button>
-            <Button Style="{DynamicResource ButtonStyle2}"
+            <Button Style="{StaticResource SytemButton}"
                     Grid.Column="3"
-                    Grid.Row="1"
-                    Background="#4D4D4D"
-                    BorderBrush="#4D4D4D"
-                    Padding="10,10,10,10">
+                    Grid.Row="1">
                 <Image Source="/Dependens/Images/settings.png" />
-                <Button.Resources>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="CornerRadius" Value="10"/>
-                    </Style>
-                </Button.Resources>
             </Button>
             <Button x:Name="OutButton"
-                    Style="{DynamicResource ButtonStyle2}"
+                    Style="{StaticResource SytemButton}"
                     Grid.Column="5"
                     Grid.Row="1"
-                    Background="#4D4D4D"
-                    BorderBrush="#4D4D4D"
-                    Padding="10,10,10,10" 
-                    Height="40"
-                    VerticalAlignment="Top"
                     Click="OutButton_Click">
                 <Image Source="/Dependens/Images/out.png" />
-                <Button.Resources>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="CornerRadius" Value="10"/>
-                    </Style>
-                </Button.Resources>
             </Button>
         </Grid>
         <StackPanel Grid.Column="0"

@@ -9,8 +9,8 @@
              Background="#FF2B2B2B">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="100px"></RowDefinition>
             <RowDefinition Height="480px"></RowDefinition>
+            <RowDefinition Height="100px"></RowDefinition>
             <RowDefinition Height="100px"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -19,7 +19,7 @@
             <ColumnDefinition Width="*"></ColumnDefinition>
             <ColumnDefinition Width="100px"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Grid Grid.Row="1" Grid.Column="1">
+        <Grid Grid.Row="0" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50px"></RowDefinition>
                 <RowDefinition Height="10px"></RowDefinition>
@@ -44,7 +44,9 @@
                      Foreground="#FF969696"
                      BorderBrush="#FFFFFFFF"
                      VerticalContentAlignment="Center"
-                     Padding="40px, 0, 0, 0">
+                     Padding="40px, 0, 0, 0"
+                     GotFocus="TextBox_GotFocus"
+                     LostFocus="TextBox_LostFocus">
                 <TextBox.Text>Логин</TextBox.Text>
                 <TextBox.Resources>
                     <Style TargetType="{x:Type Border}"/>
@@ -57,7 +59,9 @@
                      Foreground="#FF969696"
                      BorderBrush="#FFFFFFFF"
                      VerticalContentAlignment="Center"
-                     Padding="40px, 0, 0, 0">
+                     Padding="40px, 0, 0, 0"
+                     GotFocus="TextBox_GotFocus"
+                     LostFocus="TextBox_LostFocus">
                 <TextBox.Text>Пароль</TextBox.Text>
                 <TextBox.Resources>
                     <Style TargetType="{x:Type Border}"/>
@@ -70,7 +74,9 @@
                      Foreground="#FF969696"
                      BorderBrush="#FFFFFFFF"
                      VerticalContentAlignment="Center"
-                     Padding="40px, 0, 0, 0">
+                     Padding="40px, 0, 0, 0"
+                     GotFocus="TextBox_GotFocus"
+                     LostFocus="TextBox_LostFocus">
                 <TextBox.Text>Почта</TextBox.Text>
                 <TextBox.Resources>
                     <Style TargetType="{x:Type Border}"/>
@@ -83,7 +89,9 @@
                      Foreground="#FF969696"
                      BorderBrush="#FFFFFFFF"
                      VerticalContentAlignment="Center"
-                     Padding="40px, 0, 0, 0">
+                     Padding="40px, 0, 0, 0"
+                     GotFocus="TextBox_GotFocus"
+                     LostFocus="TextBox_LostFocus">
                 <TextBox.Text>Телефон</TextBox.Text>
                 <TextBox.Resources>
                     <Style TargetType="{x:Type Border}"/>
@@ -96,7 +104,9 @@
                      Foreground="#FF969696"
                      BorderBrush="#FFFFFFFF"
                      VerticalContentAlignment="Center"
-                     Padding="40px, 0, 0, 0">
+                     Padding="40px, 0, 0, 0"
+                     GotFocus="TextBox_GotFocus"
+                     LostFocus="TextBox_LostFocus">
                 <TextBox.Text>Фамилия</TextBox.Text>
                 <TextBox.Resources>
                     <Style TargetType="{x:Type Border}"/>
@@ -109,7 +119,9 @@
                      Foreground="#FF969696"
                      BorderBrush="#FFFFFFFF"
                      VerticalContentAlignment="Center"
-                     Padding="40px, 0, 0, 0">
+                     Padding="40px, 0, 0, 0"
+                     GotFocus="TextBox_GotFocus"
+                     LostFocus="TextBox_LostFocus">
                 <TextBox.Text>Имя</TextBox.Text>
                 <TextBox.Resources>
                     <Style TargetType="{x:Type Border}"/>
@@ -122,15 +134,16 @@
                      Foreground="#FF969696"
                      BorderBrush="#FFFFFFFF"
                      VerticalContentAlignment="Center"
-                     Padding="40px, 0, 0, 0">
+                     Padding="40px, 0, 0, 0"
+                     GotFocus="TextBox_GotFocus"
+                     LostFocus="TextBox_LostFocus">
                 <TextBox.Text>Отчество</TextBox.Text>
                 <TextBox.Resources>
                     <Style TargetType="{x:Type Border}"/>
                 </TextBox.Resources>
             </TextBox>
-            <ComboBox Style="{DynamicResource ComboBoxStyle1}"
-                      DisplayMemberPath="Name"
-                      SelectedValuePath="Id"
+            <ComboBox DisplayMemberPath="Name"
+                      SelectedValuePath="Name"
                       x:Name="Roles"
                       Grid.Row="14"
                       Text="Роли"
@@ -139,15 +152,14 @@
             </ComboBox>
         </Grid>
         <StackPanel Grid.Column="2"
-                    Grid.Row="1"
+                    Grid.Row="0"
                     x:Name="Image"
                     Background="#D9D9D9"
                     Drop="Image_Drop"
                     AllowDrop="True"
                     Margin="10px, 0, 10px, 10px">
             <Image x:Name="ImageLoad" IsEnabled="False" Height="400px" Width="400px"/>
-            <Button Style="{DynamicResource ButtonStyle1}"
-                    x:Name="ButtonLoadImage"
+            <Button x:Name="ButtonLoadImage"
                     Grid.Row="3"
                     Height="60px"
                     Width="400px"
@@ -158,17 +170,21 @@
                     HorizontalContentAlignment="Center"
                     Foreground="#FFD9D9D9" Click="ButtonLoadImage_Click">
                 <Button.Content>Загрузить изображение</Button.Content>
-                <Button.Resources>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="CornerRadius" Value="16"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#4D4D4D"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Resources>
             </Button>
         </StackPanel>
+        <Button x:Name="ButtonSave"
+                Grid.Row="1"
+                Grid.Column="1"
+                Height="60px"
+                Width="400px"
+                Background="#FFFFFFFF"
+                FontFamily="Georgia"
+                FontSize="25px"
+                VerticalContentAlignment="Center"
+                HorizontalContentAlignment="Center"
+                Foreground="#FF969696"
+                Click="ButtonSave_Click">
+            <Button.Content>Сохранить</Button.Content>
+        </Button>
     </Grid>
 </UserControl>

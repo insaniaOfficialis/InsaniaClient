@@ -112,7 +112,7 @@ namespace Client.Controls
                 }
             }
 
-            News.ItemsSource = list;
+            //News.ItemsSource = list;
         }
 
         private void OutButton_Click(object sender, RoutedEventArgs e)

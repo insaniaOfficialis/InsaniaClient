@@ -255,6 +255,8 @@
     <Compile Include="Models\Base\BaseError.cs" />
     <Compile Include="Models\Base\BaseResponse.cs" />
     <Compile Include="Models\Base\BaseResponseList.cs" />
+    <Compile Include="Models\Identification\Registration\Request\AddUserRequest.cs" />
+    <Compile Include="Models\Identification\Roles\Request\AddRoleRequest.cs" />
     <Compile Include="Models\MainWindow\ShortNew.cs" />
     <Page Include="Controls\Authorization.xaml">
       <SubType>Designer</SubType>

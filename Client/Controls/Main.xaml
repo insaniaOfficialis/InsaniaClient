@@ -6,7 +6,7 @@
              mc:Ignorable="d"
              Height="1080px"
              Width="1920px"
-             Background="#FF2B2B2B"
+             Background="{StaticResource CustomBlack}"
              Padding="60,0,60,51">
     <Grid>
         <Grid.RowDefinitions>
@@ -18,15 +18,14 @@
             <ColumnDefinition Width="*"></ColumnDefinition>
             <ColumnDefinition Width="472px"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Label
-            Grid.Column="0"
-            Content="Insania" 
-            HorizontalAlignment="Right" 
-            VerticalAlignment="Center" 
-            FontFamily="OptimusPrincepsCyr" 
-            Foreground="Silver"
-            FontSize="40px"
-            Margin="0,0,578,0"/>
+        <Label Grid.Column="0"
+               HorizontalAlignment="Right" 
+               VerticalAlignment="Center"
+               FontFamily="OptimusPrincepsCyr"
+               Foreground="{StaticResource CustomSilver}"
+               FontSize="40px"
+               Margin="0,0,578,0"
+               Content="Insania"/>
         <Grid Grid.Row="0"
               Grid.Column="2">
             <Grid.ColumnDefinitions>
@@ -45,62 +44,37 @@
                 <RowDefinition Height="40px"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
-            <Button Style="{DynamicResource ButtonStyle2}"
+            <Button Style="{StaticResource SytemButton}"
                     x:Name="AdministratorButton"
                     Grid.Column="2"
                     Grid.Row="1"
-                    Background="#4D4D4D"
-                    BorderBrush="#4D4D4D"
-                    Padding="10,10,10,10" Click="AdministratorButton_Click">
-                <Image Source="/Dependens/Images/administrator.png" />
-                <Button.Resources>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="CornerRadius" Value="10"/>
-                    </Style>
-                </Button.Resources>
+                    Click="AdministratorButton_Click">
+                <ContentControl>
+                    <Image Source="/Dependens/Images/administrator.png"/>
+                </ContentControl>
             </Button>
-            <Button Style="{DynamicResource ButtonStyle2}"
+            <Button Style="{StaticResource SytemButton}"
                     Grid.Column="4"
-                    Grid.Row="1"
-                    Background="#4D4D4D"
-                    BorderBrush="#4D4D4D"
-                    Padding="10,10,10,10">
-                <Image Source="/Dependens/Images/info.png" />
-                <Button.Resources>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="CornerRadius" Value="10"/>
-                    </Style>
-                </Button.Resources>
+                    Grid.Row="1">
+                <ContentControl>
+                    <Image Source="/Dependens/Images/info.png"/>
+                </ContentControl>
             </Button>
-            <Button Style="{DynamicResource ButtonStyle2}"
+            <Button Style="{StaticResource SytemButton}"
                     Grid.Column="6"
-                    Grid.Row="1"
-                    Background="#4D4D4D"
-                    BorderBrush="#4D4D4D"
-                    Padding="10,10,10,10">
-                <Image Source="/Dependens/Images/settings.png" />
-                <Button.Resources>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="CornerRadius" Value="10"/>
-                    </Style>
-                </Button.Resources>
+                    Grid.Row="1">
+                <ContentControl>
+                    <Image Source="/Dependens/Images/settings.png"/>
+                </ContentControl>
             </Button>
-            <Button x:Name="OutButton"
-                    Style="{DynamicResource ButtonStyle2}"
+            <Button Style="{StaticResource SytemButton}"
+                    x:Name="OutButton"                    
                     Grid.Column="8"
                     Grid.Row="1"
-                    Background="#4D4D4D"
-                    BorderBrush="#4D4D4D"
-                    Padding="10,10,10,10" 
-                    Height="40"
-                    VerticalAlignment="Top"
                     Click="OutButton_Click">
-                <Image Source="/Dependens/Images/out.png" />
-                <Button.Resources>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="CornerRadius" Value="10"/>
-                    </Style>
-                </Button.Resources>
+                <ContentControl>
+                    <Image Source="/Dependens/Images/out.png"/>
+                </ContentControl>
             </Button>
         </Grid>
         <Grid Grid.Row="2">
@@ -119,13 +93,13 @@
                 <RowDefinition Height="77px"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
-            <Button Style="{DynamicResource ButtonStyle3}" 
+            <Button Style="{StaticResource MainMenu}"
                     Grid.Row="1" 
                     HorizontalAlignment="Left">
                 <ContentControl>
                     <Grid>
                         <Polygon x:Name="Polygon1"
-                                 Fill="#4D4D4D"
+                                 Fill="{StaticResource CustomGrey}"
                                  Points="0, 0, 50, 77, 600, 77, 550, 0"
                                  MouseEnter="Polygon_MouseEnter"
                                  MouseLeave="Polygon_MouseLeave">
@@ -142,8 +116,8 @@
                     </Grid>
                 </ContentControl>
             </Button>
-            <Button Style="{DynamicResource ButtonStyle3}"
-                    Grid.Row="3" 
+            <Button Style="{StaticResource MainMenu}"
+                    Grid.Row="3"
                     HorizontalAlignment="Left">
                 <ContentControl>
                     <Grid>
@@ -166,7 +140,7 @@
                     </Grid>
                 </ContentControl>
             </Button>
-            <Button Style="{DynamicResource ButtonStyle3}"
+            <Button Style="{StaticResource MainMenu}"
                     Grid.Row="5"
                     HorizontalAlignment="Left">
                 <ContentControl>
@@ -190,7 +164,7 @@
                     </Grid>
                 </ContentControl>
             </Button>
-            <Button Style="{DynamicResource ButtonStyle3}"
+            <Button Style="{StaticResource MainMenu}"
                     Grid.Row="7"
                     HorizontalAlignment="Left">
                 <ContentControl>
@@ -216,7 +190,7 @@
                     </Grid>
                 </ContentControl>
             </Button>
-            <Button Style="{DynamicResource ButtonStyle3}"
+            <Button Style="{StaticResource MainMenu}"
                     Grid.Row="9"
                     HorizontalAlignment="Left">
                 <ContentControl>
@@ -242,7 +216,7 @@
                     </Grid>
                 </ContentControl>
             </Button>
-            <Button Style="{DynamicResource ButtonStyle3}"
+            <Button Style="{StaticResource MainMenu}"
                     Grid.Row="11"
                     HorizontalAlignment="Left">
                 <ContentControl>
@@ -267,7 +241,7 @@
                 </ContentControl>
             </Button>
         </Grid>
-        <ListBox x:Name="News"
+        <!--<ListBox x:Name="News"
                  Grid.Column="2" 
                  Grid.Row="2"
                  Background="#00000000"
@@ -343,7 +317,7 @@
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-        </ListBox>
+        </ListBox>-->
         <Image x:Name="LogoImage"
                Grid.Column="1"
                HorizontalAlignment="Center"

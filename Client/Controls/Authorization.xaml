@@ -24,7 +24,7 @@
                HorizontalAlignment="Center" 
                VerticalAlignment="Center" 
                FontFamily="OptimusPrincepsCyr" 
-               Foreground="{StaticResource CustomSilver}"
+               Foreground="{StaticResource OriginalSilver}"
                FontSize="40px"/>
         <Border Grid.Column="1"
                 Grid.Row="1"

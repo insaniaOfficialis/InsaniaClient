@@ -7,7 +7,7 @@
              mc:Ignorable="d"             
              Height="1080px"
              Width="1920px"
-             Background="#FF2B2B2B"
+             Background="{StaticResource CustomBlack}"
              Padding="60,0,60,51">
     <Grid>
         <Grid.RowDefinitions>
@@ -23,7 +23,7 @@
                HorizontalAlignment="Left" 
                VerticalAlignment="Center" 
                FontFamily="OptimusPrincepsCyr" 
-               Foreground="Silver"
+               Foreground="{StaticResource OriginalSilver}"
                FontSize="40px"/>
         <Grid Grid.Row="0"
               Grid.Column="1">
@@ -60,33 +60,28 @@
         </Grid>
         <StackPanel Grid.Column="0"
                     Grid.Row="1">
-            <TextBox x:Name="TextSearch"
+            <TextBox Style="{StaticResource SimplifiedLightTextBox}"
+                     x:Name="TextSearch"
                      Grid.Row="1"
                      Height="60px"
                      Width="400px"
-                     FontFamily="Georgia"
-                     FontSize="20px"
-                     Foreground="#FF969696"
-                     BorderBrush="#FFFFFFFF"
-                     VerticalContentAlignment="Center"
-                     Padding="40px, 0, 0, 0">
-                <TextBox.Resources>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="CornerRadius" Value="16"/>
-                    </Style>
-                </TextBox.Resources> Поиск...
-            </TextBox>
-            <TextBlock x:Name="Registration"
-                       TextWrapping="Wrap"
-                       FontFamily="Georgia"
-                       Foreground="Silver"
-                       FontSize="20px"
-                       Height="60px"
-                       Padding="20px"
-                       Text="Регистрация"
-                       MouseLeftButtonUp="Registration_MouseLeftButtonUp"/>
+                     Text="Поиск..."/>
+            <ListBox Style="{StaticResource DarkList}">
+                <ListBoxItem Style="{StaticResource DarkListItem}"
+                             Content="Регистрация"
+                             Height="60px"
+                             MouseLeftButtonUp="Registration_MouseLeftButtonUp"/>
+                <ListBoxItem Style="{StaticResource DarkListItem}"
+                             Content="Роли"
+                             Height="60px"
+                             MouseLeftButtonUp="Registration_MouseLeftButtonUp"/>
+            </ListBox>
         </StackPanel>
-        <Custom:NumericChartRangeControlClient Grid.Column="1" Margin="197,386,1203,467" Grid.Row="1"/>
-        <ContentControl Grid.Column="1" Grid.Row="1" Width="Auto" Height="Auto" Opacity="1" x:Name="Element"/>
+        <ContentControl Grid.Column="1"
+                        Grid.Row="1"
+                        Width="Auto"
+                        Height="Auto"
+                        Opacity="1"
+                        x:Name="Element"/>
     </Grid>
 </UserControl>

@@ -22,7 +22,7 @@
                HorizontalAlignment="Right" 
                VerticalAlignment="Center"
                FontFamily="OptimusPrincepsCyr"
-               Foreground="{StaticResource CustomSilver}"
+               Foreground="{StaticResource OriginalSilver}"
                FontSize="40px"
                Margin="0,0,578,0"
                Content="Insania"/>
@@ -107,7 +107,7 @@
                         <Label x:Name="Label1"
                                Content="ЛОР"
                                FontFamily="Georgia" 
-                               Foreground="Silver"
+                               Foreground="{StaticResource OriginalSilver}"
                                VerticalAlignment="Center"
                                FontSize="36px"
                                Margin="230,0,10,0"
@@ -123,7 +123,7 @@
                     <Grid>
                         <Polygon x:Name="Polygon2"
                                  Grid.Row="3"
-                                 Fill="#4D4D4D"
+                                 Fill="{StaticResource CustomGrey}"
                                  Points="60, 0, 110, 77, 660, 77, 610, 0"
                                  MouseEnter="Polygon_MouseEnter"
                                  MouseLeave="Polygon_MouseLeave"/>
@@ -131,7 +131,7 @@
                                Grid.Row="3"
                                Content="КАРТЫ"
                                FontFamily="Georgia" 
-                               Foreground="Silver"
+                               Foreground="{StaticResource OriginalSilver}"
                                VerticalAlignment="Center"
                                FontSize="36px"
                                Margin="230,0,0,0"
@@ -147,7 +147,7 @@
                     <Grid>
                         <Polygon x:Name="Polygon3"
                                  Grid.Row="5"
-                                 Fill="#4D4D4D"
+                                 Fill="{StaticResource CustomGrey}"
                                  Points="120, 0, 170, 77, 720, 77, 670, 0"
                                  MouseEnter="Polygon_MouseEnter"
                                  MouseLeave="Polygon_MouseLeave"/>
@@ -155,7 +155,7 @@
                                Grid.Row="5"
                                Content="МЕХАНИКИ"
                                FontFamily="Georgia" 
-                               Foreground="Silver"
+                               Foreground="{StaticResource OriginalSilver}"
                                VerticalAlignment="Center"
                                FontSize="36px"
                                Margin="230,0,0,0"
@@ -171,7 +171,7 @@
                     <Grid>
                         <Polygon x:Name="Polygon4"
                                  Grid.Row="7"
-                                 Fill="#4D4D4D"
+                                 Fill="{StaticResource CustomGrey}"
                                  Points="170, 0, 120, 77, 670, 77, 720, 0"
                                  MouseEnter="Polygon_MouseEnter"
                                  MouseLeave="Polygon_MouseLeave"
@@ -180,7 +180,7 @@
                                Grid.Row="7"
                                Content="КАЛЬКУЛЯТОР"
                                FontFamily="Georgia" 
-                               Foreground="Silver"
+                               Foreground="{StaticResource OriginalSilver}"
                                VerticalAlignment="Center"
                                FontSize="36px"
                                Margin="230,0,0,0"
@@ -197,7 +197,7 @@
                     <Grid>
                         <Polygon x:Name="Polygon5"
                                  Grid.Row="9"
-                                 Fill="#4D4D4D"
+                                 Fill="{StaticResource CustomGrey}"
                                  Points="110, 0, 60, 77, 610, 77, 660, 0"
                                  MouseEnter="Polygon_MouseEnter"
                                  MouseLeave="Polygon_MouseLeave"
@@ -206,7 +206,7 @@
                                Grid.Row="9"
                                Content="ГЕНЕРАТОР"
                                FontFamily="Georgia" 
-                               Foreground="Silver"
+                               Foreground="{StaticResource OriginalSilver}"
                                VerticalAlignment="Center"
                                FontSize="36px"
                                Margin="230,0,0,0"
@@ -223,7 +223,7 @@
                     <Grid>
                         <Polygon x:Name="Polygon6"
                                  Grid.Row="11"
-                                 Fill="#4D4D4D"
+                                 Fill="{StaticResource CustomGrey}"
                                  Points="50, 0, 0, 77, 550, 77, 600, 0"
                                  MouseEnter="Polygon_MouseEnter"
                                  MouseLeave="Polygon_MouseLeave"/>
@@ -231,7 +231,7 @@
                                Grid.Row="11"
                                Content="СТАТИСТИКА"
                                FontFamily="Georgia" 
-                               Foreground="Silver"
+                               Foreground="{StaticResource OriginalSilver}"
                                VerticalAlignment="Center"
                                FontSize="36px"
                                Margin="230,0,0,0"

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -115,14 +114,6 @@ namespace Client.Controls
             //News.ItemsSource = list;
         }
 
-        private void OutButton_Click(object sender, RoutedEventArgs e)
-        {
-            Authorization authorization = new();
-
-            this.Padding = new(0,0,0,0);
-            this.Content = authorization;
-        }
-
         private void Polygon4_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Calculator calculator = new();
@@ -139,13 +130,6 @@ namespace Client.Controls
         private async void GetLogo()
         {
             //LogoImage.Source = ImageSourceValueSerializer(@"I:\\Files\System\afe36d54-028a-4b44-934e-39841aac59bb\Alv.png");
-        }
-
-        private void AdministratorButton_Click(object sender, RoutedEventArgs e)
-        {
-            Administrator administrator = new();
-            this.Padding = new(0, 0, 0, 0);
-            this.Content = administrator;
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Serilog;
+using Serilog.Core;
+using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -12,6 +14,8 @@ namespace Client.Controls
     /// </summary>
     public partial class Authorization : UserControl
     {
+        public ILogger _logger { get { return Log.ForContext<Authorization>(); } } //логгер для записи логов
+
         string connectionString;
 
         public Authorization()
@@ -20,7 +24,7 @@ namespace Client.Controls
             connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
             /*Определяем действие для кнопки esc*/
-            this.PreviewKeyDown += new KeyEventHandler(Enter);
+            PreviewKeyDown += new KeyEventHandler(Enter);
         }
 
         /// <summary>
@@ -67,9 +71,9 @@ namespace Client.Controls
 
                     if(reader.HasRows)
                     {
-                        Main main = new Main();
+                        Base main = new Base();
 
-                        this.Content = main;
+                        Content = main;
                     }
                 }
             }

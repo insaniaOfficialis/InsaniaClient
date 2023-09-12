@@ -3,63 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Custom="http://schemas.devexpress.com/winfx/2008/xaml/charts/rangecontrolclient"
-             mc:Ignorable="d"             
-             Height="1080px"
-             Width="1920px"
-             Background="{StaticResource CustomBlack}"
-             Padding="60,0,60,51">
+             mc:Ignorable="d"
+             Height="853px"
+             Width="1800px"
+             Background="{StaticResource CustomBlack}">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="176px"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="400px"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Label Grid.Column="0"
-               Content="Insania" 
-               HorizontalAlignment="Left" 
-               VerticalAlignment="Center" 
-               FontFamily="OptimusPrincepsCyr" 
-               Foreground="{StaticResource OriginalSilver}"
-               FontSize="40px"/>
-        <Grid Grid.Row="0"
-              Grid.Column="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="40px"/>
-                <ColumnDefinition Width="10px"/>
-                <ColumnDefinition Width="40px"/>
-                <ColumnDefinition Width="10px"/>
-                <ColumnDefinition Width="40px"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="40px"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Button Style="{StaticResource SytemButton}"
-                    Grid.Column="1"
-                    Grid.Row="1">
-                <Image Source="/Dependens/Images/info.png" />
-            </Button>
-            <Button Style="{StaticResource SytemButton}"
-                    Grid.Column="3"
-                    Grid.Row="1">
-                <Image Source="/Dependens/Images/settings.png" />
-            </Button>
-            <Button x:Name="OutButton"
-                    Style="{StaticResource SytemButton}"
-                    Grid.Column="5"
-                    Grid.Row="1"
-                    Click="OutButton_Click">
-                <Image Source="/Dependens/Images/out.png" />
-            </Button>
-        </Grid>
-        <StackPanel Grid.Column="0"
-                    Grid.Row="1">
+        <StackPanel Grid.Column="0">
             <TextBox Style="{StaticResource SimplifiedLightTextBox}"
                      x:Name="TextSearch"
                      Grid.Row="1"

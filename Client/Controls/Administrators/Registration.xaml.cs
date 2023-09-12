@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows.Input;
+using Serilog;
 
 namespace Client.Controls.Administrators;
 
@@ -20,26 +21,36 @@ namespace Client.Controls.Administrators;
 /// Логика взаимодействия для Registration.xaml
 /// </summary>
 public partial class Registration : UserControl
-{
-    JsonSerializerOptions _settings = new(); //настройки десериализации json
-    string filePath = string.Empty; //путь к файлу, выбранному пользователем
-    
+{    
+    public ILogger _logger { get { return Log.ForContext<Registration>(); } } //логгер для записи логов
+    readonly JsonSerializerOptions _settings = new(); //настройки десериализации json
+    private readonly List<string> _allowedExtensions = new() { "pdf", "png", "jpeg", "jpg", "bmp" }; //доступные расширения
+    private readonly List<char> _allowedSymbolsPhone = new() { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' }; //доступные символы телефона
+    string _filePath = string.Empty; //путь к файлу, выбранному пользователем
+
     /// <summary>
     /// Конструктор контрола регистрации
     /// </summary>
     public Registration()
     {
-        /*Инициализация всех компонентов*/
-        InitializeComponent();
+        try
+        {
+            /*Инициализация всех компонентов*/
+            InitializeComponent();
 
-        /*Выставлыяем параметры десириализации*/
-        _settings.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            /*Выставлыяем параметры десериализации*/
+            _settings.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 
-        /*Определяем действие для кнопки enter*/
-        PreviewKeyDown += new KeyEventHandler(Enter);
+            /*Определяем действие для кнопки enter*/
+            PreviewKeyDown += new KeyEventHandler(Enter);
 
-        /*Заполняем роли*/
-        GetRoles();
+            /*Проверяем доступность api*/
+            CheckConnection();
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Registration. " + ex.Message);
+        }
     }
 
     /// <summary>
@@ -56,31 +67,40 @@ public partial class Registration : UserControl
     /// </summary>
     public async void GetRoles()
     {
-        /*Объявляем переменную ссылки запроса*/
-        string path = null;
-
-        /*Если в конфиге есть данные для формирования ссылки запроса*/
-        if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
-            && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
-            && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Roles"]))
+        try
         {
-            /*Формируем ссылку запроса*/
-            path = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] + ConfigurationManager.AppSettings["Roles"] + "list";
+            /*Объявляем переменную ссылки запроса*/
+            string path = null;
+
+            /*Если в конфиге есть данные для формирования ссылки запроса*/
+            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Roles"]))
+            {
+                /*Формируем ссылку запроса*/
+                path = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] + ConfigurationManager.AppSettings["Roles"] + "list";
+            }
+
+            /*Получаем данные по запросу*/
+            using HttpClient client = new();
+            var result = await client.GetAsync(path);
+
+            /*Если получили успешный результат*/
+            if (result != null && result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                /*Десериализуем ответ и заполняем combobox ролей*/
+                var content = await result.Content.ReadAsStringAsync();
+
+                BaseResponseList response = JsonSerializer.Deserialize<BaseResponseList>(content, _settings);
+
+                Roles.ItemsSource = response.Items;
+            }
         }
-
-        /*Получаем данные по запросу*/
-        using HttpClient client = new();
-        var result = await client.GetAsync(path);
-
-        /*Если получили успешный результат*/
-        if (result != null && result.StatusCode == System.Net.HttpStatusCode.OK)
+        catch(Exception ex)
         {
-            /*Десериализуем ответ и заполняем combobox ролей*/
-            var content = await result.Content.ReadAsStringAsync();
-            
-            BaseResponseList response = JsonSerializer.Deserialize<BaseResponseList>(content, _settings);
-
-            Roles.ItemsSource = response.Items;
+            var serverExceptionStyle = FindResource("ServerExceptionTextBlock") as Style;
+            ErrorText.Style = serverExceptionStyle;
+            ErrorText.Text = ex.Message;
         }
     }
 
@@ -91,18 +111,30 @@ public partial class Registration : UserControl
     /// <param name="e"></param>
     private void Image_Drop(object sender, DragEventArgs e)
     {
-        /*Если есть фотографий*/
-        if (e.Data.GetDataPresent(DataFormats.FileDrop))
+        try
         {
-            /*Получаем массив перетянутых фотографий*/
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            /*Если есть фотографий*/
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                /*Получаем массив перетянутых фотографий*/
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop); 
+                
+                string extention = files[0].Substring(files[0].LastIndexOf('.')+1);
 
-            /*Включаем компоненту изображений и отображаем загруженную фото в нём*/
-            ImageLoad.IsEnabled = true;
-            ImageLoad.Source = new BitmapImage(new Uri(files[0]));
+                if (!_allowedExtensions.Contains(extention))
+                    SetError("Некорректное расширение файла", false);
 
-            /*Сохраняем путь к файлу*/
-            filePath = files[0];
+                /*Включаем компоненту изображений и отображаем загруженную фото в нём*/
+                ImageLoad.IsEnabled = true;
+                ImageLoad.Source = new BitmapImage(new Uri(files[0]));
+
+                /*Сохраняем путь к файлу*/
+                _filePath = files[0];
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.Error("Registration. Image_Drop. " + ex.Message);
         }
     }
 
@@ -127,7 +159,7 @@ public partial class Registration : UserControl
             ImageLoad.Source = new BitmapImage(new Uri(openFileDialog.FileName));
 
             /*Сохраняем путь к файлу*/
-            filePath = openFileDialog.FileName;
+            _filePath = openFileDialog.FileName;
         }
     }
 
@@ -138,114 +170,186 @@ public partial class Registration : UserControl
     /// <param name="e"></param>
     private async void ButtonSave_Click(object sender, RoutedEventArgs e)
     {
-        /*Отключаем кнопку для нажатия*/
-        ButtonSave.IsEnabled = false;
-
-        /*Формируем модель для регистрации пользователей*/
-        List<string> roles = new()
+        try        
         {
-            Roles.SelectedValue.ToString()
-        };
+            /*Отключаем кнопку для нажатия*/
+            ButtonSave.IsEnabled = false;
 
-        AddUserRequest request = new(Username.Text, Password.Text, Email.Text, PhoneNumber.Text, LastName.Text, FirstName.Text, Patronymic.Text, roles);
+            /*Убираем тест ошибки*/
+            ErrorText.Text = null;
 
-        /*Объявляем переменную ссылки запроса*/
-        string url = null;
-
-        /*Если в конфиге есть данные для формирования ссылки запроса*/
-        if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
-            && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
-            && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Registration"]))
-        {
-            /*Формируем ссылку запроса*/
-            url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
-                ConfigurationManager.AppSettings["Registration"] + "add";
-        }
-
-        /*Получаем данные по запросу*/
-        using HttpClient client = new();
-
-#if DEBUG
-        var a = JsonSerializer.Serialize(request, _settings).ToString();
-#endif
-        StringContent stringCintent = new(JsonSerializer.Serialize(request, _settings).ToString(), Encoding.UTF8, "application/json");
-        using var result = await client.PostAsync(url, stringCintent);
-
-        /*Если получили успешный результат*/
-        if (result != null && result.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            /*Десериализуем ответ*/
-            var content = await result.Content.ReadAsStringAsync();
-
-            BaseResponse response = JsonSerializer.Deserialize<BaseResponse>(content, _settings);
-
-            /*Если успешно, сохраняем фото*/
-            if(response.Success && response.Id != null)
+            /*Проверяем ошибки*/
+            if (String.IsNullOrEmpty(Username.Text) || Username.Text == "Логин")
             {
-                /*Формируем тело запроса*/
-                using var multipartFormContent = new MultipartFormDataContent();
+                SetError("Не указан логин", false);
+                return;
+            }
 
-                /*Загружаем отправляемый файл*/
-                var fileStreamContent = new StreamContent(File.OpenRead(filePath));
+            if (String.IsNullOrEmpty(Password.Text) || Password.Text == "Пароль")
+            {
+                SetError("Не указан пароль", false);
+                return;
+            }
 
-                /*Получем тип контента*/
-                var extention = filePath.Substring(filePath.LastIndexOf('.') + 1);
-                var contentType = "image/" + extention;
-                var fileName = filePath.Substring(filePath.LastIndexOf('\\') + 1);
+            if (String.IsNullOrEmpty(Email.Text) || Email.Text == "Почта")
+            {
+                SetError("Не указана почта", false);
+                return;
+            }
 
-                /*Устанавливаем заголовок Content-Type*/
-                fileStreamContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+            if (String.IsNullOrEmpty(PhoneNumber.Text) || PhoneNumber.Text == "Телефон")
+            {
+                SetError("Не указан телефон", false);
+                return;
+            }
 
-                /*Добавляем загруженный файл в MultipartFormDataContent*/
-                multipartFormContent.Add(fileStreamContent, name: "file", fileName: fileName);
+            if (String.IsNullOrEmpty(LastName.Text) || LastName.Text == "Фамилия")
+            {
+                SetError("Не указана фамилия", false);
+                return;
+            }
 
-                /*Если в конфиге есть данные для формирования ссылки запроса*/
-                if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
-                    && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
-                    && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Files"]))
-                {
-                    /*Формируем ссылку запроса*/
-                    url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
-                        ConfigurationManager.AppSettings["Files"] + "add/User/" + response.Id;
-                }
+            if (String.IsNullOrEmpty(FirstName.Text) || FirstName.Text == "Имя")
+            {
+                SetError("Не указано имя", false);
+                return;
+            }
 
-                /*Отправляем файл*/
-                using HttpClient clientFile = new();
-                using var resultFile = await clientFile.PostAsync(url, multipartFormContent);
+            if (String.IsNullOrEmpty(Patronymic.Text) || Patronymic.Text == "Отчество")
+            {
+                SetError("Не указано отчество", false);
+                return;
+            }
 
-#if DEBUG
-                var b = await resultFile.Content.ReadAsStringAsync();
-#endif
+            if (String.IsNullOrEmpty(_filePath))
+            {
+                SetError("Не указан файл", false);
+                return;
+            }
+
+            if (String.IsNullOrEmpty(Roles?.SelectedValue?.ToString()))
+            {
+                SetError("Не указана роль", false);
+                return;
+            }
+
+            /*Формируем модель для регистрации пользователей*/
+            List<string> roles = new()
+            {
+                Roles.SelectedValue.ToString()
+            };
+
+            AddUserRequest request = new(Username.Text, Password.Text, Email.Text, PhoneNumber.Text, LastName.Text, FirstName.Text, Patronymic.Text, roles);
+
+            /*Если в конфиге есть данные для формирования ссылки запроса*/
+            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Registration"]))
+            {
+                /*Объявляем переменную ссылки запроса*/
+                /*Формируем ссылку запроса*/
+                string url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
+                    ConfigurationManager.AppSettings["Registration"] + "add";
+
+                /*Получаем данные по запросу*/
+                using HttpClient client = new();
+
+                StringContent stringCintent = new(JsonSerializer.Serialize(request, _settings).ToString(), Encoding.UTF8, "application/json");
+                using var result = await client.PostAsync(url, stringCintent);
 
                 /*Если получили успешный результат*/
-                if (resultFile != null && resultFile.StatusCode == System.Net.HttpStatusCode.OK)
+                if (result != null)
                 {
                     /*Десериализуем ответ*/
-                    var contentFile = await resultFile.Content.ReadAsStringAsync();
+                    var content = await result.Content.ReadAsStringAsync();
 
-                    BaseResponse responseFile = JsonSerializer.Deserialize<BaseResponse>(contentFile, _settings);
+                    BaseResponse response = JsonSerializer.Deserialize<BaseResponse>(content, _settings);
 
-                    /*Если успешно, обнуляем поля*/
-                    if (responseFile.Success)
+                    /*Если успешно, сохраняем фото*/
+                    if (response.Success && response.Id != null)
                     {
-                        Username.Text = "Логин";
-                        Password.Text = "Пароль";
-                        Email.Text = "Почта";
-                        PhoneNumber.Text = "Телефон";
-                        LastName.Text = "Фамилия";
-                        FirstName.Text = "Имя";
-                        Patronymic.Text = "Отчество";
-                        Roles.SelectedItem = null;
-                        Roles.Text = "Роли";
-                        ImageLoad.Source = null;
-                        ImageLoad.IsEnabled = false;
-                    }
-                }
-            }
-        }
+                        /*Формируем тело запроса*/
+                        using var multipartFormContent = new MultipartFormDataContent();
 
-        /*Включаем кнопку для нажатия*/
-        ButtonSave.IsEnabled = true;
+                        /*Загружаем отправляемый файл*/
+                        var fileStreamContent = new StreamContent(File.OpenRead(_filePath));
+
+                        /*Получем тип контента*/
+                        var extention = _filePath.Substring(_filePath.LastIndexOf('.') + 1);
+                        var contentType = "image/" + extention;
+                        var fileName = _filePath.Substring(_filePath.LastIndexOf('\\') + 1);
+
+                        /*Устанавливаем заголовок Content-Type*/
+                        fileStreamContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+
+                        /*Добавляем загруженный файл в MultipartFormDataContent*/
+                        multipartFormContent.Add(fileStreamContent, name: "file", fileName: fileName);
+
+                        /*Если в конфиге есть данные для формирования ссылки запроса*/
+                        if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
+                            && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
+                            && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Files"]))
+                        {
+                            /*Формируем ссылку запроса*/
+                            url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
+                                ConfigurationManager.AppSettings["Files"] + "add/User/" + response.Id;
+
+                            /*Отправляем файл*/
+                            using HttpClient clientFile = new();
+                            using var resultFile = await clientFile.PostAsync(url, multipartFormContent);
+
+                            /*Если получили успешный результат*/
+                            if (resultFile != null)
+                            {
+                                /*Десериализуем ответ*/
+                                var contentFile = await resultFile.Content.ReadAsStringAsync();
+
+                                BaseResponse responseFile = JsonSerializer.Deserialize<BaseResponse>(contentFile, _settings);
+
+                                /*Если успешно, обнуляем поля*/
+                                if (responseFile.Success)
+                                {
+                                    Username.Text = "Логин";
+                                    Password.Text = "Пароль";
+                                    Email.Text = "Почта";
+                                    PhoneNumber.Text = "Телефон";
+                                    LastName.Text = "Фамилия";
+                                    FirstName.Text = "Имя";
+                                    Patronymic.Text = "Отчество";
+                                    Roles.SelectedItem = null;
+                                    Roles.Text = "Роли";
+                                    ImageLoad.Source = null;
+                                    ImageLoad.IsEnabled = false;
+                                }
+                                else
+                                    SetError(response?.Error?.Message ?? "Ошибка сервера", false);
+                            }
+                            else
+                                SetError("Ошибка сервера", true);
+                        }
+                        /*Иначе возвращаем ошибку*/
+                        else
+                            SetError("Не указаны адреса api.Обратитесь в техническую поддержку", true);
+                    }
+                    else
+                        SetError(response?.Error?.Message ?? "Ошибка сервера", false);
+                }
+                else
+                    SetError("Ошибка сервера", true);
+            }
+            /*Иначе возвращаем ошибку*/
+            else
+                SetError("Не указаны адреса api.Обратитесь в техническую поддержку", true);
+
+            /*Включаем кнопку для нажатия*/
+            ButtonSave.IsEnabled = true;
+
+            //MessageBox.Show("Пользователь успешно зергистрирован");
+        }
+        catch(Exception ex)
+        {
+            _logger.Error("Registration. ButtonSave_Click. " + ex.Message);
+        }
     }
 
     /// <summary>
@@ -371,6 +475,226 @@ public partial class Registration : UserControl
 
                 }
                 break;
+        }
+    }
+
+    /// <summary>
+    /// Метод проверки соединения с api
+    /// </summary>
+    public async void CheckConnection()
+    {
+        try
+        {
+            /*Блокируем все элементы*/
+            Username.IsEnabled = false;
+            Password.IsEnabled = false;
+            Email.IsEnabled = false;
+            PhoneNumber.IsEnabled = false;
+            LastName.IsEnabled = false;
+            FirstName.IsEnabled = false;
+            Patronymic.IsEnabled = false;
+            Roles.IsEnabled = false;
+            ButtonSave.IsEnabled = false;
+            ButtonLoadImage.IsEnabled = false;
+
+            /*Объявляем переменную ссылки запроса*/
+            string url = null;
+
+            try
+            {
+                /*Если в конфиге есть данные для формирования ссылки запроса*/
+                if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"]))
+                {
+                    /*Формируем ссылку запроса*/
+                    url = ConfigurationManager.AppSettings["DefaultConnection"];
+
+                    /*Получаем данные по запросу*/
+                    using HttpClient client = new();
+
+                    using var result = await client.GetAsync(url);
+
+                    /*Если получили успешный результат*/
+                    if (result != null && result.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        /*Разблокируем все элементы*/
+                        Username.IsEnabled = true;
+                        Password.IsEnabled = true;
+                        Email.IsEnabled = true;
+                        PhoneNumber.IsEnabled = true;
+                        LastName.IsEnabled = true;
+                        FirstName.IsEnabled = true;
+                        Patronymic.IsEnabled = true;
+                        Roles.IsEnabled = true;
+                        ButtonSave.IsEnabled = true;
+                        ButtonLoadImage.IsEnabled = true;
+
+                        /*Заполняем роли*/
+                        GetRoles();
+                    }
+                    /*Иначе возвращаем ошибку*/
+                    else
+                        SetError("Сервер временно недоступен, попробуйте позднее или обратитесь в техническую поддержку", true);
+                }
+                /*Иначе возвращаем ошибку*/
+                else
+                    SetError("Не указан адрес api. Обратитесь в техническую поддержку", true);
+            }
+            catch
+            {
+                SetError("Сервер временно недоступен, попробуйте позднее или обратитесь в техническую поддержку", true);
+            }
+        }
+        catch(Exception ex)
+        {
+            SetError(ex.Message, true);
+        }
+    }
+
+    /// <summary>
+    /// Метод отображения ошибок
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="serverExceprion"></param>
+    public void SetError(string message, bool serverExceprion)
+    {
+        try
+        {
+            /*Объявляем переменные*/
+            string style; //стиль
+
+            /*Определяем наименование стиля*/
+            if (serverExceprion)
+                style = "ServerExceptionTextBlock";
+            else
+                style = "InnerExceptionTextBlock";
+
+            /*Находим стиль*/
+            var serverExceptionStyle = FindResource(style) as Style;
+
+            /*Устанавливаем текст и стиль*/
+            ErrorText.Style = serverExceptionStyle;
+            ErrorText.Text = message;
+
+            /*Включаем кнопку сохранения*/
+            ButtonSave.IsEnabled = true;
+        }
+        catch(Exception ex)
+        {
+            _logger.Error("Registration. SetError. " + ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Метод изменения номера телефона
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void PhoneNumber_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        try
+        {
+            if (!String.IsNullOrEmpty(PhoneNumber.Text) && PhoneNumber.Text != "Телефон")
+            {
+                string phoneNumber = string.Empty;
+
+                /*Проверяем на валидность введённые цифры*/
+                if(PhoneNumber.Text.Length > 4 && !_allowedSymbolsPhone.Contains(PhoneNumber.Text[4]))
+                {
+                    PhoneNumber.Text = PhoneNumber.Text.Substring(0, 4);
+                }
+                if (PhoneNumber.Text.Length > 5 && !_allowedSymbolsPhone.Contains(PhoneNumber.Text[5]))
+                {
+                    PhoneNumber.Text = PhoneNumber.Text.Substring(0, 5);
+                }
+                if (PhoneNumber.Text.Length > 6 && !_allowedSymbolsPhone.Contains(PhoneNumber.Text[6]))
+                {
+                    PhoneNumber.Text = PhoneNumber.Text.Substring(0, 6);
+                }
+                if (PhoneNumber.Text.Length > 9 && !_allowedSymbolsPhone.Contains(PhoneNumber.Text[9]))
+                {
+                    PhoneNumber.Text = PhoneNumber.Text.Substring(0, 9);
+                }
+                if (PhoneNumber.Text.Length > 10 && !_allowedSymbolsPhone.Contains(PhoneNumber.Text[10]))
+                {
+                    PhoneNumber.Text = PhoneNumber.Text.Substring(0, 10);
+                }
+                if (PhoneNumber.Text.Length > 11 && !_allowedSymbolsPhone.Contains(PhoneNumber.Text[11]))
+                {
+                    PhoneNumber.Text = PhoneNumber.Text.Substring(0, 11);
+                }
+                if (PhoneNumber.Text.Length > 13 && !_allowedSymbolsPhone.Contains(PhoneNumber.Text[13]))
+                {
+                    PhoneNumber.Text = PhoneNumber.Text.Substring(0, 13);
+                }
+                if (PhoneNumber.Text.Length > 14 && !_allowedSymbolsPhone.Contains(PhoneNumber.Text[14]))
+                {
+                    PhoneNumber.Text = PhoneNumber.Text.Substring(0, 14);
+                }
+                if (PhoneNumber.Text.Length > 16 && !_allowedSymbolsPhone.Contains(PhoneNumber.Text[16]))
+                {
+                    PhoneNumber.Text = PhoneNumber.Text.Substring(0, 14);
+                }
+                if (PhoneNumber.Text.Length > 16 && !_allowedSymbolsPhone.Contains(PhoneNumber.Text[16]))
+                {
+                    PhoneNumber.Text = PhoneNumber.Text.Substring(0, 16);
+                }
+
+                /*Если первая цифра 7 или 8 меняем на +7*/
+                if (PhoneNumber.Text[0] == '8' || PhoneNumber.Text[0] == '7')
+                {
+                    phoneNumber = "+7" + PhoneNumber.Text.Substring(1);
+                }
+                /*Иначе просто добавляем +7*/
+                else
+                {
+                    /*Если уже не добавили*/
+                    if(!PhoneNumber.Text.Contains("+7"))
+                        phoneNumber = "+7" + PhoneNumber.Text.Substring(0);
+                }
+
+                /*Если есть цирфа после +7, добавляем скобки*/
+                if (PhoneNumber.Text.Length > 2 && PhoneNumber.Text[2] != ' ')
+                {
+                    phoneNumber = PhoneNumber.Text.Substring(0, 2) + " (" + PhoneNumber.Text.Substring(2);
+                }
+                if (phoneNumber.Length > 2 && phoneNumber[2] != ' ')
+                {
+                    phoneNumber = phoneNumber.Substring(0, 2) + " (" + phoneNumber.Substring(2);
+                }
+
+                /*Если это последняя цирфа кода оператора, добавляем скобки*/
+                if (PhoneNumber.Text.Length > 6 && PhoneNumber.Text[6] != ' ')
+                {
+                    /*Если уже не добавили*/
+                    if (PhoneNumber.Text.Length < 8 || (PhoneNumber.Text.Length > 7 && PhoneNumber.Text[7] != ')'))
+                        phoneNumber = PhoneNumber.Text.Substring(0, 7) + ") " + PhoneNumber.Text.Substring(7);
+                }
+
+                /*Если это последняя цифра первых 3 цифр после кода оператора, добавляем тире*/
+                if (PhoneNumber.Text.Length > 11 && PhoneNumber.Text[11] != ' ')
+                {
+                    /*Если уже не добавили*/
+                    if (PhoneNumber.Text.Length < 13 || (PhoneNumber.Text.Length > 12 && PhoneNumber.Text[12] != '-'))
+                        phoneNumber = PhoneNumber.Text.Substring(0, 12) + "-" + PhoneNumber.Text.Substring(12);
+                }
+
+                /*Если это последняя цифра первых 5 цифр после кода оператора, добавляем тире*/
+                if (PhoneNumber.Text.Length > 14 && PhoneNumber.Text[14] != ' ')
+                {
+                    /*Если уже не добавили*/
+                    if (PhoneNumber.Text.Length < 16 || (PhoneNumber.Text.Length > 15 && PhoneNumber.Text[15] != '-'))
+                        phoneNumber = PhoneNumber.Text.Substring(0, 15) + "-" + PhoneNumber.Text.Substring(15);
+                }
+
+                if (!String.IsNullOrEmpty(phoneNumber))
+                    PhoneNumber.Text = phoneNumber;
+
+                PhoneNumber.CaretIndex = PhoneNumber.Text.Length;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Registration. PhoneNumber_TextChanged. " + ex.Message);
         }
     }
 }

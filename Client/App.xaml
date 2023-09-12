@@ -14,6 +14,8 @@
         <SolidColorBrush x:Key="CustomSilver" Color="#FF969696"/>
         <SolidColorBrush x:Key="CustomLightSilver" Color="#FFD9D9D9"/>
         <SolidColorBrush x:Key="OriginalSilver" Color="Silver"/>
+        <SolidColorBrush x:Key="CustomGold" Color="#FFFFD700"/>
+        <SolidColorBrush x:Key="CustomRed" Color="#FFFF0000"/>
 
 
         <!--КНОПКИ-->
@@ -421,5 +423,24 @@
 
         </Style>
 
+        
+        <!--НАДПИСИ-->
+        
+        <!--Внутренние исключения-->
+        <Style x:Key="InnerExceptionTextBlock"
+               TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="Georgia"/>
+            <Setter Property="FontSize" Value="20px"/>
+            <Setter Property="Foreground" Value="{StaticResource CustomGold}"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <!--Серверные исключения-->
+        <Style x:Key="ServerExceptionTextBlock"
+               TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="Georgia"/>
+            <Setter Property="FontSize" Value="20px"/>
+            <Setter Property="Foreground" Value="{StaticResource CustomRed}"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
     </Application.Resources>
 </Application>

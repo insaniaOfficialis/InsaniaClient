@@ -10,8 +10,9 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="480px"></RowDefinition>
-            <RowDefinition Height="100px"></RowDefinition>
-            <RowDefinition Height="100px"></RowDefinition>
+            <RowDefinition Height="50px"></RowDefinition>
+            <RowDefinition Height="70px"></RowDefinition>
+            <RowDefinition Height="80px"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100px"></ColumnDefinition>
@@ -60,7 +61,9 @@
                      Style="{StaticResource SimplifiedLightTextBox}"
                      GotFocus="TextBox_GotFocus"
                      LostFocus="TextBox_LostFocus"
-                     Text="Телефон"/>
+                     Text="Телефон"
+                     MaxLength="18"
+                     TextChanged="PhoneNumber_TextChanged"/>
             <TextBox x:Name="LastName"
                      Grid.Row="8"
                      Style="{StaticResource SimplifiedLightTextBox}"
@@ -103,9 +106,12 @@
                     Click="ButtonLoadImage_Click"
                     Content="Загрузить изображение"/>
         </StackPanel>
+        <TextBlock x:Name="ErrorText"
+                   Grid.Row="1"
+                   Grid.Column="1"/>
         <Button x:Name="ButtonSave"
                 Style="{StaticResource LightButton}"
-                Grid.Row="1"
+                Grid.Row="2"
                 Grid.Column="1"
                 Height="60px"
                 Width="400px"

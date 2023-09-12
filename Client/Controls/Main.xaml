@@ -4,80 +4,16 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             Height="1080px"
-             Width="1920px"
-             Background="{StaticResource CustomBlack}"
-             Padding="60,0,60,51">
+             Height="853px"
+             Width="1800px"
+             Background="{StaticResource CustomBlack}">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="176px"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="720px"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
             <ColumnDefinition Width="472px"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Label Grid.Column="0"
-               HorizontalAlignment="Right" 
-               VerticalAlignment="Center"
-               FontFamily="OptimusPrincepsCyr"
-               Foreground="{StaticResource OriginalSilver}"
-               FontSize="40px"
-               Margin="0,0,578,0"
-               Content="Insania"/>
-        <Grid Grid.Row="0"
-              Grid.Column="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="10px"></ColumnDefinition>
-                <ColumnDefinition Width="40px"></ColumnDefinition>
-                <ColumnDefinition Width="10px"></ColumnDefinition>
-                <ColumnDefinition Width="40px"></ColumnDefinition>
-                <ColumnDefinition Width="10px"></ColumnDefinition>
-                <ColumnDefinition Width="40px"></ColumnDefinition>
-                <ColumnDefinition Width="10px"></ColumnDefinition>
-                <ColumnDefinition Width="40px"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="40px"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-            </Grid.RowDefinitions>
-            <Button Style="{StaticResource SytemButton}"
-                    x:Name="AdministratorButton"
-                    Grid.Column="2"
-                    Grid.Row="1"
-                    Click="AdministratorButton_Click">
-                <ContentControl>
-                    <Image Source="/Dependens/Images/administrator.png"/>
-                </ContentControl>
-            </Button>
-            <Button Style="{StaticResource SytemButton}"
-                    Grid.Column="4"
-                    Grid.Row="1">
-                <ContentControl>
-                    <Image Source="/Dependens/Images/info.png"/>
-                </ContentControl>
-            </Button>
-            <Button Style="{StaticResource SytemButton}"
-                    Grid.Column="6"
-                    Grid.Row="1">
-                <ContentControl>
-                    <Image Source="/Dependens/Images/settings.png"/>
-                </ContentControl>
-            </Button>
-            <Button Style="{StaticResource SytemButton}"
-                    x:Name="OutButton"                    
-                    Grid.Column="8"
-                    Grid.Row="1"
-                    Click="OutButton_Click">
-                <ContentControl>
-                    <Image Source="/Dependens/Images/out.png"/>
-                </ContentControl>
-            </Button>
-        </Grid>
-        <Grid Grid.Row="2">
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="10px"></RowDefinition>
                 <RowDefinition Height="77px"></RowDefinition>

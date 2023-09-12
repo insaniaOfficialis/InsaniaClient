@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DevExpress.Entity.Model;
+using Serilog;
+using Serilog.Context;
 using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Client
@@ -13,5 +11,17 @@ namespace Client
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            LogInitialize();
+        }
+
+        void LogInitialize()
+        {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .WriteTo.File(path: ConfigurationManager.AppSettings["LogFilePath"], rollingInterval: RollingInterval.Day)
+            .CreateLogger();
+        }
     }
 }

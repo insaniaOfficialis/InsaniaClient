@@ -108,6 +108,12 @@
     <Reference Include="PresentationFramework.Aero2, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\PresentationFramework.Aero2.1.0.1\lib\PresentationFramework.Aero2.dll</HintPath>
     </Reference>
+    <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.3.0.1\lib\net471\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.File, Version=5.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Sinks.File.5.0.0\lib\net45\Serilog.Sinks.File.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -234,6 +240,9 @@
     <Compile Include="Controls\Administrator.xaml.cs">
       <DependentUpon>Administrator.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Base.xaml.cs">
+      <DependentUpon>Base.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Generator.xaml.cs">
       <DependentUpon>Generator.xaml</DependentUpon>
     </Compile>
@@ -265,6 +274,10 @@
     <Page Include="Controls\Administrator.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Base.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Generator.xaml">
       <SubType>Designer</SubType>

@@ -7,7 +7,7 @@
              Height="680px"
              Width="1520px"
              Background="{StaticResource CustomBlack}">
-    <Grid>
+    <Grid PreviewKeyDown="Enter">
         <Grid.RowDefinitions>
             <RowDefinition Height="480px"></RowDefinition>
             <RowDefinition Height="50px"></RowDefinition>

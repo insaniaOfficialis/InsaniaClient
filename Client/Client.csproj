@@ -72,11 +72,17 @@
     <Reference Include="DevExpress.Xpf.Charts.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Core.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Printing.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.AspNetCore.WebUtilities, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.WebUtilities.2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.WebUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Data.SqlClient, Version=5.0.0.0, Culture=neutral, PublicKeyToken=23ec7fc2d6eaa4a5, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Data.SqlClient.5.1.1\lib\net462\Microsoft.Data.SqlClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Primitives.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Identity.Client, Version=4.56.0.0, Culture=neutral, PublicKeyToken=0a613f4dd989e8ae, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Identity.Client.4.56.0\lib\net461\Microsoft.Identity.Client.dll</HintPath>
@@ -101,6 +107,9 @@
     </Reference>
     <Reference Include="Microsoft.IdentityModel.Tokens, Version=6.32.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.IdentityModel.Tokens.6.32.3\lib\net472\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Net.Http.Headers, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Net.Http.Headers.2.2.0\lib\netstandard2.0\Microsoft.Net.Http.Headers.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -261,9 +270,13 @@
     <Compile Include="Controls\Calculator.xaml.cs">
       <DependentUpon>Calculator.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Message.xaml.cs">
+      <DependentUpon>Message.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Models\Base\BaseError.cs" />
     <Compile Include="Models\Base\BaseResponse.cs" />
     <Compile Include="Models\Base\BaseResponseList.cs" />
+    <Compile Include="Models\Identification\Authorization\Response\AuthorizationResponse.cs" />
     <Compile Include="Models\Identification\Registration\Request\AddUserRequest.cs" />
     <Compile Include="Models\Identification\Roles\Request\AddRoleRequest.cs" />
     <Compile Include="Models\MainWindow\ShortNew.cs" />
@@ -315,6 +328,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Controls\Screensaver.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Message.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

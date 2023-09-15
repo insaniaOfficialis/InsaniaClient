@@ -41,9 +41,6 @@ public partial class Registration : UserControl
             /*Выставлыяем параметры десериализации*/
             _settings.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 
-            /*Определяем действие для кнопки enter*/
-            PreviewKeyDown += new KeyEventHandler(Enter);
-
             /*Проверяем доступность api*/
             CheckConnection();
         }
@@ -75,30 +72,45 @@ public partial class Registration : UserControl
             /*Если в конфиге есть данные для формирования ссылки запроса*/
             if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
                 && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
-                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Roles"]))
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Roles"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Token"]))
             {
                 /*Формируем ссылку запроса*/
-                path = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] + ConfigurationManager.AppSettings["Roles"] + "list";
+                path = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] + 
+                    ConfigurationManager.AppSettings["Roles"] + "list";
+
+                /*Формируем клиента и добавляем токен*/
+                using HttpClient client = new();
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["Token"]);
+
+                /*Получаем данные по запросу*/
+                using var result = await client.GetAsync(path);
+
+                /*Если получили успешный результат*/
+                if (result != null && result.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    /*Десериализуем ответ и заполняем combobox ролей*/
+                    var content = await result.Content.ReadAsStringAsync();
+
+                    BaseResponseList response = JsonSerializer.Deserialize<BaseResponseList>(content, _settings);
+
+                    Roles.ItemsSource = response.Items;
+                }
+                else
+                {
+                    if (result.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                        SetError("Некорректный токен", false);
+                    else
+                        SetError("Ошибка сервера", true);
+                }
             }
-
-            /*Получаем данные по запросу*/
-            using HttpClient client = new();
-            var result = await client.GetAsync(path);
-
-            /*Если получили успешный результат*/
-            if (result != null && result.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                /*Десериализуем ответ и заполняем combobox ролей*/
-                var content = await result.Content.ReadAsStringAsync();
-
-                BaseResponseList response = JsonSerializer.Deserialize<BaseResponseList>(content, _settings);
-
-                Roles.ItemsSource = response.Items;
-            }
+            else
+                SetError("Не указаны адреса api. Обратитесь в техническую поддержку", true);
         }
         catch(Exception ex)
         {
-            var serverExceptionStyle = FindResource("ServerExceptionTextBlock") as Style;
+            var serverExceptionStyle = FindResource("CriticalExceptionTextBlock") as Style;
             ErrorText.Style = serverExceptionStyle;
             ErrorText.Text = ex.Message;
         }
@@ -244,22 +256,27 @@ public partial class Registration : UserControl
             /*Если в конфиге есть данные для формирования ссылки запроса*/
             if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
                 && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
-                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Registration"]))
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Registration"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Token"]))
             {
-                /*Объявляем переменную ссылки запроса*/
                 /*Формируем ссылку запроса*/
                 string url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
                     ConfigurationManager.AppSettings["Registration"] + "add";
 
-                /*Получаем данные по запросу*/
+                /*Формируем клиента, добавляем ему токен и тело запроса*/
                 using HttpClient client = new();
-
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["Token"]);
                 StringContent stringCintent = new(JsonSerializer.Serialize(request, _settings).ToString(), Encoding.UTF8, "application/json");
+
+                /*Получаем результат запроса*/
                 using var result = await client.PostAsync(url, stringCintent);
 
                 /*Если получили успешный результат*/
                 if (result != null)
                 {
+                    if (result.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                        SetError("Некорректный токен", false);
+
                     /*Десериализуем ответ*/
                     var content = await result.Content.ReadAsStringAsync();
 
@@ -286,16 +303,17 @@ public partial class Registration : UserControl
                         multipartFormContent.Add(fileStreamContent, name: "file", fileName: fileName);
 
                         /*Если в конфиге есть данные для формирования ссылки запроса*/
-                        if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
-                            && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
-                            && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Files"]))
+                        if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["Files"]))
                         {
                             /*Формируем ссылку запроса*/
                             url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
                                 ConfigurationManager.AppSettings["Files"] + "add/User/" + response.Id;
 
-                            /*Отправляем файл*/
+                            /*Формируем клиента и добавляем токен доступа*/
                             using HttpClient clientFile = new();
+                            clientFile.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["Token"]);
+
+                            /*Получаем реузльтат запроса*/
                             using var resultFile = await clientFile.PostAsync(url, multipartFormContent);
 
                             /*Если получили успешный результат*/
@@ -320,6 +338,10 @@ public partial class Registration : UserControl
                                     Roles.Text = "Роли";
                                     ImageLoad.Source = null;
                                     ImageLoad.IsEnabled = false;
+
+                                    Message message = new("Успешно");
+
+                                    message.Show();
                                 }
                                 else
                                     SetError(response?.Error?.Message ?? "Ошибка сервера", false);
@@ -329,7 +351,7 @@ public partial class Registration : UserControl
                         }
                         /*Иначе возвращаем ошибку*/
                         else
-                            SetError("Не указаны адреса api.Обратитесь в техническую поддержку", true);
+                            SetError("Не указаны адреса api. Обратитесь в техническую поддержку", true);
                     }
                     else
                         SetError(response?.Error?.Message ?? "Ошибка сервера", false);
@@ -339,7 +361,7 @@ public partial class Registration : UserControl
             }
             /*Иначе возвращаем ошибку*/
             else
-                SetError("Не указаны адреса api.Обратитесь в техническую поддержку", true);
+                SetError("Не указаны адреса api. Обратитесь в техническую поддержку", true);
 
             /*Включаем кнопку для нажатия*/
             ButtonSave.IsEnabled = true;
@@ -348,6 +370,7 @@ public partial class Registration : UserControl
         }
         catch(Exception ex)
         {
+            SetError("Не удалось зарегистрировать полоьзователя. Обратитесь в техническую поддержку", true);
             _logger.Error("Registration. ButtonSave_Click. " + ex.Message);
         }
     }
@@ -555,7 +578,7 @@ public partial class Registration : UserControl
     /// </summary>
     /// <param name="message"></param>
     /// <param name="serverExceprion"></param>
-    public void SetError(string message, bool serverExceprion)
+    public void SetError(string message, bool criticalException)
     {
         try
         {
@@ -563,8 +586,8 @@ public partial class Registration : UserControl
             string style; //стиль
 
             /*Определяем наименование стиля*/
-            if (serverExceprion)
-                style = "ServerExceptionTextBlock";
+            if (criticalException)
+                style = "CriticalExceptionTextBlock";
             else
                 style = "InnerExceptionTextBlock";
 

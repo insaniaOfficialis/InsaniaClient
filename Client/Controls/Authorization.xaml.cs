@@ -1,94 +1,303 @@
-﻿using Serilog;
-using Serilog.Core;
+﻿using Client.Models.Identification.Authorization.Response;
+using Microsoft.AspNetCore.WebUtilities;
+using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
+using System.Net.Http;
+using System.Text.Json;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Client.Controls
+namespace Client.Controls;
+
+/// <summary>
+/// Логика взаимодействия для Authoriztion.xaml
+/// </summary>
+public partial class Authorization : UserControl
 {
+    public ILogger _logger { get { return Log.ForContext<Authorization>(); } } //логгер для записи логов
+    readonly JsonSerializerOptions _jsonSettings = new(); //настройки десериализации json
+
     /// <summary>
-    /// Логика взаимодействия для Authoriztion.xaml
+    /// Конструктор страницы авторизации
     /// </summary>
-    public partial class Authorization : UserControl
+    public Authorization()
     {
-        public ILogger _logger { get { return Log.ForContext<Authorization>(); } } //логгер для записи логов
-
-        string connectionString;
-
-        public Authorization()
+        try
         {
+            /*Инициализация компонентов*/
             InitializeComponent();
-            connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
-            /*Определяем действие для кнопки esc*/
-            PreviewKeyDown += new KeyEventHandler(Enter);
+            /*Выставлыяем параметры десериализации*/
+            _jsonSettings.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+
+            /*Проверяем соединения с api*/
+            CheckConnection();
         }
+        catch(Exception ex)
+        {
+            _logger.Error("Authorization. " + ex.Message);
+        }
+    }
 
-        /// <summary>
-        /// Обработка авторизации по enter
-        /// </summary>
-        public void Enter(object sender, KeyEventArgs e)
+    /// <summary>
+    /// Обработка авторизации по enter
+    /// </summary>
+    public void Enter(object sender, KeyEventArgs e)
+    {
+        try
         {
             if (e.Key == Key.Enter)
                 ButtonLogin_Click(sender, e);
         }
-
-        private async void ButtonLogin_Click(object sender, System.Windows.RoutedEventArgs e)
+        catch (Exception ex)
         {
-            if (String.IsNullOrEmpty(TextBoxLogin.Text))
+            _logger.Error("Authorization. Enter. " + ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Событие нажатия на кнопку входа
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void ButtonLogin_Click(object sender, System.Windows.RoutedEventArgs e)
+    {
+        try
+        {
+            /*Отключаем для нажатия кнопку авторизации*/
+            ButtonLogin.IsEnabled = false;
+
+            /*Объявляем переменные*/
+            string username = Username.Text; //логин
+            string password = Password.Text; //пароль
+
+            /*Проверяем корректность данных*/
+            if (String.IsNullOrEmpty(username) || username == "Логин")
             {
-                Console.WriteLine("Не указан логин");
+                SetError("Не указан логин", false);
                 return;
             }
-
-            if (String.IsNullOrEmpty(TextBoxPassword.Text))
+            if (String.IsNullOrEmpty(password) || password == "Пароль")
             {
                 Console.WriteLine("Не указан пароль");
                 return;
             }
 
-            /*Создаём подключение*/
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            /*Если в конфиге есть данные для формирования ссылки запроса*/
+            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Authorization"]))
             {
-                /*Открываем подключение*/
-                await connection.OpenAsync();
+                /*Формируем ссылку запроса*/
+                string url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
+                    ConfigurationManager.AppSettings["Authorization"] + "login";
 
-                if (connection.State == ConnectionState.Open)
+                /*Добавляем параметры строки*/
+                var queryParams = new Dictionary<string, string>
                 {
-                    string sqlExpression = "SELECT 0 FROM rUsers WHERE login = '"
-                        + TextBoxLogin.Text
-                        + "' AND password = '"
-                        + TextBoxPassword.Text
-                        + "'";
+                    ["username"] = username,
+                    ["password"] = password
+                };
 
-                    SqlCommand command = new SqlCommand(sqlExpression, connection);
+                /*Получаем данные по запросу*/
+                using HttpClient client = new();
 
-                    /*Выполняем команду*/
-                    SqlDataReader reader = command.ExecuteReader();
+                /*Получаем результат запроса*/
+                using var result = await client.GetAsync(QueryHelpers.AddQueryString(url, queryParams));
 
-                    if(reader.HasRows)
+                /*Если получили успешный результат*/
+                if (result != null)
+                {
+                    /*Десериализуем ответ*/
+                    var content = await result.Content.ReadAsStringAsync();
+
+                    AuthorizationResponse response = JsonSerializer.Deserialize<AuthorizationResponse>(content, _jsonSettings);
+
+                    /*Если успешно, открываем основное окно и записываем в конфиг токен*/
+                    if (response.Success)
                     {
-                        Base main = new Base();
+                        ConfigurationManager.AppSettings["Token"] = response.Token;
+
+                        Base main = new();
 
                         Content = main;
                     }
+                    else
+                        SetError(response?.Error?.Message ?? "Ошибка сервера", false);
                 }
+                else
+                    SetError("Ошибка сервера", true);
+            }
+            /*Иначе возвращаем ошибку*/
+            else
+                SetError("Не указаны адреса api.Обратитесь в техническую поддержку", true);
+        }
+        catch(Exception ex)
+        {
+            _logger.Error("Authorization. ButtonLogin_Click. " + ex.Message);
+        }
+        finally
+        {
+            ButtonLogin.IsEnabled = true;
+        }
+    }
+
+    /// <summary>
+    /// Метод обнуления полей ввода по нажатию
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var textbox = sender as TextBox;
+
+            switch (textbox.Name)
+            {
+                case "Username":
+                    {
+                        if (Username.Text == "Логин")
+                            Username.Text = "";
+
+                    }
+                    break;
+                case "Password":
+                    {
+                        if (Password.Text == "Пароль")
+                            Password.Text = "";
+
+                    }
+                    break;
             }
         }
-
-        private void TextBoxLogin_GotFocus(object sender, System.Windows.RoutedEventArgs e)
+        catch (Exception ex)
         {
-            if (TextBoxLogin.Text == "Логин")
-                TextBoxLogin.Text = "";
+            _logger.Error("Authorization. TextBox_GotFocus. " + ex.Message);
         }
+    }
 
-        private void TextBoxPassword_GotFocus(object sender, System.Windows.RoutedEventArgs e)
+    /// <summary>
+    /// Метод возвращения значений по умолчанию полей ввода по потере фокуса
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void TextBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        try
         {
-            if (TextBoxPassword.Text == "Пароль")
-                TextBoxPassword.Text = "";
+            var textbox = sender as TextBox;
+
+            switch (textbox.Name)
+            {
+                case "Username":
+                    {
+                        if (Username.Text == "")
+                            Username.Text = "Логин";
+
+                    }
+                    break;
+                case "Password":
+                    {
+                        if (Password.Text == "")
+                            Password.Text = "Пароль";
+
+                    }
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Authorization. TextBox_LostFocus. " + ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Метод отображения ошибок
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="serverExceprion"></param>
+    public void SetError(string message, bool criticalException)
+    {
+        try
+        {
+            /*Объявляем переменные*/
+            string style; //стиль
+
+            /*Определяем наименование стиля*/
+            if (criticalException)
+                style = "CriticalExceptionTextBlock";
+            else
+                style = "InnerExceptionTextBlock";
+
+            /*Находим стиль*/
+            var serverExceptionStyle = FindResource(style) as Style;
+
+            /*Устанавливаем текст и стиль*/
+            Error.Style = serverExceptionStyle;
+            Error.Text = message;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Authorization. SetError. " + ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Метод проверки соединения с api
+    /// </summary>
+    public async void CheckConnection()
+    {
+        try
+        {
+            /*Блокируем все элементы*/
+            Username.IsEnabled = false;
+            Password.IsEnabled = false;
+            ButtonLogin.IsEnabled = false;
+
+            /*Объявляем переменную ссылки запроса*/
+            string url = null;
+
+            try
+            {
+                /*Если в конфиге есть данные для формирования ссылки запроса*/
+                if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"]))
+                {
+                    /*Формируем ссылку запроса*/
+                    url = ConfigurationManager.AppSettings["DefaultConnection"];
+
+                    /*Получаем данные по запросу*/
+                    using HttpClient client = new();
+
+                    using var result = await client.GetAsync(url);
+
+                    /*Если получили успешный результат*/
+                    if (result != null && result.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        /*Разблокируем все элементы*/
+                        Username.IsEnabled = true;
+                        Password.IsEnabled = true;
+                        ButtonLogin.IsEnabled = true;
+                    }
+                    /*Иначе возвращаем ошибку*/
+                    else
+                        SetError("Сервер временно недоступен, попробуйте позднее или обратитесь в техническую поддержку", true);
+                }
+                /*Иначе возвращаем ошибку*/
+                else
+                    SetError("Не указан адрес api. Обратитесь в техническую поддержку", true);
+            }
+            catch
+            {
+                SetError("Сервер временно недоступен, попробуйте позднее или обратитесь в техническую поддержку", true);
+            }
+        }
+        catch (Exception ex)
+        {
+            SetError(ex.Message, true);
         }
     }
 }

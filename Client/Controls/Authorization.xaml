@@ -7,7 +7,7 @@
              Height="1080px"
              Width="1920px"
              Background="{StaticResource CustomBlack}">
-    <Grid>
+    <Grid PreviewKeyDown="Enter">
         <Grid.RowDefinitions>
             <RowDefinition Height="320px"></RowDefinition>
             <RowDefinition Height="480px"></RowDefinition>
@@ -33,7 +33,8 @@
         <Grid Grid.Column="1"
               Grid.Row="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="118px"></RowDefinition>
+                <RowDefinition Height="100px"></RowDefinition>
+                <RowDefinition Height="80px"></RowDefinition>
                 <RowDefinition Height="80px"></RowDefinition>
                 <RowDefinition Height="100px"></RowDefinition>
                 <RowDefinition Height="143px"></RowDefinition>
@@ -49,25 +50,32 @@
                    VerticalContentAlignment="Center"
                />
             <TextBox Style="{DynamicResource LightTextBox}"
-                     x:Name="TextBoxLogin"
+                     x:Name="Username"
                      Grid.Row="1"
                      Height="60px"
                      Width="400px"
-                     GotFocus="TextBoxLogin_GotFocus"
+                     GotFocus="TextBox_GotFocus"
+                     LostFocus="TextBox_LostFocus"
                      Text="Логин"/>
             <TextBox Style="{DynamicResource LightTextBox}"
-                     x:Name="TextBoxPassword"
+                     x:Name="Password"
                      Grid.Row="2"
                      Height="60px"
                      Width="400px"
-                     GotFocus="TextBoxPassword_GotFocus" 
+                     GotFocus="TextBox_GotFocus"
+                     LostFocus="TextBox_LostFocus"
                      Text="Пароль">
             </TextBox>
+            <TextBlock x:Name="Error"
+                       Grid.Row="3"
+                       VerticalAlignment="Center"
+                       Padding="40px,0,0,0"/>
             <Button Style="{DynamicResource DarkButton}"
                     x:Name="ButtonLogin"
-                    Grid.Row="3"
+                    Grid.Row="4"
                     Height="60px"
                     Width="400px"
+                    VerticalAlignment="Top"
                     Click="ButtonLogin_Click"
                     Content="Войти">
             </Button>

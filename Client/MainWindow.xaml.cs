@@ -1,7 +1,6 @@
 ﻿using Client.Controls;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
+using Serilog;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -13,17 +12,25 @@ namespace Client;
 /// </summary>
 public partial class MainWindow : Window
 {
-    string connectionString;
+    public ILogger _logger { get { return Log.ForContext<MainWindow>(); } } //логгер для записи логов
 
+    /// <summary>
+    /// Конструктор главного окна
+    /// </summary>
     public MainWindow()
     {
-        /*Инициализируем окно*/
-        InitializeComponent();
+        try
+        {
+            /*Инициализируем окно*/
+            InitializeComponent();
 
-        connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-
-        /*Определяем действие для кнопки esc*/
-        this.PreviewKeyDown += new KeyEventHandler(Close);
+            /*Определяем действие для кнопки esc*/
+            PreviewKeyDown += new KeyEventHandler(Close);
+        }
+        catch(Exception ex)
+        {
+            _logger.Error("MainWindow. " + ex.Message);
+        }
     }
 
     /// <summary>
@@ -31,8 +38,17 @@ public partial class MainWindow : Window
     /// </summary>
     public void Close(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Escape)
-            Close();
+        try
+        {
+            /*Если нажата клавиша escape*/
+            if (e.Key == Key.Escape)
+                /*Закрываем окно*/
+                Close();
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("MainWindow. Close. " + ex.Message);
+        }
     }
 
     /// <summary>
@@ -40,32 +56,44 @@ public partial class MainWindow : Window
     /// </summary>
     public async Task ShowAuthoriztion()
     {
-        Authorization authorization = new Authorization();
+        try
+        {
+            /*Формируем окно авторизации*/
+            Authorization authorization = new();
 
-        await Task.Delay(1000);
+            /*Делаем паузу*/
+            await Task.Delay(1000);
 
-        this.Content = authorization;
+            /*Меняем контент*/
+            Content = authorization;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("MainWindow. ShowAuthoriztion. " + ex.Message);
+        }
     }
 
+    /// <summary>
+    /// Событие загрузки экрана
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private async void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        /*Формируем стартовое окно*/
-        Screensaver screensaver = new Screensaver();
-
-        this.Content = screensaver;
-
-        /*Создаём подключение*/
-        using (SqlConnection connection = new SqlConnection(connectionString))
+        try
         {
-            /*Открываем подключение*/
-            await connection.OpenAsync();
+            /*Формируем стартовое окно*/
+            Screensaver screensaver = new Screensaver();
 
-            if (connection.State == ConnectionState.Open)
-            {
-                /*Отображаем страницу авторизации*/
-                await ShowAuthoriztion();
-            }
+            /*Меняем контент*/
+            Content = screensaver;
+
+            /*Отображаем страницу авторизации*/
+            await ShowAuthoriztion();
         }
-
+        catch (Exception ex)
+        {
+            _logger.Error("MainWindow. Window_Loaded. " + ex.Message);
+        }
     }
 }

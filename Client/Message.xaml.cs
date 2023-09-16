@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Serilog;
+using System;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Client
 {
@@ -19,27 +10,79 @@ namespace Client
     /// </summary>
     public partial class Message : Window
     {
+        public ILogger _logger { get { return Log.ForContext<Message>(); } } //логгер для записи логов
+
+        /// <summary>
+        /// Конструктор окна сообщений
+        /// </summary>
         public Message()
         {
-            InitializeComponent();
+            try
+            {
+                /*Инициализируем компоненты*/
+                InitializeComponent();
+            }
+            catch(Exception ex)
+            {
+                _logger.Error("Message. " + ex.Message);
+            }
         }
 
+        /// <summary>
+        /// Конструктор окна сообщений с сообщением
+        /// </summary>
         public Message(string message)
         {
-            InitializeComponent();
+            try
+            {
+                /*Инициализируем компоненты*/
+                InitializeComponent();
 
-            MessageText.Text = message;
+                /*Заполняем текст*/
+                MessageText.Text = message;
+            }
+            catch(Exception ex)
+            {
+                _logger.Error("Message. " + ex.Message);
+            }
         }
 
+        /// <summary>
+        /// Событие нажатия клавиши ок
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            Close();
+            try
+            {
+                /*Закрываем окно*/
+                Close();
+            }
+            catch(Exception ex)
+            {
+                _logger.Error("Message. OkButton_Click. " + ex.Message);
+            }
         }
 
+        /// <summary>
+        /// Событие нажатия клавиши
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Grid_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Escape)
-                Close();
+            try
+            {
+                /*Если нажата клавиша eacape*/
+                if (e.Key == Key.Escape)
+                    /*Закрываем окно*/
+                    Close();
+            }
+            catch(Exception ex)
+            {
+                _logger.Error("Message. Grid_PreviewKeyDown. " + ex.Message);
+            }
         }
     }
 }

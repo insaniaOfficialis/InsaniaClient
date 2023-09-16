@@ -1,43 +1,52 @@
 ﻿using Client.Controls.Generators;
+using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-namespace Client.Controls
+namespace Client.Controls;
+
+/// <summary>
+/// Логика взаимодействия для Generator.xaml
+/// </summary>
+public partial class Generator : UserControl
 {
+    public ILogger _logger { get { return Log.ForContext<Generator>(); } } //логгер для записи логов
+
     /// <summary>
-    /// Логика взаимодействия для Generator.xaml
+    /// Конструктор страницы генераторов
     /// </summary>
-    public partial class Generator : UserControl
+    public Generator()
     {
-        public Generator()
+        try
         {
+            /*Инициализируем компоненты*/
             InitializeComponent();
         }
-
-        private void OutButton_Click(object sender, RoutedEventArgs e)
+        catch (Exception ex)
         {
-            Authorization authorization = new();
-
-            this.Padding = new(0, 0, 0, 0);
-            this.Content = authorization;
+            _logger.Error("Generator. " + ex.Message);
         }
+    }
 
-        private void TextBlock1_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    /// <summary>
+    /// Событие нажатия на список
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void TextBlock1_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        try
         {
+            /*Формируем новую страницу генератора ресурсов*/
             GeneratorResource generatorResource = new();
+
+            /*Меняем контент элемента на генератор ресурсов*/
             Content.Content = generatorResource;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Generator. TextBlock1_MouseLeftButtonDown. " + ex.Message);
         }
     }
 }

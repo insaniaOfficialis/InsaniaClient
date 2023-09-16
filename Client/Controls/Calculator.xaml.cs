@@ -1,21 +1,29 @@
-﻿using System.Windows;
+﻿using Serilog;
+using System;
 using System.Windows.Controls;
 
-namespace Client.Controls
+namespace Client.Controls;
+
+/// <summary>
+/// Логика взаимодействия для Calculator.xaml
+/// </summary>
+public partial class Calculator : UserControl
 {
-    public partial class Calculator : UserControl
+    public ILogger _logger { get { return Log.ForContext<Calculator>(); } } //логгер для записи логов
+
+    /// <summary>
+    /// Конструктор страницы калькуляторов
+    /// </summary>
+    public Calculator()
     {
-        public Calculator()
+        try
         {
+            /*Инициализируем компоненты*/
             InitializeComponent();
         }
-
-        private void OutButton_Click(object sender, RoutedEventArgs e)
+        catch (Exception ex)
         {
-            Authorization authorization = new();
-
-            this.Padding = new(0, 0, 0, 0);
-            this.Content = authorization;
+            _logger.Error("Calculator. " + ex.Message);
         }
     }
 }

@@ -55,8 +55,17 @@ public partial class Registration : UserControl
     /// </summary>
     public void Enter(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Enter)
-            ButtonSave_Click(sender, e);
+        try
+        {
+            /*Если нажата кнопка enter*/
+            if (e.Key == Key.Enter)
+                /*Вызываем метод сохранения*/
+                ButtonSave_Click(sender, e);
+        }
+        catch(Exception ex)
+        {
+            _logger.Error("Registration. Enter. " + ex.Message);
+        }
     }
 
     /// <summary>
@@ -157,21 +166,28 @@ public partial class Registration : UserControl
     /// <param name="e"></param>
     private void ButtonLoadImage_Click(object sender, RoutedEventArgs e)
     {
-        /*Формируем новое окно загрузки фотографий*/
-        OpenFileDialog openFileDialog = new();
-
-        /*Ставим фильтры на типы файлов*/
-        openFileDialog.Filter = "Image files (*.pdf;*.png;*.jpeg;*.jpg;*.bmp)|*.pdf;*.png;*.jpeg;*.jpg;*.bmp";
-
-        /*Если есть выбранные файлы,*/
-        if (openFileDialog.ShowDialog() == true)
+        try
         {
-            /*Включаем компоненту изображений и отображаем выбранное фото в нём*/
-            ImageLoad.IsEnabled = true;
-            ImageLoad.Source = new BitmapImage(new Uri(openFileDialog.FileName));
+            /*Формируем новое окно загрузки фотографий*/
+            OpenFileDialog openFileDialog = new();
 
-            /*Сохраняем путь к файлу*/
-            _filePath = openFileDialog.FileName;
+            /*Ставим фильтры на типы файлов*/
+            openFileDialog.Filter = "Image files (*.pdf;*.png;*.jpeg;*.jpg;*.bmp)|*.pdf;*.png;*.jpeg;*.jpg;*.bmp";
+
+            /*Если есть выбранные файлы,*/
+            if (openFileDialog.ShowDialog() == true)
+            {
+                /*Включаем компоненту изображений и отображаем выбранное фото в нём*/
+                ImageLoad.IsEnabled = true;
+                ImageLoad.Source = new BitmapImage(new Uri(openFileDialog.FileName));
+
+                /*Сохраняем путь к файлу*/
+                _filePath = openFileDialog.FileName;
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.Error("Registration. ButtonLoadImage_Click. " + ex.Message);
         }
     }
 
@@ -382,59 +398,66 @@ public partial class Registration : UserControl
     /// <param name="e"></param>
     private void TextBox_GotFocus(object sender, RoutedEventArgs e)
     {
-        var textbox = sender as TextBox;
-
-        switch (textbox.Name)
+        try
         {
-            case "Username":
-                {
-                    if (Username.Text == "Логин")
-                        Username.Text = "";
+            var textbox = sender as TextBox;
 
-                }
-                break;
-            case "Password":
-                {
-                    if (Password.Text == "Пароль")
-                        Password.Text = "";
+            switch (textbox.Name)
+            {
+                case "Username":
+                    {
+                        if (Username.Text == "Логин")
+                            Username.Text = "";
 
-                }
-                break;
-            case "Email":
-                {
-                    if (Email.Text == "Почта")
-                        Email.Text = "";
+                    }
+                    break;
+                case "Password":
+                    {
+                        if (Password.Text == "Пароль")
+                            Password.Text = "";
 
-                }
-                break;
-            case "PhoneNumber":
-                {
-                    if (PhoneNumber.Text == "Телефон")
-                        PhoneNumber.Text = "";
+                    }
+                    break;
+                case "Email":
+                    {
+                        if (Email.Text == "Почта")
+                            Email.Text = "";
 
-                }
-                break;
-            case "LastName":
-                {
-                    if (LastName.Text == "Фамилия")
-                        LastName.Text = "";
+                    }
+                    break;
+                case "PhoneNumber":
+                    {
+                        if (PhoneNumber.Text == "Телефон")
+                            PhoneNumber.Text = "";
 
-                }
-                break;
-            case "FirstName":
-                {
-                    if (FirstName.Text == "Имя")
-                        FirstName.Text = "";
+                    }
+                    break;
+                case "LastName":
+                    {
+                        if (LastName.Text == "Фамилия")
+                            LastName.Text = "";
 
-                }
-                break;
-            case "Patronymic":
-                {
-                    if (Patronymic.Text == "Отчество")
-                        Patronymic.Text = "";
+                    }
+                    break;
+                case "FirstName":
+                    {
+                        if (FirstName.Text == "Имя")
+                            FirstName.Text = "";
 
-                }
-                break;
+                    }
+                    break;
+                case "Patronymic":
+                    {
+                        if (Patronymic.Text == "Отчество")
+                            Patronymic.Text = "";
+
+                    }
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Registration. TextBox_GotFocus. " + ex.Message);
         }
     }
 
@@ -445,59 +468,66 @@ public partial class Registration : UserControl
     /// <param name="e"></param>
     private void TextBox_LostFocus(object sender, RoutedEventArgs e)
     {
-        var textbox = sender as TextBox;
-
-        switch (textbox.Name)
+        try
         {
-            case "Username":
-                {
-                    if (Username.Text == "")
-                        Username.Text = "Логин";
+            var textbox = sender as TextBox;
 
-                }
-                break;
-            case "Password":
-                {
-                    if (Password.Text == "")
-                        Password.Text = "Пароль";
+            switch (textbox.Name)
+            {
+                case "Username":
+                    {
+                        if (Username.Text == "")
+                            Username.Text = "Логин";
 
-                }
-                break;
-            case "Email":
-                {
-                    if (Email.Text == "")
-                        Email.Text = "Почта";
+                    }
+                    break;
+                case "Password":
+                    {
+                        if (Password.Text == "")
+                            Password.Text = "Пароль";
 
-                }
-                break;
-            case "PhoneNumber":
-                {
-                    if (PhoneNumber.Text == "")
-                        PhoneNumber.Text = "Телефон";
+                    }
+                    break;
+                case "Email":
+                    {
+                        if (Email.Text == "")
+                            Email.Text = "Почта";
 
-                }
-                break;
-            case "LastName":
-                {
-                    if (LastName.Text == "")
-                        LastName.Text = "Фамилия";
+                    }
+                    break;
+                case "PhoneNumber":
+                    {
+                        if (PhoneNumber.Text == "")
+                            PhoneNumber.Text = "Телефон";
 
-                }
-                break;
-            case "FirstName":
-                {
-                    if (FirstName.Text == "")
-                        FirstName.Text = "Имя";
+                    }
+                    break;
+                case "LastName":
+                    {
+                        if (LastName.Text == "")
+                            LastName.Text = "Фамилия";
 
-                }
-                break;
-            case "Patronymic":
-                {
-                    if (Patronymic.Text == "")
-                        Patronymic.Text = "Отчество";
+                    }
+                    break;
+                case "FirstName":
+                    {
+                        if (FirstName.Text == "")
+                            FirstName.Text = "Имя";
 
-                }
-                break;
+                    }
+                    break;
+                case "Patronymic":
+                    {
+                        if (Patronymic.Text == "")
+                            Patronymic.Text = "Отчество";
+
+                    }
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Registration. TextBox_LostFocus. " + ex.Message);
         }
     }
 

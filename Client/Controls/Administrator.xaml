@@ -20,14 +20,16 @@
                      Width="400px"
                      Text="Поиск..."/>
             <ListBox Style="{StaticResource DarkList}">
-                <ListBoxItem Style="{StaticResource DarkListItem}"
+                <ListBoxItem x:Name="RegistrationItem"
+                             Style="{StaticResource DarkListItem}"
                              Content="Регистрация"
                              Height="60px"
-                             MouseLeftButtonUp="Registration_MouseLeftButtonUp"/>
-                <ListBoxItem Style="{StaticResource DarkListItem}"
+                             MouseLeftButtonUp="Element_MouseLeftButtonUp"/>
+                <ListBoxItem x:Name="RolesItem"
+                             Style="{StaticResource DarkListItem}"
                              Content="Роли"
                              Height="60px"
-                             MouseLeftButtonUp="Registration_MouseLeftButtonUp"/>
+                             MouseLeftButtonUp="Element_MouseLeftButtonUp"/>
             </ListBox>
         </StackPanel>
         <ContentControl Grid.Column="1"

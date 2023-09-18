@@ -3,91 +3,40 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             mc:Ignorable="d" 
-             Height="1080px"
-             Width="1920px"
-             Background="#FF2B2B2B"
-             Padding="60,0,60,51">
+             mc:Ignorable="d"
+             Height="853px"
+             Width="1800px"
+             Background="{StaticResource CustomBlack}">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="176px"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="400px"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="400px"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Label Grid.Column="0"
-               Content="Insania" 
-               HorizontalAlignment="Left" 
-               VerticalAlignment="Center" 
-               FontFamily="OptimusPrincepsCyr" 
-               Foreground="Silver"
-               FontSize="40px"/>
-        <Grid Grid.Row="0"
-              Grid.Column="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="40px"></ColumnDefinition>
-                <ColumnDefinition Width="10px"></ColumnDefinition>
-                <ColumnDefinition Width="40px"></ColumnDefinition>
-                <ColumnDefinition Width="10px"></ColumnDefinition>
-                <ColumnDefinition Width="40px"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="40px"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-            </Grid.RowDefinitions>
-            <Button Style="{StaticResource SytemButton}"
-                    Grid.Column="1"
-                    Grid.Row="1">
-                <Image Source="/Dependens/Images/info.png" />
-            </Button>
-            <Button Style="{StaticResource SytemButton}"
-                    Grid.Column="3"
-                    Grid.Row="1">
-                <Image Source="/Dependens/Images/settings.png" />
-            </Button>
-            <Button x:Name="OutButton"
-                    Style="{StaticResource SytemButton}"
-                    Grid.Column="5"
-                    Grid.Row="1"
-                    Click="OutButton_Click">
-                <Image Source="/Dependens/Images/out.png" />
-            </Button>
-        </Grid>
-        <StackPanel Grid.Column="0"
-                    Grid.Row="1">
-            <TextBox x:Name="TextSearch"
+        <StackPanel Grid.Column="0">
+            <TextBox Style="{StaticResource SimplifiedLightTextBox}"
+                     x:Name="TextSearch"
                      Grid.Row="1"
                      Height="60px"
                      Width="400px"
-                     FontFamily="Georgia"
-                     FontSize="20px"
-                     Foreground="#FF969696"
-                     BorderBrush="#FFFFFFFF"
-                     VerticalContentAlignment="Center"
-                     Padding="40px, 0, 0, 0">
-                <TextBox.Text>Поиск...</TextBox.Text>
-                <TextBox.Resources>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="CornerRadius" Value="16"/>
-                    </Style>
-                </TextBox.Resources>
-            </TextBox>
-            <TextBlock TextWrapping="Wrap"
-                       FontFamily="Georgia"
-                       Foreground="Silver"
-                       FontSize="20px"
-                       Height="60px"
-                       Padding="20px"
-                       Text="Генерация ресурсов"
-                       MouseLeftButtonDown="TextBlock1_MouseLeftButtonDown"/>
+                     Text="Поиск..."/>
+            <ListBox Style="{StaticResource DarkList}">
+                <ListBoxItem x:Name="GeneratorResourceItem"
+                             Style="{StaticResource DarkListItem}"
+                             Content="Генератор ресурсов"
+                             Height="60px"
+                             MouseLeftButtonUp="Element_MouseLeftButtonUp"/>
+                <ListBoxItem x:Name="GeneratorPersonalNameItem"
+                             Style="{StaticResource DarkListItem}"
+                             Content="Генератор имён"
+                             Height="60px"
+                             MouseLeftButtonUp="Element_MouseLeftButtonUp"/>
+            </ListBox>
         </StackPanel>
-        <UserControl x:Name="Content"
-                     Grid.Column="1"
-                     Grid.Row="1">
-        </UserControl>
+        <ContentControl x:Name="Element"
+                        Grid.Column="1"
+                        Grid.Row="1"
+                        Width="Auto"
+                        Height="Auto"
+                        Opacity="1"/>
     </Grid>
 </UserControl>

@@ -33,19 +33,39 @@ public partial class Administrator : UserControl
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void Registration_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    private void Element_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
         try
         {
-            /*Формируем страницу регистрации*/
-            Registration registration = new();
+            /*Определяем нажатый элемент как элемент списка*/
+            var element = sender as ListBoxItem;
 
-            /*Меняем контент элемента на странице на страницу регистрации*/
-            Element.Content = registration;
+            /*Ищем наименование нажатого элемента*/
+            switch (element.Name)
+            {
+                case "RegistrationItem":
+                    {
+                        /*Формируем страницу регистрации*/
+                        Registration registration = new();
+
+                        /*Меняем контент элемента на странице на страницу регистрации*/
+                        Element.Content = registration;
+                    }
+                    break;
+                case "RolesItem":
+                    {
+                        /*Формируем страницу ролей*/
+                        Roles roles = new();
+
+                        /*Меняем контент элемента на странице на страницу ролей*/
+                        Element.Content = roles;
+                    }
+                    break;
+            }
         }
         catch (Exception ex)
         {
-            _logger.Error("Administrator. Registration_MouseLeftButtonUp. " + ex.Message);
+            _logger.Error("Administrator. Element_MouseLeftButtonUp. " + ex.Message);
         }
     }
 }

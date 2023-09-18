@@ -315,6 +315,12 @@
                     <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}"/>
                     <Setter Property="Cursor" Value="Hand"/>
                 </Trigger>
+                <!--Значения при выборе-->
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{StaticResource CustomLightSilver}"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
             </Style.Triggers>
         </Style>
         <!--Светлый выпадающий список-->
@@ -329,7 +335,7 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
-                                <ColumnDefinition MaxWidth="20px"/>
+                                <ColumnDefinition MaxWidth="17px"/>
                             </Grid.ColumnDefinitions>
                             <TextBox Name="PART_EditableTextBox"
                                      Style="{StaticResource LightComboBoxTextBox}"

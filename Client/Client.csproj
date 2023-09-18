@@ -249,6 +249,9 @@
     <Compile Include="Controls\Administrator.xaml.cs">
       <DependentUpon>Administrator.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Administrators\Roles.xaml.cs">
+      <DependentUpon>Roles.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Base.xaml.cs">
       <DependentUpon>Base.xaml</DependentUpon>
     </Compile>
@@ -280,6 +283,10 @@
     <Compile Include="Models\Identification\Registration\Request\AddUserRequest.cs" />
     <Compile Include="Models\Identification\Roles\Request\AddRoleRequest.cs" />
     <Compile Include="Models\MainWindow\ShortNew.cs" />
+    <Page Include="Controls\Administrators\Roles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Authorization.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

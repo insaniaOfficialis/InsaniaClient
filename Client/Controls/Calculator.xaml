@@ -52,8 +52,7 @@
             <Button x:Name="OutButton"
                     Style="{StaticResource SytemButton}"
                     Grid.Column="5"
-                    Grid.Row="1"
-                    Click="OutButton_Click">
+                    Grid.Row="1">
                 <Image Source="/Dependens/Images/out.png" />
             </Button>
         </Grid>

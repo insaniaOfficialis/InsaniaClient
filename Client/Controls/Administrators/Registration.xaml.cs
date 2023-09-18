@@ -38,7 +38,7 @@ public partial class Registration : UserControl
             /*Инициализация всех компонентов*/
             InitializeComponent();
 
-            /*Выставлыяем параметры десериализации*/
+            /*Выставляем параметры десериализации*/
             _settings.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 
             /*Проверяем доступность api*/

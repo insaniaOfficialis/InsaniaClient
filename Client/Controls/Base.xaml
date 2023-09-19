@@ -7,10 +7,10 @@
              Height="1080px"
              Width="1920px"
              Background="{StaticResource CustomBlack}"
-             Padding="60,0,60,51">
+             Padding="60,0,60,50">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="176px"></RowDefinition>
+            <RowDefinition Height="180px"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Label Grid.Column="0"
@@ -74,7 +74,7 @@
         </Grid>
         <ContentControl x:Name="BaseContent"
                         Grid.Row="1"
-                        Height="853px"
+                        Height="850px"
                         Width="1800px"/>
     </Grid>
 </UserControl>

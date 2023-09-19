@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="Client.Controls.Statistic"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+             Height="850px"
+             Width="1800px"
+             Background="{StaticResource CustomBlack}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="400px"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0">
+            <TextBox x:Name="TextSearch"
+                     Style="{StaticResource SimplifiedLightTextBox}"
+                     Grid.Row="1"
+                     Height="60px"
+                     Width="400px"
+                     Text="Поиск..."/>
+            <ListBox Style="{StaticResource DarkList}">
+                <ListBoxItem x:Name="CountryItem"
+                             Style="{StaticResource DarkListItem}"
+                             Content="Страны"
+                             Height="60px"
+                             MouseLeftButtonUp="Element_MouseLeftButtonUp"/>
+                <ListBoxItem x:Name="RegionItem"
+                             Style="{StaticResource DarkListItem}"
+                             Content="Регионы"
+                             Height="60px"
+                             MouseLeftButtonUp="Element_MouseLeftButtonUp"/>
+            </ListBox>
+        </StackPanel>
+        <ContentControl x:Name="Element"
+                        Grid.Column="1"
+                        Grid.Row="1"
+                        Width="Auto"
+                        Height="Auto"
+                        Opacity="1"/>
+    </Grid>
+</UserControl>

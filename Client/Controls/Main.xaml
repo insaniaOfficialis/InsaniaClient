@@ -157,22 +157,24 @@
                     HorizontalAlignment="Left">
                 <ContentControl>
                     <Grid>
-                        <Polygon x:Name="Polygon6"
+                        <Polygon x:Name="StatisticsPolygon"
                                  Grid.Row="11"
                                  Fill="{StaticResource CustomGrey}"
                                  Points="50, 0, 0, 77, 550, 77, 600, 0"
                                  MouseEnter="Polygon_MouseEnter"
-                                 MouseLeave="Polygon_MouseLeave"/>
-                        <Label x:Name="Label6"
+                                 MouseLeave="Polygon_MouseLeave"
+                                 MouseLeftButtonDown="Polygon_MouseLeftButtonDown"/>
+                        <Label x:Name="StatisticsLabel"
                                Grid.Row="11"
                                Content="СТАТИСТИКА"
                                FontFamily="Georgia" 
                                Foreground="{StaticResource OriginalSilver}"
                                VerticalAlignment="Center"
                                FontSize="36px"
-                               Margin="230,0,0,0"
+                               Margin="230px,0,0,0"
                                MouseEnter="Polygon_MouseEnter"
-                               MouseLeave="Polygon_MouseLeave"/>
+                               MouseLeave="Polygon_MouseLeave"
+                               MouseLeftButtonDown="Polygon_MouseLeftButtonDown"/>
                     </Grid>
                 </ContentControl>
             </Button>

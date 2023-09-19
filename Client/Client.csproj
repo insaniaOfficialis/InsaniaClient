@@ -273,12 +273,20 @@
     <Compile Include="Controls\Calculator.xaml.cs">
       <DependentUpon>Calculator.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Statistic.xaml.cs">
+      <DependentUpon>Statistic.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Statistics\Countries.xaml.cs">
+      <DependentUpon>Countries.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Message.xaml.cs">
       <DependentUpon>Message.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\Base\BaseError.cs" />
     <Compile Include="Models\Base\BaseResponse.cs" />
     <Compile Include="Models\Base\BaseResponseList.cs" />
+    <Compile Include="Models\Geography\Countries\Request\AddCountryRequest.cs" />
+    <Compile Include="Models\Geography\Countries\Response\CountriesResponseList.cs" />
     <Compile Include="Models\Identification\Authorization\Response\AuthorizationResponse.cs" />
     <Compile Include="Models\Identification\Registration\Request\AddUserRequest.cs" />
     <Compile Include="Models\Identification\Roles\Request\AddRoleRequest.cs" />
@@ -316,6 +324,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Calculator.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Statistic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Statistics\Countries.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

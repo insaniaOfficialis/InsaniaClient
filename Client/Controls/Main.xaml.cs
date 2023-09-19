@@ -1,4 +1,5 @@
-﻿using Client.Models.MainWindow;
+﻿using Client.Controls.Administrators;
+using Client.Models.MainWindow;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 
 namespace Client.Controls;
 
@@ -63,13 +65,13 @@ public partial class Main : UserControl
                 case "Label3": Polygon3.Fill = (Brush)bc.ConvertFrom("#696969"); break;
                 case "Label4": Polygon4.Fill = (Brush)bc.ConvertFrom("#696969"); break;
                 case "Label5": Polygon5.Fill = (Brush)bc.ConvertFrom("#696969"); break;
-                case "Label6": Polygon6.Fill = (Brush)bc.ConvertFrom("#696969"); break;
+                case "StatisticsLabel": StatisticsPolygon.Fill = (Brush)bc.ConvertFrom("#696969"); break;
                 default: { Polygon polygon = sender as Polygon; polygon.Fill = (Brush)bc.ConvertFrom("#696969"); break; }
             }
         }
         catch(Exception ex)
         {
-            _logger.Error("Main. Polygon_MouseEnter. " + ex.Message);
+            _logger.Error("Main. Polygon_MouseEnter. Ошибка: {1}", ex);
         }
     }
 
@@ -96,13 +98,13 @@ public partial class Main : UserControl
                 case "Label3": Polygon3.Fill = (Brush)bc.ConvertFrom("#4D4D4D"); break;
                 case "Label4": Polygon4.Fill = (Brush)bc.ConvertFrom("#4D4D4D"); break;
                 case "Label5": Polygon5.Fill = (Brush)bc.ConvertFrom("#4D4D4D"); break;
-                case "Label6": Polygon6.Fill = (Brush)bc.ConvertFrom("#4D4D4D"); break;
+                case "StatisticsLabel": StatisticsPolygon.Fill = (Brush)bc.ConvertFrom("#4D4D4D"); break;
                 default: { Polygon polygon = sender as Polygon; polygon.Fill = (Brush)bc.ConvertFrom("#4D4D4D"); break; }
             }
         }
         catch(Exception ex)
         {
-            _logger.Error("Main. Polygon_MouseLeave. " + ex.Message);
+            _logger.Error("Main. Polygon_MouseLeave. Ошибка: {1}", ex);
         }
     }
 
@@ -230,4 +232,69 @@ public partial class Main : UserControl
             _logger.Error("Main. GetLogo. " + ex.Message);
         }
     }
+
+    /// <summary>
+    /// Метод нажатия на пункты меню
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void Polygon_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        try
+        {
+            /*Убираем отступы*/
+            Padding = new(0, 0, 0, 0);
+
+            /*Определяем нажатый элемент как полигон*/
+            var elementPolygon = sender as Polygon;
+            var elementLabel = sender as Label;
+
+            if (elementPolygon != null)
+            {
+                /*Ищем наименование нажатого элемента*/
+                switch (elementPolygon.Name)
+                {
+                    case "StatisticsPolygon":
+                        {
+                            /*Формируем страницу статистики*/
+                            Statistic statistic = new();
+
+                            /*Меняем контент элемента на странице на страницу статистики*/
+                            Content = statistic;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                if (elementLabel != null)
+                {
+                    /*Ищем наименование нажатого элемента*/
+                    switch (elementLabel.Name)
+                    {
+                        case "StatisticsLabel":
+                            {
+                                /*Формируем страницу статистики*/
+                                Statistic statistic = new();
+
+                                /*Меняем контент элемента на странице на страницу статистики*/
+                                Content = statistic;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else
+                    _logger.Error("Main. Polygon_MouseLeftButtonDown. Не удалось определить элемент");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Main. Polygon_MouseLeftButtonDown. Ошибка: {1}", ex);
+        }
+    }
+
 }

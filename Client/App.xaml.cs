@@ -1,6 +1,4 @@
-﻿using DevExpress.Entity.Model;
-using Serilog;
-using Serilog.Context;
+﻿using Serilog;
 using System.Configuration;
 using System.Windows;
 

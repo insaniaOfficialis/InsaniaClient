@@ -1,9 +1,12 @@
 ﻿using Client.Controls.Administrators;
+using Client.Models.Base;
 using Client.Models.Geography.Countries.Response;
+using Microsoft.AspNetCore.WebUtilities;
 using Serilog;
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -18,8 +21,10 @@ namespace Client.Controls.Statistics;
 public partial class Countries : UserControl
 {
     public ILogger _logger { get { return Log.ForContext<Roles>(); } } //сервис для записи логов
-    readonly JsonSerializerOptions _settings = new(); //настройки десериализации json
-    ObservableCollection<CountriesResponseListItem?>? _countries;
+    private readonly JsonSerializerOptions _settings = new(); //настройки десериализации json
+    private int? skip, take;
+    private List<BaseSortRequest?>? sort = new();
+    private string? search;
 
     /// <summary>
     /// Конструктор страницы стран
@@ -28,13 +33,13 @@ public partial class Countries : UserControl
     {
         try
         {
-            /*Инициализация всех компонентов*/
+            //Инициализация всех компонентов
             InitializeComponent();
 
-            /*Выставлыяем параметры десериализации*/
+            //Выставлыяем параметры десериализации
             _settings.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 
-            /*Проверяем доступность api*/
+            //Проверяем доступность api
             CheckConnection();
         }
         catch (Exception ex)
@@ -50,39 +55,39 @@ public partial class Countries : UserControl
     {
         try
         {
-            /*Блокируем все элементы*/
-            //CountriesDataGrid.IsEnabled = false;
+            //Блокируем все элементы
+            CountriesDataGrid.IsEnabled = false;
 
-            /*Объявляем переменную ссылки запроса*/
+            //Объявляем переменную ссылки запроса
             string url = null;
 
             try
             {
-                /*Если в конфиге есть данные для формирования ссылки запроса*/
+                //Если в конфиге есть данные для формирования ссылки запроса
                 if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"]))
                 {
-                    /*Формируем ссылку запроса*/
+                    //Формируем ссылку запроса
                     url = ConfigurationManager.AppSettings["DefaultConnection"];
 
-                    /*Получаем данные по запросу*/
+                    //Получаем данные по запросу
                     using HttpClient client = new();
 
                     using var result = await client.GetAsync(url);
 
-                    /*Если получили успешный результат*/
+                    //Если получили успешный результат
                     if (result != null && result.StatusCode == System.Net.HttpStatusCode.OK)
                     {
-                        /*Разблокируем все элементы*/
-                        //CountriesDataGrid.IsEnabled = true;
+                        //Разблокируем все элементы
+                        CountriesDataGrid.IsEnabled = true;
 
-                        /*Вызываем метод получения стран*/
+                        //Вызываем метод получения стран
                         GetCountries();
                     }
-                    /*Иначе возвращаем ошибку*/
+                    //Иначе возвращаем ошибку
                     else
                         SetError("Сервер временно недоступен, попробуйте позднее или обратитесь в техническую поддержку", true);
                 }
-                /*Иначе возвращаем ошибку*/
+                //Иначе возвращаем ошибку
                 else
                     SetError("Не указан адрес api. Обратитесь в техническую поддержку", true);
             }
@@ -106,21 +111,21 @@ public partial class Countries : UserControl
     {
         try
         {
-            /*Объявляем переменные*/
+            //Объявляем переменные
             string style; //стиль
 
-            /*Определяем наименование стиля*/
+            //Определяем наименование стиля
             if (criticalException)
                 style = "CriticalExceptionTextBlock";
             else
                 style = "InnerExceptionTextBlock";
 
-            /*Находим стиль*/
+            //Находим стиль
             var exceptionStyle = FindResource(style) as Style;
 
-            /*Устанавливаем текст и стиль*/
-            //ErrorTextBlock.Style = exceptionStyle;
-            //ErrorTextBlock.Text = message;
+            //Устанавливаем текст и стиль
+            ErrorTextBlock.Style = exceptionStyle;
+            ErrorTextBlock.Text = message;
         }
         catch (Exception ex)
         {
@@ -135,31 +140,39 @@ public partial class Countries : UserControl
     {
         try
         {
-            /*Объявляем переменную ссылки запроса*/
-            string path = null;
+            //Объявляем переменную ссылки запроса
+            string url = null;
 
-            /*Если в конфиге есть данные для формирования ссылки запроса*/
+            //Если в конфиге есть данные для формирования ссылки запроса
             if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
                 && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
                 && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Countries"])
                 && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Token"]))
             {
-                /*Формируем ссылку запроса*/
-                path = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
+                //Формируем ссылку запроса
+                url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
                     ConfigurationManager.AppSettings["Countries"] + "listFull";
 
-                /*Формируем клиента и добавляем токен*/
+                //Устанавливаем первоначальные параметры пагинации и сортировки
+                skip = 0;
+                take = 20;
+                sort.Add(new("number", true));
+
+                //Добавляем параметры строки
+                url += CreateQueryStringListCountries();
+
+                //Формируем клиента и добавляем токен
                 using HttpClient client = new();
 
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["Token"]);
 
-                /*Получаем данные по запросу*/
-                using var result = await client.GetAsync(path);
+                //Получаем данные по запросу
+                using var result = await client.GetAsync(url);
 
-                /*Если получили успешный результат*/
+                //Если получили успешный результат
                 if (result != null && result.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    /*Десериализуем ответ и заполняем combobox ролей*/
+                    //Десериализуем ответ и заполняем combobox ролей
                     var content = await result.Content.ReadAsStringAsync();
 
                     CountriesResponseList response = JsonSerializer.Deserialize<CountriesResponseList>(content, _settings);
@@ -181,5 +194,43 @@ public partial class Countries : UserControl
         {
             SetError(ex.Message, true);
         }
+    }
+
+    /// <summary>
+    /// Формирование строки запроса для списка стран
+    /// </summary>
+    /// <returns></returns>
+    public string CreateQueryStringListCountries()
+    {
+        //Формируем ссылку
+        string url = "?search=";
+
+        //Если есть строка поиска добавляем в ссылку
+        if (!String.IsNullOrEmpty(search))
+            url += search;
+
+        //Если указано количество пропущенных элементов, добавляем
+        if(skip != null)
+            url += string.Format("&skip={0}", skip);
+
+        //Если указано количество формируемых элементов, добавляем
+        if (take != null)
+            url += string.Format("&take={0}", take);
+
+        //Если есть поля сортировки
+        if(sort.Any())
+        {
+            //Проходим по всем полям сортировки
+            for(int i = 0; i < sort.Count; i++)
+            {
+                //Добавляем ключ сортировки
+                url += string.Format("&sort[{0}].SortKey={1}", i, sort[i].SortKey);
+                //Добавляем порядок сортировки
+                url += string.Format("&sort[{0}].IsAscending={1}", i, sort[i].IsAscending);
+            }
+        }
+
+        //Возвращаем результат
+        return url;
     }
 }

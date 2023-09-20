@@ -285,6 +285,7 @@
     <Compile Include="Models\Base\BaseError.cs" />
     <Compile Include="Models\Base\BaseResponse.cs" />
     <Compile Include="Models\Base\BaseResponseList.cs" />
+    <Compile Include="Models\Base\BaseSortRequest.cs" />
     <Compile Include="Models\Geography\Countries\Request\AddCountryRequest.cs" />
     <Compile Include="Models\Geography\Countries\Response\CountriesResponseList.cs" />
     <Compile Include="Models\Identification\Authorization\Response\AuthorizationResponse.cs" />

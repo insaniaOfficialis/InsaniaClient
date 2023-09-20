@@ -10,32 +10,30 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="100px"/>
-            <RowDefinition Height="650px"/>
+            <RowDefinition Height="550px"/>
+            <RowDefinition Height="100px"/>
             <RowDefinition Height="100px"/>
         </Grid.RowDefinitions>
         <DataGrid x:Name="CountriesDataGrid"
-                  Grid.Row="1"
-                  FontFamily="Georgia"
-                  FontSize="40px"
-                  AutoGenerateColumns="False"
-                  Height="650px">
+                  Style="{DynamicResource LightDataGridStyle}"
+                  ColumnHeaderStyle="{DynamicResource LightDataGridColumnHeaderStyle}"
+                  RowStyle="{DynamicResource LightDataGridRows}"
+                  CellStyle="{DynamicResource LightDataGridCells}"
+                  RowHeaderStyle="{DynamicResource LightDataGridRowHeaders}"
+                  Grid.Row="1">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Номер на карте"
-                                    FontFamily="Georgia"
-                                    FontSize="40"
-                                    Binding="{Binding Path=Number}"/>
+                                    Binding="{Binding Path=Number}"
+                                    EditingElementStyle="{DynamicResource EditLightTextBox}"/>
                 <DataGridTextColumn Header="Наименование"
-                                    FontFamily="Georgia"
-                                    FontSize="20"
-                                    Binding="{Binding Path=Name}"/>
+                                    Binding="{Binding Path=Name}"
+                                    EditingElementStyle="{DynamicResource EditLightTextBox}"/>
                 <DataGridTextColumn Header="Цвет"
-                                    FontFamily="Georgia"
-                                    FontSize="20"
-                                    Binding="{Binding Path=Color}"/>
+                                    Binding="{Binding Path=Color}"
+                                    EditingElementStyle="{DynamicResource EditLightTextBox}"/>
                 <DataGridTextColumn Header="Язык для названий"
-                                    FontFamily="Georgia"
-                                    FontSize="20"
-                                    Binding="{Binding Path=LanguageForNames}"/>
+                                    Binding="{Binding Path=LanguageForNames}"
+                                    EditingElementStyle="{DynamicResource EditLightTextBox}"/>
             </DataGrid.Columns>
         </DataGrid>
         <TextBlock x:Name="ErrorTextBlock"

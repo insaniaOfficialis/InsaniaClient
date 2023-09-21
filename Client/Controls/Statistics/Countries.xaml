@@ -41,5 +41,12 @@
                    Grid.Row="2"
                    Height="100px"
                    Grid.Column="1"/>
+        <Button x:Name="PaginationButton"
+                Style="{DynamicResource LightButton}"
+                Grid.Row="3"
+                Width="300px"
+                Height="50px"
+                Content="Показать ещё"
+                Click="PaginationButton_Click"/>
     </Grid>
 </UserControl>

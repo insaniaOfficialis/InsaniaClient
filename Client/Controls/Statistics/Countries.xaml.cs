@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Linq;
 using System.Net.Http;
@@ -22,9 +23,10 @@ public partial class Countries : UserControl
 {
     public ILogger _logger { get { return Log.ForContext<Roles>(); } } //сервис для записи логов
     private readonly JsonSerializerOptions _settings = new(); //настройки десериализации json
-    private int? skip, take;
+    private int? skip, take = 20;
     private List<BaseSortRequest?>? sort = new();
     private string? search;
+    ObservableCollection<CountriesResponseListItem?>? countries = new();
 
     /// <summary>
     /// Конструктор страницы стран
@@ -155,7 +157,6 @@ public partial class Countries : UserControl
 
                 //Устанавливаем первоначальные параметры пагинации и сортировки
                 skip = 0;
-                take = 20;
                 sort.Add(new("number", true));
 
                 //Добавляем параметры строки
@@ -175,9 +176,12 @@ public partial class Countries : UserControl
                     //Десериализуем ответ и заполняем combobox ролей
                     var content = await result.Content.ReadAsStringAsync();
 
-                    CountriesResponseList response = JsonSerializer.Deserialize<CountriesResponseList>(content, _settings);
+                    foreach(var item in JsonSerializer.Deserialize<CountriesResponseList>(content, _settings).Items)
+                    {
+                        countries.Add(item);
+                    }
 
-                    CountriesDataGrid.ItemsSource = response.Items;
+                    CountriesDataGrid.ItemsSource = countries;
                 }
                 else
                 {
@@ -232,5 +236,77 @@ public partial class Countries : UserControl
 
         //Возвращаем результат
         return url;
+    }
+
+    /// <summary>
+    /// Метод пагинации на странице
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void PaginationButton_Click(object sender, RoutedEventArgs e)
+
+    {
+        try
+        {
+            //Объявляем переменную ссылки запроса
+            string url = null;
+
+            //Если в конфиге есть данные для формирования ссылки запроса
+            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Countries"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Token"]))
+            {
+                //Формируем ссылку запроса
+                url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
+                    ConfigurationManager.AppSettings["Countries"] + "listFull";
+
+                //Устанавливаем первоначальные параметры пагинации и сортировки
+                skip += take;
+
+                //Добавляем параметры строки
+                url += CreateQueryStringListCountries();
+
+                //Формируем клиента и добавляем токен
+                using HttpClient client = new();
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["Token"]);
+
+                //Получаем данные по запросу
+                using var result = await client.GetAsync(url);
+
+                //Если получили успешный результат
+                if (result != null && result.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    //Десериализуем ответ и заполняем combobox ролей
+                    var content = await result.Content.ReadAsStringAsync();
+
+                    var respose = JsonSerializer.Deserialize<CountriesResponseList>(content, _settings).Items;
+
+                    foreach (var item in respose)
+                    {
+                        countries.Add(item);
+                    }
+
+                    if (respose.Count < take)
+                        PaginationButton.Visibility = Visibility.Hidden;
+
+                    CountriesDataGrid.Items.Refresh();
+                }
+                else
+                {
+                    if (result.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                        SetError("Некорректный токен", false);
+                    else
+                        SetError("Ошибка сервера", true);
+                }
+            }
+            else
+                SetError("Не указаны адреса api. Обратитесь в техническую поддержку", true);
+        }
+        catch (Exception ex)
+        {
+            SetError(ex.Message, true);
+        }
     }
 }

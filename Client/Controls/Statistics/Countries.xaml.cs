@@ -1,4 +1,5 @@
-﻿using Client.Controls.Administrators;
+﻿using Azure;
+using Client.Controls.Administrators;
 using Client.Models.Base;
 using Client.Models.Geography.Countries.Response;
 using Microsoft.AspNetCore.WebUtilities;
@@ -13,6 +14,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Client.Controls.Statistics;
 
@@ -21,12 +23,13 @@ namespace Client.Controls.Statistics;
 /// </summary>
 public partial class Countries : UserControl
 {
-    public ILogger _logger { get { return Log.ForContext<Roles>(); } } //сервис для записи логов
+    private ILogger _logger { get { return Log.ForContext<Roles>(); } } //сервис для записи логов
     private readonly JsonSerializerOptions _settings = new(); //настройки десериализации json
-    private int? skip, take = 20;
-    private List<BaseSortRequest?>? sort = new();
-    private string? search;
-    ObservableCollection<CountriesResponseListItem?>? countries = new();
+    private int? skip, take = 15; //пагинация
+    private string? search; //строка поиска
+    private bool isDeleted; //признак удалённых записей
+    private List<BaseSortRequest?>? sort = new(); //список сортировки
+    private ObservableCollection<CountriesResponseListItem?>? countries = new(); //коллекция стран
 
     /// <summary>
     /// Конструктор страницы стран
@@ -82,8 +85,14 @@ public partial class Countries : UserControl
                         //Разблокируем все элементы
                         CountriesDataGrid.IsEnabled = true;
 
+                        //Устанавливаем первоначальные параметры пагинации и сортировки
+                        skip = 0;
+                        sort.Add(new("number", true));
+
                         //Вызываем метод получения стран
-                        GetCountries();
+                        GetCountries(null, skip, take, sort, isDeleted, false);
+
+                        CountriesDataGrid.ItemsSource = countries;
                     }
                     //Иначе возвращаем ошибку
                     else
@@ -138,7 +147,7 @@ public partial class Countries : UserControl
     /// <summary>
     /// Метод получения стран
     /// </summary>
-    public async void GetCountries()
+    public async void GetCountries(string? search, int? skip, int? take, List<BaseSortRequest?>? sort, bool isDeleted, bool clear)
     {
         try
         {
@@ -155,12 +164,8 @@ public partial class Countries : UserControl
                 url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
                     ConfigurationManager.AppSettings["Countries"] + "listFull";
 
-                //Устанавливаем первоначальные параметры пагинации и сортировки
-                skip = 0;
-                sort.Add(new("number", true));
-
                 //Добавляем параметры строки
-                url += CreateQueryStringListCountries();
+                url += CreateQueryStringListCountries(search, skip, take, sort, isDeleted);
 
                 //Формируем клиента и добавляем токен
                 using HttpClient client = new();
@@ -173,18 +178,31 @@ public partial class Countries : UserControl
                 //Если получили успешный результат
                 if (result != null && result.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    //Десериализуем ответ и заполняем combobox ролей
-                    var content = await result.Content.ReadAsStringAsync();
+                    //Если указали необходимость очистки списка, очищаем его
+                    if (clear)
+                        countries.Clear();
 
-                    foreach(var item in JsonSerializer.Deserialize<CountriesResponseList>(content, _settings).Items)
+                    //Десериализуем ответ и заполняем коллекцию стран
+                    var content = await result.Content.ReadAsStringAsync();
+                    var respose = JsonSerializer.Deserialize<CountriesResponseList>(content, _settings).Items;
+                    foreach (var item in respose)
                     {
                         countries.Add(item);
                     }
 
-                    CountriesDataGrid.ItemsSource = countries;
+                    //Если пришло меньше, чем количество запрашиваемых полей, скрываем кнопку пагинации
+                    if (respose.Count < take)
+                        PaginationButton.Visibility = Visibility.Hidden;
+                    else
+                        PaginationButton.Visibility = Visibility.Visible;
+
+                    //Обновляем таблицу стран
+                    CountriesDataGrid.Items.Refresh();
                 }
+                //В ином случае обрабатываем ошибки
                 else
                 {
+                    //Если пришёл статус - Неавторизованн
                     if (result.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                         SetError("Некорректный токен", false);
                     else
@@ -204,14 +222,14 @@ public partial class Countries : UserControl
     /// Формирование строки запроса для списка стран
     /// </summary>
     /// <returns></returns>
-    public string CreateQueryStringListCountries()
+    public string CreateQueryStringListCountries(string? search, int? skip, int? take, List<BaseSortRequest?>? sort, bool isDeleted)
     {
         //Формируем ссылку
-        string url = "?search=";
+        string url = string.Format("?isDeleted={0}", isDeleted);
 
         //Если есть строка поиска добавляем в ссылку
         if (!String.IsNullOrEmpty(search))
-            url += search;
+            url += string.Format("&search={0}", search); ;
 
         //Если указано количество пропущенных элементов, добавляем
         if(skip != null)
@@ -222,7 +240,7 @@ public partial class Countries : UserControl
             url += string.Format("&take={0}", take);
 
         //Если есть поля сортировки
-        if(sort.Any())
+        if (sort.Any())
         {
             //Проходим по всем полям сортировки
             for(int i = 0; i < sort.Count; i++)
@@ -243,70 +261,155 @@ public partial class Countries : UserControl
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private async void PaginationButton_Click(object sender, RoutedEventArgs e)
-
+    private void PaginationButton_Click(object sender, RoutedEventArgs e)
     {
         try
         {
-            //Объявляем переменную ссылки запроса
-            string url = null;
+            //Блокируем кнопку пагинации
+            PaginationButton.IsEnabled = false;
 
-            //Если в конфиге есть данные для формирования ссылки запроса
-            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
-                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
-                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Countries"])
-                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Token"]))
-            {
-                //Формируем ссылку запроса
-                url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
-                    ConfigurationManager.AppSettings["Countries"] + "listFull";
+            //Устанавливаем новое количество пропускаемых элементов
+            skip += take;
 
-                //Устанавливаем первоначальные параметры пагинации и сортировки
-                skip += take;
-
-                //Добавляем параметры строки
-                url += CreateQueryStringListCountries();
-
-                //Формируем клиента и добавляем токен
-                using HttpClient client = new();
-
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["Token"]);
-
-                //Получаем данные по запросу
-                using var result = await client.GetAsync(url);
-
-                //Если получили успешный результат
-                if (result != null && result.StatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    //Десериализуем ответ и заполняем combobox ролей
-                    var content = await result.Content.ReadAsStringAsync();
-
-                    var respose = JsonSerializer.Deserialize<CountriesResponseList>(content, _settings).Items;
-
-                    foreach (var item in respose)
-                    {
-                        countries.Add(item);
-                    }
-
-                    if (respose.Count < take)
-                        PaginationButton.Visibility = Visibility.Hidden;
-
-                    CountriesDataGrid.Items.Refresh();
-                }
-                else
-                {
-                    if (result.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                        SetError("Некорректный токен", false);
-                    else
-                        SetError("Ошибка сервера", true);
-                }
-            }
-            else
-                SetError("Не указаны адреса api. Обратитесь в техническую поддержку", true);
+            //Получаем элементы
+            GetCountries(search, skip, take, sort, isDeleted, false);
         }
         catch (Exception ex)
         {
             SetError(ex.Message, true);
+        }
+        finally
+        {
+            //Разблокируем кнопку пагинации
+            PaginationButton.IsEnabled = true;
+        }
+    }
+
+    /// <summary>
+    /// Метод обнуления полей ввода по нажатию
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var textbox = sender as TextBox;
+
+            switch (textbox.Name)
+            {
+                case "SearchTextBox":
+                    {
+                        if (SearchTextBox.Text == "Поиск...")
+                            SearchTextBox.Text = "";
+
+                    }
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Countries. TextBox_GotFocus. Ошибка: {1}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Метод возвращения значений по умолчанию полей ввода по потере фокуса
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void TextBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var textbox = sender as TextBox;
+
+            switch (textbox.Name)
+            {
+                case "SearchTextBox":
+                    {
+                        if (SearchTextBox.Text == "")
+                            SearchTextBox.Text = "Поиск...";
+
+                    }
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Countries. TextBox_LostFocus. Ошибка: {1}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Обработка поиска по enter
+    /// </summary>
+    public void TextBoxEnter(object sender, KeyEventArgs e)
+    {
+        try
+        {
+            //Если нражатая клавиша - Enter
+            if (e.Key == Key.Enter)
+                //Вызываем метод нажатия на кнопку поиска
+                SearchButton_Click(sender, e);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Countries. TextBoxEnter. Ошибка: {1}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Метод нажатия на поиск
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void SearchButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            //Если есть введённый текст, кроме дефолтного
+            if (!String.IsNullOrEmpty(SearchTextBox.Text) && SearchTextBox.Text != "Поиск...")
+            {
+                //Устанавливаем параметры поиска
+                search = SearchTextBox.Text;
+                skip = 0;
+                take = 15;
+
+                //Получаем список стран
+                GetCountries(search, skip, take, sort, isDeleted, true);
+            }
+            else
+            {
+                SetError("Не указано значение для поиска", false);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Countries. SearchButton_Click. Ошибка: {1}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Метод переключения признака удалённой записи
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void DeletedRadioButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            //Устанавливаем параметры поиска
+            isDeleted = DeletedRadioButton.IsChecked ?? false;
+            skip = 0;
+            take = 15;
+
+            //Получаем список стран
+            GetCountries(search, skip, take, sort, isDeleted, true);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Countries. DeletedRadioButton_Checked. Ошибка: {1}", ex);
         }
     }
 }

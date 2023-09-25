@@ -172,8 +172,113 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <!--Светлые переключатели-->
+        <Style x:Key="LightCheckBox" TargetType="{x:Type CheckBox}">
+            <Setter Property="Background" Value="{StaticResource CustomSilver}"/>
+            <Setter Property="FontFamily" Value="Georgia"/>
+            <Setter Property="FontSize" Value="20px"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <!--Устанавливаем шабон-->
+                    <ControlTemplate TargetType="CheckBox">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100px"/>
+                                <ColumnDefinition Width="150px"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Width="70px"
+                                    Height="30px"
+                                    Grid.Column="0"
+                                    CornerRadius="15"
+                                    Background="{TemplateBinding Background}">
+                                <Grid>
+                                    <Border x:Name="border"
+                                            Width="25px"
+                                            Height="25px"
+                                            CornerRadius="40"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Left"
+                                            Margin="1 0"
+                                            Background="{StaticResource CustomLightSilver}">
+                                        <Border.RenderTransform>
+                                            <TranslateTransform X="0"/>
+                                        </Border.RenderTransform>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                            <TextBlock x:Name="txt"
+                                       Text="{TemplateBinding Content}"
+                                       Foreground="{StaticResource CustomLightSilver}"
+                                       Grid.Column="1"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Left"/>
+                        </Grid>
+                        <!--Устанавливаем поведение-->
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="true">
+                                <Setter Property="Text"
+                                        TargetName="txt"
+                                        Value="{Binding Tag,RelativeSource={RelativeSource TemplatedParent}}"/>
+                                <Setter Property="Background" Value="{StaticResource CustomGrey}"/>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="border"
+                                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                                                             To="45"
+                                                             Duration="00:00:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="border"
+                                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                                                             To="0"
+                                                             Duration="00:00:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="False">
+                                <Setter Property="Text"
+                                        TargetName="txt"
+                                        Value="{Binding Content,RelativeSource={RelativeSource TemplatedParent}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--Серые кнопки-->
+        <Style x:Key="SilverButton" TargetType="Button">
+            <!--Значения по умолчанию-->
+            <Setter Property="Background" Value="{StaticResource CustomLightSilver}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}"/>
+            <Setter Property="Margin" Value="0,0.5,0,-0.5"/>
+            <!--Устанавливаем шиблон-->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10px,10px,10px,10px"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <!--Устанавливаем поведение-->
+            <Style.Triggers>
+                <!--Значения при наведении-->
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Cursor" Value="Hand" />
+                    <Setter Property="Background" Value="{StaticResource CustomSilver}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
-        
+
         <!--ПОЛЯ ВВОДА-->
         
         <!--Светлые поля ввода-->
@@ -301,6 +406,44 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+        </Style>
+        <!--Упрощённые серые поля ввода-->
+        <Style x:Key="SilverTextBox" TargetType="{x:Type TextBox}">
+            <!--Значения по умолчанию-->
+            <Setter Property="Background" Value="{StaticResource CustomLightSilver}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}"/>
+            <Setter Property="FontFamily" Value="Georgia"/>
+            <Setter Property="FontSize" Value="20px"/>
+            <Setter Property="Foreground" Value="{StaticResource CustomSilver}"/>
+            <Setter Property="Padding" Value="40px,0,0,0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="SelectionBrush" Value="{StaticResource CustomGrey}"/>
+            <!--Через шаблон привязываем основные свойства-->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Focusable="false"
+                                          HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <!--Значения при наведении-->
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource CustomLightSilver}"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}"/>
+                    <Setter Property="Cursor" Value="IBeam"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
 

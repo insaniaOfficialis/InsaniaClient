@@ -59,7 +59,9 @@
                   RowStyle="{DynamicResource LightDataGridRows}"
                   CellStyle="{DynamicResource LightDataGridCells}"
                   RowHeaderStyle="{DynamicResource LightDataGridRowHeaders}"
-                  Grid.Row="1">
+                  Grid.Row="1"
+                  
+                  Sorting="CountriesDataGrid_Sorting">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Номер на карте"
                                     Binding="{Binding Path=Number}"

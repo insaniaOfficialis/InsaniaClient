@@ -2,11 +2,12 @@
 using Client.Controls.Administrators;
 using Client.Models.Base;
 using Client.Models.Geography.Countries.Response;
-using Microsoft.AspNetCore.WebUtilities;
+using DevExpress.Mvvm.Native;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Configuration;
 using System.Linq;
 using System.Net.Http;
@@ -87,7 +88,6 @@ public partial class Countries : UserControl
 
                         //Устанавливаем первоначальные параметры пагинации и сортировки
                         skip = 0;
-                        sort.Add(new("number", true));
 
                         //Вызываем метод получения стран
                         GetCountries(null, skip, take, sort, isDeleted, false);
@@ -410,6 +410,65 @@ public partial class Countries : UserControl
         catch (Exception ex)
         {
             _logger.Error("Countries. DeletedRadioButton_Checked. Ошибка: {1}", ex);
+        }
+    }
+
+    private void CountriesDataGrid_Sorting(object sender, DataGridSortingEventArgs e)
+    {
+        try
+        {
+            //Объявляем переменные сортировки
+            string sortKey = String.Empty;
+            bool? isAscending;
+
+            //Если у нас есть поля для сортировки
+            if (!String.IsNullOrEmpty(e.Column.SortMemberPath.ToString()))
+            {
+                //Получаем наименование сортируемого поля
+                sortKey = e.Column.SortMemberPath.ToString().ToLower();
+
+                //Получаем порядок сортировки
+                isAscending = e.Column.SortDirection == null ? true : e.Column.SortDirection == ListSortDirection.Ascending ? false : null;
+
+                //Если не был зажат shift
+                if ((Keyboard.Modifiers & ModifierKeys.Shift) != ModifierKeys.Shift)
+                {
+                    //Очищаем сортировку
+                    sort.Clear();
+                }
+
+                //Если уже есть такое поле сортировки
+                if (sort.Any(x => x.SortKey == sortKey))
+                {
+                    //Если порядок сортировки исчезает
+                    if (isAscending == null)
+                        //Убираем из полей сортировки
+                        sort.RemoveAll(x => x.SortKey == sortKey);
+                    //Иначе
+                    else
+                        //Меняем порядлок сортировки
+                        sort.Where(x => x.SortKey == sortKey && x.IsAscending != isAscending).ForEach(x => x.IsAscending = isAscending);
+                }
+                //Иначе
+                else
+                {
+                    //Если есть порядок сортировки
+                    if (isAscending != null)
+                        //Добавляем в сортировку новое поле
+                        sort.Add(new(sortKey, isAscending ?? false));
+                }
+
+                //Обнуляем пагинацию
+                skip = 0;
+                take = 15;
+
+                //Получаем страны
+                GetCountries(search, skip, take, sort, isDeleted, true);
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.Error("Countries. CountriesDataGrid_Sorting. Ошибка: {1}", ex);
         }
     }
 }

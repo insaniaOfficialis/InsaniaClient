@@ -1,8 +1,7 @@
 ﻿using Client.Models.Base;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Client.Models.Geography.Countries.Response;
+namespace Client.Models.Politics.Countries.Response;
 
 /// <summary>
 /// Модель стандартного ответа для списка

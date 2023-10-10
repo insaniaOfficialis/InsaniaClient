@@ -8,8 +8,10 @@
         Width="400px"
         WindowStyle="None"
         WindowStartupLocation="CenterOwner"
-        Background="{StaticResource CustomBlack}">
-    <Grid PreviewKeyDown="Grid_PreviewKeyDown">
+        Background="{StaticResource CustomBlack}"
+        PreviewKeyDown="Window_PreviewKeyDown"
+        MouseDown="Window_MouseDown">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="50px"/>

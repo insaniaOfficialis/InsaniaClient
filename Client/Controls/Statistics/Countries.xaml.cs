@@ -1,7 +1,7 @@
-﻿using Azure;
-using Client.Controls.Administrators;
+﻿using Client.Controls.Administrators;
+using Client.Controls.Statistics.Windows;
 using Client.Models.Base;
-using Client.Models.Geography.Countries.Response;
+using Client.Models.Politics.Countries.Response;
 using DevExpress.Mvvm.Native;
 using Serilog;
 using System;
@@ -31,6 +31,7 @@ public partial class Countries : UserControl
     private bool isDeleted; //признак удалённых записей
     private List<BaseSortRequest?>? sort = new(); //список сортировки
     private ObservableCollection<CountriesResponseListItem?>? countries = new(); //коллекция стран
+    Country _country; //окно страны
 
     /// <summary>
     /// Конструктор страницы стран
@@ -404,6 +405,18 @@ public partial class Countries : UserControl
             skip = 0;
             take = 15;
 
+            //Меняем видимость кнопок
+            if (isDeleted)
+            {
+                Deleted.Visibility = Visibility.Collapsed;
+                Restored.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Deleted.Visibility = Visibility.Visible;
+                Restored.Visibility = Visibility.Collapsed;
+            }
+
             //Получаем список стран
             GetCountries(search, skip, take, sort, isDeleted, true);
         }
@@ -413,6 +426,11 @@ public partial class Countries : UserControl
         }
     }
 
+    /// <summary>
+    /// Метод сортировки стран
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void CountriesDataGrid_Sorting(object sender, DataGridSortingEventArgs e)
     {
         try
@@ -470,5 +488,215 @@ public partial class Countries : UserControl
         {
             _logger.Error("Countries. CountriesDataGrid_Sorting. Ошибка: {1}", ex);
         }
+    }
+
+    /// <summary>
+    /// События нажатия на кнопку добавления стран
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void AddButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            //Создаём пустое окно страны
+            _country = new();
+
+            //Отображаем окно страны
+            _country.ShowDialog();
+
+            //Обновляем страны
+            GetCountries(search, 0, skip + take, sort, isDeleted, true);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Countries. AddButton_Click. Ошибка: {1}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Событие нажатия на кнопку редактирвоания страны
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void EditButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            //Получаем выбранную строку
+            CountriesResponseListItem item = CountriesDataGrid.SelectedItem as CountriesResponseListItem;
+
+            //Создаём заполненное окно страны
+            _country = new(item.Id ?? 0, item.Number, item.Name, item.Color, item.LanguageForNames);
+
+            //Отображаем окно страны
+            _country.ShowDialog();
+
+            //Обновляем страны
+            GetCountries(search, 0, skip + take, sort, isDeleted, true);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Countries. EditButton_Click. Ошибка: {1}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Событие нажатия на кнопку удаления стран
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void DeletedButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            //Получаем выбранную строку
+            CountriesResponseListItem item = CountriesDataGrid.SelectedItem as CountriesResponseListItem;
+
+            //Блокируем таблицу
+            CountriesDataGrid.IsEnabled = false;
+
+            //Проверяем ошибки
+            if (item.Id == null)
+            {
+                SetError("Не указан id страны", false);
+                return;
+            }
+
+            //Если в конфиге есть данные для формирования ссылки запроса
+            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Countries"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Token"]))
+            {
+                //Формируем ссылку запроса
+                string url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
+                    ConfigurationManager.AppSettings["Countries"] + "delete/" + item.Id;
+
+                //Формируем клиента, добавляем ему токен и тело запроса
+                using HttpClient client = new();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["Token"]);
+
+                //Получаем результат запроса
+                HttpResponseMessage result = await client.DeleteAsync(url);
+
+                //Если получили успешный результат
+                if (result != null)
+                {
+                    if (result.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                        SetError("Некорректный токен", false);
+
+                    //Десериализуем ответ
+                    var content = await result.Content.ReadAsStringAsync();
+
+                    BaseResponse response = JsonSerializer.Deserialize<BaseResponse>(content, _settings);
+
+                    //Если успешно, оповещяем пользователя и обновляем страны
+                    if (response.Success)
+                    {
+                        GetCountries(search, 0, skip + take, sort, isDeleted, true);
+                        Message message = new("Успешно");
+                        message.Show();
+                    }
+                    else
+                        SetError(response?.Error?.Message ?? "Ошибка сервера", false);
+                }
+                else
+                    SetError("Ошибка сервера", true);
+            }
+            //Иначе возвращаем ошибку
+            else
+                SetError("Не указаны адреса api. Обратитесь в техническую поддержку", true);
+
+            //Разблокируем таблицу
+            CountriesDataGrid.IsEnabled = true;
+
+            //Обновляем страны
+            GetCountries(search, 0, skip + take, sort, isDeleted, true);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Countries. DeletedButton_Click. Ошибка: {1}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Событие нажатия на кнопку восстановления стран
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void RestoredButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            //Получаем выбранную строку
+            CountriesResponseListItem item = CountriesDataGrid.SelectedItem as CountriesResponseListItem;
+
+            //Блокируем таблицу
+            CountriesDataGrid.IsEnabled = false;
+
+            //Проверяем ошибки
+            if (item.Id == null)
+            {
+                SetError("Не указан id страны", false);
+                return;
+            }
+
+            //Если в конфиге есть данные для формирования ссылки запроса
+            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Countries"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Token"]))
+            {
+                //Формируем ссылку запроса
+                string url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
+                    ConfigurationManager.AppSettings["Countries"] + "restore/" + item.Id;
+
+                //Формируем клиента, добавляем ему токен и тело запроса
+                using HttpClient client = new();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["Token"]);
+
+                //Получаем результат запроса
+                HttpResponseMessage result = await client.DeleteAsync(url);
+
+                //Если получили успешный результат
+                if (result != null)
+                {
+                    if (result.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                        SetError("Некорректный токен", false);
+
+                    //Десериализуем ответ
+                    var content = await result.Content.ReadAsStringAsync();
+
+                    BaseResponse response = JsonSerializer.Deserialize<BaseResponse>(content, _settings);
+
+                    //Если успешно, оповещяем пользователя и обновляем страны
+                    if (response.Success)
+                    {
+                        GetCountries(search, 0, skip + take, sort, isDeleted, true);
+                        Message message = new("Успешно");
+                        message.Show();
+                    }
+                    else
+                        SetError(response?.Error?.Message ?? "Ошибка сервера", false);
+                }
+                else
+                    SetError("Ошибка сервера", true);
+            }
+            //Иначе возвращаем ошибку
+            else
+                SetError("Не указаны адреса api. Обратитесь в техническую поддержку", true);
+
+            //Разблокируем таблицу
+            CountriesDataGrid.IsEnabled = true;
+
+            //Обновляем страны
+            GetCountries(search, 0, skip + take, sort, isDeleted, true);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Countries. RestoredButton_Click. Ошибка: {1}", ex);
+        }
+
     }
 }

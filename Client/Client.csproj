@@ -279,6 +279,9 @@
     <Compile Include="Controls\Statistics\Countries.xaml.cs">
       <DependentUpon>Countries.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Statistics\Windows\Country.xaml.cs">
+      <DependentUpon>Country.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Message.xaml.cs">
       <DependentUpon>Message.xaml</DependentUpon>
     </Compile>
@@ -286,8 +289,8 @@
     <Compile Include="Models\Base\BaseResponse.cs" />
     <Compile Include="Models\Base\BaseResponseList.cs" />
     <Compile Include="Models\Base\BaseSortRequest.cs" />
-    <Compile Include="Models\Geography\Countries\Request\AddCountryRequest.cs" />
-    <Compile Include="Models\Geography\Countries\Response\CountriesResponseList.cs" />
+    <Compile Include="Models\Politics\Countries\Request\AddCountryRequest.cs" />
+    <Compile Include="Models\Politics\Countries\Response\CountriesResponseList.cs" />
     <Compile Include="Models\Identification\Authorization\Response\AuthorizationResponse.cs" />
     <Compile Include="Models\Identification\Registration\Request\AddUserRequest.cs" />
     <Compile Include="Models\Identification\Roles\Request\AddRoleRequest.cs" />
@@ -333,6 +336,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Statistics\Countries.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Statistics\Windows\Country.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -416,6 +423,19 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Dependens\Images\magnifier.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Dependens\Images\add.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Dependens\Images\edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Dependens\Images\delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Dependens\Images\restore.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Data.SqlClient.SNI.5.1.1\build\net462\Microsoft.Data.SqlClient.SNI.targets" Condition="Exists('..\packages\Microsoft.Data.SqlClient.SNI.5.1.1\build\net462\Microsoft.Data.SqlClient.SNI.targets')" />

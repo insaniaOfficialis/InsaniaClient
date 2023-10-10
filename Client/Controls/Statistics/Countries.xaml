@@ -21,6 +21,8 @@
                 <ColumnDefinition Width="50px"/>
                 <ColumnDefinition Width="50px"/>
                 <ColumnDefinition Width="250px"/>
+                <ColumnDefinition Width="50px"/>
+                <ColumnDefinition Width="50px"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -52,6 +54,15 @@
                       Tag="Удалённые"
                       Style="{DynamicResource LightCheckBox}"
                       Click="DeletedRadioButton_Click"/>
+            <Button x:Name="AddButton"
+                    Style="{DynamicResource SytemButton}"
+                    Grid.Column="6"
+                    Grid.Row="1"
+                    Click="AddButton_Click">
+                <ContentControl>
+                    <Image Source="/Dependens/Images/add.png"/>
+                </ContentControl>
+            </Button>
         </Grid>
         <DataGrid x:Name="CountriesDataGrid"
                   Style="{DynamicResource LightDataGridStyle}"
@@ -59,22 +70,95 @@
                   RowStyle="{DynamicResource LightDataGridRows}"
                   CellStyle="{DynamicResource LightDataGridCells}"
                   RowHeaderStyle="{DynamicResource LightDataGridRowHeaders}"
-                  Grid.Row="1"
-                  
+                  Grid.Row="1"                  
                   Sorting="CountriesDataGrid_Sorting">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Номер на карте"
-                                    Binding="{Binding Path=Number}"
+                                    Binding="{Binding Path=Number, UpdateSourceTrigger=PropertyChanged}"
                                     EditingElementStyle="{DynamicResource EditLightTextBox}"/>
                 <DataGridTextColumn Header="Наименование"
-                                    Binding="{Binding Path=Name}"
+                                    Binding="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}"
                                     EditingElementStyle="{DynamicResource EditLightTextBox}"/>
                 <DataGridTextColumn Header="Цвет"
-                                    Binding="{Binding Path=Color}"
+                                    Binding="{Binding Path=Color, UpdateSourceTrigger=PropertyChanged}"
                                     EditingElementStyle="{DynamicResource EditLightTextBox}"/>
                 <DataGridTextColumn Header="Язык для названий"
-                                    Binding="{Binding Path=LanguageForNames}"
+                                    Binding="{Binding Path=LanguageForNames, UpdateSourceTrigger=PropertyChanged}"
                                     EditingElementStyle="{DynamicResource EditLightTextBox}"/>
+                <DataGridTemplateColumn x:Name="Deleted"
+                                        Header="Действия"
+                                        Visibility="Visible">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="10px"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="10px"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="10px"/>
+                                </Grid.ColumnDefinitions>
+                                <Button x:Name="EditButton"
+                                        Style="{DynamicResource SmallSytemButton}"
+                                        Height="25px"
+                                        Width="25px"
+                                        Grid.Column="1"
+                                        Click="EditButton_Click">
+                                    <ContentControl>
+                                        <Image Source="/Dependens/Images/edit.png"/>
+                                    </ContentControl>
+                                </Button>
+                                <Button x:Name="DeletedButton"
+                                        Style="{DynamicResource SmallSytemButton}"
+                                        Height="25px"
+                                        Width="25px"
+                                        Grid.Column="3"
+                                        Click="DeletedButton_Click">
+                                    <ContentControl>
+                                        <Image Source="/Dependens/Images/delete.png"/>
+                                    </ContentControl>
+                                </Button>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn x:Name="Restored"
+                                        Header="Действия"
+                                        Visibility="Collapsed">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="10px"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="10px"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="10px"/>
+                                </Grid.ColumnDefinitions>
+                                <Button x:Name="EditButton"
+                                        Style="{DynamicResource SmallSytemButton}"
+                                        Height="25px"
+                                        Width="25px"
+                                        Grid.Column="1"
+                                        Click="EditButton_Click">
+                                    <ContentControl>
+                                        <Image Source="/Dependens/Images/edit.png"/>
+                                    </ContentControl>
+                                </Button>
+                                <Button x:Name="RestoredButton"
+                                        Style="{DynamicResource SmallSytemButton}"
+                                        Height="25px"
+                                        Width="25px"
+                                        Grid.Column="3"
+                                        Click="RestoredButton_Click">
+                                    <ContentControl>
+                                        <Image Source="/Dependens/Images/restore.png"/>
+                                    </ContentControl>
+                                </Button>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
         <TextBlock x:Name="ErrorTextBlock"

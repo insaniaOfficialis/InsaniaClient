@@ -31,6 +31,7 @@ namespace Client
         /// <summary>
         /// Конструктор окна сообщений с сообщением
         /// </summary>
+        /// <param name="message"></param>
         public Message(string message)
         {
             try
@@ -70,7 +71,7 @@ namespace Client
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Grid_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             try
             {
@@ -82,6 +83,26 @@ namespace Client
             catch(Exception ex)
             {
                 _logger.Error("Message. Grid_PreviewKeyDown. " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Событие перетягивания мыши
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                //Если левая кнопка мыши
+                if (e.ChangedButton == MouseButton.Left)
+                    //Включаем перетягивание
+                    DragMove();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Message. Window_MouseDown. Ошибка: {1}", ex);
             }
         }
     }

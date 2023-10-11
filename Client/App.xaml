@@ -1,8 +1,7 @@
 ﻿<Application x:Class="Client.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="MainWindow.xaml"
-    xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2">
+             StartupUri="MainWindow.xaml">
     <Application.Resources>
         
         
@@ -108,11 +107,11 @@
         <!--Светлые кнопки-->
         <Style x:Key="LightButton" TargetType="Button">
             <!--Значения по умолчанию-->
-            <Setter Property="Button.Background" Value="{StaticResource CustomWhite}"/>
-            <Setter Property="Button.BorderBrush" Value="{StaticResource CustomWhite}"/>
-            <Setter Property="Button.Foreground" Value="{StaticResource CustomSilver}"/>
-            <Setter Property="Button.FontFamily" Value="Georgia"/>
-            <Setter Property="Button.FontSize" Value="25px"/>
+            <Setter Property="Background" Value="{StaticResource CustomWhite}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource CustomWhite}"/>
+            <Setter Property="Foreground" Value="{StaticResource CustomSilver}"/>
+            <Setter Property="FontFamily" Value="Georgia"/>
+            <Setter Property="FontSize" Value="25px"/>
             <!--Привязываем через шаблон фон к background-->
             <Setter Property="Template">
                 <Setter.Value>
@@ -141,6 +140,12 @@
                     <Setter Property="Cursor" Value="Hand" />
                     <Setter Property="Background" Value="{StaticResource CustomGrey}"/>
                 </Trigger>
+                <!--Значения при выключенном элементе-->
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Cursor" Value="Arrow" />
+                    <Setter Property="Background" Value="{StaticResource CustomSilver}"/>
+                    <Setter Property="Foreground" Value="{StaticResource CustomWhite}"/>
+                </Trigger>
             </Style.Triggers>
         </Style>
         <!--Светлка кнопка выпадающего списка-->
@@ -166,6 +171,10 @@
                                 <Setter TargetName="Border" Property="Background" Value="{StaticResource CustomLightSilver}"/>
                                 <!--<Setter TargetName="Border" Property="CornerRadius" Value="0,5,0,0"/>-->
                             </Trigger>
+                            <!--Значение при выключенном элементе-->
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Border" Property="Background" Value="{StaticResource CustomLightSilver}"/>
+                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -184,7 +193,7 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="100px"/>
-                                <ColumnDefinition Width="150px"/>
+                                <ColumnDefinition Width="300px"/>
                             </Grid.ColumnDefinitions>
                             <Border Width="70px"
                                     Height="30px"
@@ -411,6 +420,12 @@
                                 <Setter Property="Cursor" Value="IBeam"/>
                                 <!--<Setter TargetName="Border" Property="CornerRadius" Value="5,0,0,0"/>-->
                             </Trigger>
+                            <!--Значения при отключённом состоянии-->
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="{StaticResource CustomLightSilver}"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}"/>
+                                <Setter Property="Cursor" Value="Arrow"/>
+                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -623,7 +638,6 @@
                     <Setter Property="Cursor" Value="Hand"/>
                 </Trigger>
             </Style.Triggers>
-
         </Style>
 
         

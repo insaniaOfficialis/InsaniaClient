@@ -43,7 +43,7 @@ public partial class Roles : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Roles. " + ex.Message);
+            _logger.Error("Roles. Ошибка: {0}", ex);
         }
     }
 
@@ -127,7 +127,7 @@ public partial class Roles : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Roles. SetError. " + ex.Message);
+            _logger.Error("Roles. SetError. Ошибка: {0}", ex);
         }
     }
 
@@ -155,7 +155,7 @@ public partial class Roles : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Roles. TextBox_GotFocus. " + ex.Message);
+            _logger.Error("Roles. TextBox_GotFocus. Ошибка: {0}", ex);
         }
     }
 
@@ -183,7 +183,7 @@ public partial class Roles : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Roles. TextBox_LostFocus. " + ex.Message);
+            _logger.Error("Roles. TextBox_LostFocus. Ошибка: {0}", ex);
         }
     }
 
@@ -262,7 +262,7 @@ public partial class Roles : UserControl
         catch (Exception ex)
         {
             SetError("Не удалось зарегистрировать полоьзователя. Обратитесь в техническую поддержку", true);
-            _logger.Error("Roles. SaveButton_Click. " + ex.Message);
+            _logger.Error("Roles. SaveButton_Click. Ошибка: {0}", ex);
         }
         finally
         {
@@ -286,7 +286,7 @@ public partial class Roles : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Roles. Enter. " + ex.Message);
+            _logger.Error("Roles. Enter. Ошибка: {0}", ex);
         }
     }
 }

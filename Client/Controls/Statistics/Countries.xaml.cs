@@ -51,7 +51,7 @@ public partial class Countries : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Countries. Ошибка: {1}", ex);
+            _logger.Error("Countries. Ошибка: {0}", ex);
         }
     }
 
@@ -141,7 +141,7 @@ public partial class Countries : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Countries. SetError. Ошибка: {1}", ex);
+            _logger.Error("Countries. SetError. Ошибка: {0}", ex);
         }
     }
 
@@ -310,7 +310,7 @@ public partial class Countries : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Countries. TextBox_GotFocus. Ошибка: {1}", ex);
+            _logger.Error("Countries. TextBox_GotFocus. Ошибка: {0}", ex);
         }
     }
 
@@ -338,7 +338,7 @@ public partial class Countries : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Countries. TextBox_LostFocus. Ошибка: {1}", ex);
+            _logger.Error("Countries. TextBox_LostFocus. Ошибка: {0}", ex);
         }
     }
 
@@ -356,7 +356,7 @@ public partial class Countries : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Countries. TextBoxEnter. Ошибка: {1}", ex);
+            _logger.Error("Countries. TextBoxEnter. Ошибка: {0}", ex);
         }
     }
 
@@ -387,7 +387,7 @@ public partial class Countries : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Countries. SearchButton_Click. Ошибка: {1}", ex);
+            _logger.Error("Countries. SearchButton_Click. Ошибка: {0}", ex);
         }
     }
 
@@ -422,7 +422,7 @@ public partial class Countries : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Countries. DeletedRadioButton_Checked. Ошибка: {1}", ex);
+            _logger.Error("Countries. DeletedRadioButton_Checked. Ошибка: {0}", ex);
         }
     }
 
@@ -486,7 +486,7 @@ public partial class Countries : UserControl
         }
         catch(Exception ex)
         {
-            _logger.Error("Countries. CountriesDataGrid_Sorting. Ошибка: {1}", ex);
+            _logger.Error("Countries. CountriesDataGrid_Sorting. Ошибка: {0}", ex);
         }
     }
 
@@ -510,7 +510,7 @@ public partial class Countries : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Countries. AddButton_Click. Ошибка: {1}", ex);
+            _logger.Error("Countries. AddButton_Click. Ошибка: {0}", ex);
         }
     }
 
@@ -537,7 +537,7 @@ public partial class Countries : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Countries. EditButton_Click. Ошибка: {1}", ex);
+            _logger.Error("Countries. EditButton_Click. Ошибка: {0}", ex);
         }
     }
 
@@ -616,7 +616,7 @@ public partial class Countries : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Countries. DeletedButton_Click. Ошибка: {1}", ex);
+            _logger.Error("Countries. DeletedButton_Click. Ошибка: {0}", ex);
         }
     }
 
@@ -695,7 +695,7 @@ public partial class Countries : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Countries. RestoredButton_Click. Ошибка: {1}", ex);
+            _logger.Error("Countries. RestoredButton_Click. Ошибка: {0}", ex);
         }
 
     }

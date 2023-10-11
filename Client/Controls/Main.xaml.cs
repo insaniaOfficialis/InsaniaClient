@@ -38,7 +38,7 @@ public partial class Main : UserControl
         }
         catch(Exception ex)
         {
-            _logger.Error("Main. " + ex.Message);
+            _logger.Error("Main. Ошибка: {0}", ex);
         }
     }
 
@@ -71,7 +71,7 @@ public partial class Main : UserControl
         }
         catch(Exception ex)
         {
-            _logger.Error("Main. Polygon_MouseEnter. Ошибка: {1}", ex);
+            _logger.Error("Main. Polygon_MouseEnter. Ошибка: {0}", ex);
         }
     }
 
@@ -104,7 +104,7 @@ public partial class Main : UserControl
         }
         catch(Exception ex)
         {
-            _logger.Error("Main. Polygon_MouseLeave. Ошибка: {1}", ex);
+            _logger.Error("Main. Polygon_MouseLeave. Ошибка: {0}", ex);
         }
     }
 
@@ -152,7 +152,7 @@ public partial class Main : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Main. GetNews. " + ex.Message);
+            _logger.Error("Main. GetNews. Ошибка: {0}", ex);
         }
     }
 
@@ -176,7 +176,7 @@ public partial class Main : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Main. Polygon4_MouseLeftButtonDown. " + ex.Message);
+            _logger.Error("Main. Polygon4_MouseLeftButtonDown. Ошибка: {0}", ex);
         }
     }
 
@@ -200,7 +200,7 @@ public partial class Main : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Main. Polygon5_MouseLeftButtonDown. " + ex.Message);
+            _logger.Error("Main. Polygon5_MouseLeftButtonDown. Ошибка: {0}", ex);
         }
     }
 
@@ -229,7 +229,7 @@ public partial class Main : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Main. GetLogo. " + ex.Message);
+            _logger.Error("Main. GetLogo. Ошибка: {0}", ex);
         }
     }
 
@@ -293,7 +293,7 @@ public partial class Main : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Main. Polygon_MouseLeftButtonDown. Ошибка: {1}", ex);
+            _logger.Error("Main. Polygon_MouseLeftButtonDown. Ошибка: {0}", ex);
         }
     }
 

@@ -29,7 +29,7 @@ public partial class MainWindow : Window
         }
         catch(Exception ex)
         {
-            _logger.Error("MainWindow. " + ex.Message);
+            _logger.Error("MainWindow. Ошибка: {0}", ex);
         }
     }
 
@@ -47,7 +47,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            _logger.Error("MainWindow. Close. " + ex.Message);
+            _logger.Error("MainWindow. Close. Ошибка: {0}", ex);
         }
     }
 
@@ -69,7 +69,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            _logger.Error("MainWindow. ShowAuthoriztion. " + ex.Message);
+            _logger.Error("MainWindow. ShowAuthoriztion. Ошибка: {0}", ex);
         }
     }
 
@@ -93,7 +93,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            _logger.Error("MainWindow. Window_Loaded. " + ex.Message);
+            _logger.Error("MainWindow. Window_Loaded. Ошибка: {0}", ex);
         }
     }
 }

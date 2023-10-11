@@ -38,7 +38,7 @@ public partial class Authorization : UserControl
         }
         catch(Exception ex)
         {
-            _logger.Error("Authorization. " + ex.Message);
+            _logger.Error("Authorization. Ошибка: {0}", ex);
         }
     }
 
@@ -54,7 +54,7 @@ public partial class Authorization : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Authorization. Enter. " + ex.Message);
+            _logger.Error("Authorization. Enter. Ошибка: {0}", ex);
         }
     }
 
@@ -137,7 +137,7 @@ public partial class Authorization : UserControl
         }
         catch(Exception ex)
         {
-            _logger.Error("Authorization. ButtonLogin_Click. " + ex.Message);
+            _logger.Error("Authorization. ButtonLogin_Click. Ошибка: {0}", ex);
         }
         finally
         {
@@ -176,7 +176,7 @@ public partial class Authorization : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Authorization. TextBox_GotFocus. " + ex.Message);
+            _logger.Error("Authorization. TextBox_GotFocus. Ошибка: {0}", ex);
         }
     }
 
@@ -211,7 +211,7 @@ public partial class Authorization : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Authorization. TextBox_LostFocus. " + ex.Message);
+            _logger.Error("Authorization. TextBox_LostFocus. Ошибка: {0}", ex);
         }
     }
 
@@ -242,7 +242,7 @@ public partial class Authorization : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Authorization. SetError. " + ex.Message);
+            _logger.Error("Authorization. SetError. Ошибка: {0}", ex);
         }
     }
 

@@ -23,7 +23,7 @@ public partial class Calculator : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Calculator. " + ex.Message);
+            _logger.Error("Calculator. Ошибка: {0}", ex);
         }
     }
 }

@@ -23,7 +23,7 @@ public partial class Screensaver : UserControl
         }
         catch(Exception ex)
         {
-            _logger.Error("Screensaver. " + ex.Message);
+            _logger.Error("Screensaver. Ошибка: {0}", ex);
         }
     }
 }

@@ -38,7 +38,7 @@ public partial class GeneratorResource : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("GeneratorResource. " + ex.Message);
+            _logger.Error("GeneratorResource. Ошибка: {0}", ex);
         }
     }
 
@@ -56,7 +56,7 @@ public partial class GeneratorResource : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("GeneratorResource. Enter. " + ex.Message);
+            _logger.Error("GeneratorResource. Enter. Ошибка: {0}", ex);
         }
     }
 
@@ -143,7 +143,7 @@ public partial class GeneratorResource : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("GeneratorResource. SetError. " + ex.Message);
+            _logger.Error("GeneratorResource. SetError. Ошибка: {0}", ex);
         }
     }
 

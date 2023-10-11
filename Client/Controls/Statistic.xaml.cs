@@ -26,7 +26,7 @@ public partial class Statistic : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Statistic. Ошибка: {1}", ex);
+            _logger.Error("Statistic. Ошибка: {0}", ex);
         }
     }
 
@@ -67,7 +67,7 @@ public partial class Statistic : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Statistic. Element_MouseLeftButtonUp. Ошибка: {1}", ex);
+            _logger.Error("Statistic. Element_MouseLeftButtonUp. Ошибка: {0}", ex);
         }
     }
 }

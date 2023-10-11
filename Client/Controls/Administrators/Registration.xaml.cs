@@ -46,7 +46,7 @@ public partial class Registration : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Registration. " + ex.Message);
+            _logger.Error("Registration. Ошибка: {0}", ex);
         }
     }
 
@@ -64,7 +64,7 @@ public partial class Registration : UserControl
         }
         catch(Exception ex)
         {
-            _logger.Error("Registration. Enter. " + ex.Message);
+            _logger.Error("Registration. Enter. Ошибка: {0}", ex);
         }
     }
 
@@ -155,7 +155,7 @@ public partial class Registration : UserControl
         }
         catch(Exception ex)
         {
-            _logger.Error("Registration. Image_Drop. " + ex.Message);
+            _logger.Error("Registration. Image_Drop. Ошибка: {0}", ex);
         }
     }
 
@@ -187,7 +187,7 @@ public partial class Registration : UserControl
         }
         catch(Exception ex)
         {
-            _logger.Error("Registration. ButtonLoadImage_Click. " + ex.Message);
+            _logger.Error("Registration. ButtonLoadImage_Click. Ошибка: {0}", ex);
         }
     }
 
@@ -387,7 +387,7 @@ public partial class Registration : UserControl
         catch(Exception ex)
         {
             SetError("Не удалось зарегистрировать полоьзователя. Обратитесь в техническую поддержку", true);
-            _logger.Error("Registration. ButtonSave_Click. " + ex.Message);
+            _logger.Error("Registration. ButtonSave_Click. Ошибка: {0}", ex);
         }
     }
 
@@ -457,7 +457,7 @@ public partial class Registration : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Registration. TextBox_GotFocus. " + ex.Message);
+            _logger.Error("Registration. TextBox_GotFocus. Ошибка: {0}", ex);
         }
     }
 
@@ -527,7 +527,7 @@ public partial class Registration : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Registration. TextBox_LostFocus. " + ex.Message);
+            _logger.Error("Registration. TextBox_LostFocus. Ошибка: {0}", ex);
         }
     }
 
@@ -633,7 +633,7 @@ public partial class Registration : UserControl
         }
         catch(Exception ex)
         {
-            _logger.Error("Registration. SetError. " + ex.Message);
+            _logger.Error("Registration. SetError. Ошибка: {0}", ex);
         }
     }
 
@@ -747,7 +747,7 @@ public partial class Registration : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Registration. PhoneNumber_TextChanged. " + ex.Message);
+            _logger.Error("Registration. PhoneNumber_TextChanged. Ошибка: {0}", ex);
         }
     }
 }

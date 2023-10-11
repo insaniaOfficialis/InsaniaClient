@@ -25,7 +25,7 @@ public partial class Administrator : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Administrator. " + ex.Message);
+            _logger.Error("Administrator. Ошибка: {0}", ex);
         }
     }
 
@@ -66,7 +66,7 @@ public partial class Administrator : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Administrator. Element_MouseLeftButtonUp. " + ex.Message);
+            _logger.Error("Administrator. Element_MouseLeftButtonUp. Ошибка: {0}", ex);
         }
     }
 }

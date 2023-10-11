@@ -40,7 +40,7 @@ namespace Client.Controls.Statistics.Windows
             }
             catch (Exception ex)
             {
-                _logger.Error("Country. Ошибка: {1}", ex);
+                _logger.Error("Country. Ошибка: {0}", ex);
             }
         }
 
@@ -76,7 +76,7 @@ namespace Client.Controls.Statistics.Windows
             }
             catch (Exception ex)
             {
-                _logger.Error("Country. Ошибка: {1}", ex);
+                _logger.Error("Country. Ошибка: {0}", ex);
             }
         }
 
@@ -121,7 +121,7 @@ namespace Client.Controls.Statistics.Windows
             }
             catch (Exception ex)
             {
-                _logger.Error("Country. TextBox_GotFocus. Ошибка: {1}", ex);
+                _logger.Error("Country. TextBox_GotFocus. Ошибка: {0}", ex);
             }
         }
 
@@ -166,7 +166,7 @@ namespace Client.Controls.Statistics.Windows
             }
             catch (Exception ex)
             {
-                _logger.Error("Country. TextBox_LostFocus. Ошибка: {1}", ex);
+                _logger.Error("Country. TextBox_LostFocus. Ошибка: {0}", ex);
             }
         }
 
@@ -259,7 +259,7 @@ namespace Client.Controls.Statistics.Windows
             }
             catch (Exception ex)
             {
-                _logger.Error("Country. SetError. Ошибка: {1}", ex);
+                _logger.Error("Country. SetError. Ошибка: {0}", ex);
             }
         }
 
@@ -288,7 +288,7 @@ namespace Client.Controls.Statistics.Windows
             }
             catch (Exception ex)
             {
-                _logger.Error("Country. ColorTextBox_TextChanged. " + ex.Message);
+                _logger.Error("Country. ColorTextBox_TextChanged. Ошибка: {0}", ex);
             }
         }
 
@@ -395,7 +395,7 @@ namespace Client.Controls.Statistics.Windows
             catch (Exception ex)
             {
                 SetError("Не удалось сохранить. Обратитесь в техническую поддержку", true);
-                _logger.Error("Country. Save. " + ex.Message);
+                _logger.Error("Country. Save. Ошибка: {0}", ex);
             }
         }
 
@@ -413,7 +413,7 @@ namespace Client.Controls.Statistics.Windows
             }
             catch (Exception ex)
             {
-                _logger.Error("Country. SaveButton_Click. Ошибка: {1}", ex);
+                _logger.Error("Country. SaveButton_Click. Ошибка: {0}", ex);
             }
         }
 
@@ -438,7 +438,7 @@ namespace Client.Controls.Statistics.Windows
             }
             catch (Exception ex)
             {
-                _logger.Error("Country. Window_PreviewKeyDown. Ошибка: {1}", ex);
+                _logger.Error("Country. Window_PreviewKeyDown. Ошибка: {0}", ex);
             }
         }
 
@@ -458,7 +458,7 @@ namespace Client.Controls.Statistics.Windows
             }
             catch (Exception ex)
             {
-                _logger.Error("Country. Window_MouseDown. Ошибка: {1}", ex);
+                _logger.Error("Country. Window_MouseDown. Ошибка: {0}", ex);
             }
         }
     }

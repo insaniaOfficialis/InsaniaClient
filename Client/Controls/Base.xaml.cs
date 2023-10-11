@@ -28,7 +28,7 @@ public partial class Base : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Base. " + ex.Message);
+            _logger.Error("Base. Ошибка: {0}", ex);
         }
     }
 
@@ -52,7 +52,7 @@ public partial class Base : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Base. OutButton_Click. " + ex.Message);
+            _logger.Error("Base. OutButton_Click. Ошибка: {0}", ex);
         }
     }
 
@@ -73,7 +73,7 @@ public partial class Base : UserControl
         }
         catch (Exception ex)
         {
-            _logger.Error("Base. AdministratorButton_Click. " + ex.Message);
+            _logger.Error("Base. AdministratorButton_Click. Ошибка: {0}", ex);
         }
     }
 }

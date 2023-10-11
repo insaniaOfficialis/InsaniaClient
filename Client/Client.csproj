@@ -261,6 +261,9 @@
     <Compile Include="Controls\Administrators\Registration.xaml.cs">
       <DependentUpon>Registration.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Generators\GeneratorPersonalNames.xaml.cs">
+      <DependentUpon>GeneratorPersonalNames.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Generators\GeneratorResource.xaml.cs">
       <DependentUpon>GeneratorResource.xaml</DependentUpon>
     </Compile>
@@ -318,6 +321,10 @@
     <Page Include="Controls\Administrators\Registration.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Generators\GeneratorPersonalNames.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Generators\GeneratorResource.xaml">
       <SubType>Designer</SubType>

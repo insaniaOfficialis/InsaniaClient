@@ -1,5 +1,4 @@
-﻿using Client.Controls.Administrators;
-using Client.Controls.Generators;
+﻿using Client.Controls.Generators;
 using Serilog;
 using System;
 using System.Windows.Controls;
@@ -21,12 +20,12 @@ public partial class Generator : UserControl
     {
         try
         {
-            /*Инициализируем компоненты*/
+            //Инициализируем компоненты
             InitializeComponent();
         }
         catch (Exception ex)
         {
-            _logger.Error("Generator. " + ex.Message);
+            _logger.Error("Generator. Ошибка: {0}", ex);
         }
     }
 
@@ -39,26 +38,35 @@ public partial class Generator : UserControl
     {
         try
         {
-            /*Определяем нажатый элемент как элемент списка*/
+            //Определяем нажатый элемент как элемент списка
             var element = sender as ListBoxItem;
 
-            /*Ищем наименование нажатого элемента*/
+            //Ищем наименование нажатого элемента
             switch (element.Name)
             {
                 case "GeneratorResourceItem":
                     {
-                        /*Формируем страницу генерации ресурсов*/
+                        //Формируем страницу генерации ресурсов
                         GeneratorResource generatorResource = new();
 
-                        /*Меняем контент элемента на странице на страницу генерации ресурсов*/
+                        //Меняем контент элемента на странице на страницу генерации ресурсов
                         Element.Content = generatorResource;
+                    }
+                    break;
+                case "GeneratorPersonalNameItem":
+                    {
+                        //Формируем страницу генерации личных имён
+                        GeneratorPersonalNames generatorPersonalNames = new();
+
+                        //Меняем контент элемента на странице на страницу генерации личных имён
+                        Element.Content = generatorPersonalNames;
                     }
                     break;
             }
         }
         catch (Exception ex)
         {
-            _logger.Error("Generator. Element_MouseLeftButtonUp. " + ex.Message);
+            _logger.Error("Generator. Element_MouseLeftButtonUp. Ошибка: {0}" + ex.Message);
         }
     }
 }

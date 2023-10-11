@@ -24,7 +24,7 @@ namespace Client
             }
             catch(Exception ex)
             {
-                _logger.Error("Message. " + ex.Message);
+                _logger.Error("Message. Ошибка: {0}", ex);
             }
         }
 
@@ -44,7 +44,7 @@ namespace Client
             }
             catch(Exception ex)
             {
-                _logger.Error("Message. " + ex.Message);
+                _logger.Error("Message. Ошибка: {0}", ex);
             }
         }
 
@@ -62,7 +62,7 @@ namespace Client
             }
             catch(Exception ex)
             {
-                _logger.Error("Message. OkButton_Click. " + ex.Message);
+                _logger.Error("Message. OkButton_Click. Ошибка: {0}", ex);
             }
         }
 
@@ -82,7 +82,7 @@ namespace Client
             }
             catch(Exception ex)
             {
-                _logger.Error("Message. Grid_PreviewKeyDown. " + ex.Message);
+                _logger.Error("Message. Grid_PreviewKeyDown. Ошибка: {0}", ex);
             }
         }
 
@@ -102,7 +102,7 @@ namespace Client
             }
             catch (Exception ex)
             {
-                _logger.Error("Message. Window_MouseDown. Ошибка: {1}", ex);
+                _logger.Error("Message. Window_MouseDown. Ошибка: {0}", ex);
             }
         }
     }

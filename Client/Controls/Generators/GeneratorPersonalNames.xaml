@@ -53,7 +53,8 @@
                       SelectedValuePath="Id"
                       Grid.Row="2"
                       Text="Нации"
-                      IsEnabled="False"/>
+                      IsEnabled="False"
+                      SelectionChanged="NationsComboBox_SelectionChanged"/>
             <CheckBox x:Name="GenderRadioButton"
                       Grid.Row="4"
                       Content="Мужское"

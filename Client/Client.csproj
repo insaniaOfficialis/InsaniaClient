@@ -434,7 +434,9 @@
   <ItemGroup>
     <Resource Include="Dependens\Images\add.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Dependens\Images\home.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Dependens\Images\edit.png" />
   </ItemGroup>

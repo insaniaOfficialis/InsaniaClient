@@ -359,14 +359,13 @@ public partial class GeneratorPersonalNames : UserControl
         {
             //Если есть выыбранный элемент
             if (NationsComboBox.SelectedValue != null)
-                //Включаем выпадающий список наций
+                //Включаем кнопку генерации
                 GenerateButton.IsEnabled = true;
         }
         catch (Exception ex)
         {
-            _logger.Error("GeneratorPersonalNames. RacesComboBox_Selected. Ошибка: {0}", ex);
+            _logger.Error("GeneratorPersonalNames. NationsComboBox_SelectionChanged. Ошибка: {0}", ex);
         }
-
     }
 
     /// <summary>

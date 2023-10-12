@@ -255,6 +255,9 @@
     <Compile Include="Controls\Base.xaml.cs">
       <DependentUpon>Base.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Bases\LoadCircle.xaml.cs">
+      <DependentUpon>LoadCircle.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Generator.xaml.cs">
       <DependentUpon>Generator.xaml</DependentUpon>
     </Compile>
@@ -314,6 +317,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Base.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Bases\LoadCircle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

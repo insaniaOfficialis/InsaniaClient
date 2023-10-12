@@ -38,26 +38,54 @@
                 <RowDefinition Height="10px"></RowDefinition>
                 <RowDefinition Height="50px"></RowDefinition>
             </Grid.RowDefinitions>
-            <ComboBox x:Name="StartComboBox"
+            <ComboBox x:Name="RacesComboBox"
                       Style="{StaticResource LightComboBox}"
                       ItemContainerStyle="{StaticResource LightComboBoxItem}"
                       DisplayMemberPath="Name"
                       SelectedValuePath="Id"
                       Grid.Row="0"
-                      Text="Начало"/>
-            <ComboBox x:Name="EndComboBox"
+                      Text="Расы"
+                      SelectionChanged="RacesComboBox_SelectionChanged"/>
+            <ComboBox x:Name="NationsComboBox"
                       Style="{StaticResource LightComboBox}"
                       ItemContainerStyle="{StaticResource LightComboBoxItem}"
                       DisplayMemberPath="Name"
                       SelectedValuePath="Id"
                       Grid.Row="2"
-                      Text="Окончание"/>
+                      Text="Нации"
+                      IsEnabled="False"
+                      SelectionChanged="NationsComboBox_SelectionChanged"/>
+            <StackPanel Grid.Row="4" Orientation="Horizontal">
+                <ComboBox x:Name="StartComboBox"
+                          Style="{StaticResource LightComboBox}"
+                          ItemContainerStyle="{StaticResource LightComboBoxItem}"
+                          DisplayMemberPath="Name"
+                          SelectedValuePath="Name"
+                          Width="225px"
+                          IsEnabled="False"
+                          Text="Начало"/>
+                <Separator Opacity="0" Width="50px"/>
+                <ComboBox x:Name="EndComboBox"
+                          Style="{StaticResource LightComboBox}"
+                          ItemContainerStyle="{StaticResource LightComboBoxItem}"
+                          DisplayMemberPath="Name"
+                          SelectedValuePath="Id"
+                          Width="225px"
+                          IsEnabled="False"
+                          Text="Окончание"/>
+            </StackPanel>
             <CheckBox x:Name="GenderRadioButton"
-                      Grid.Row="4"
+                      Grid.Row="6"
                       Content="Женское"
                       Tag="Мужское"
                       Style="{DynamicResource LightCheckBox}"/>
         </Grid>
+        <ContentControl x:Name="LoadCircleContentControl"
+                        Visibility="Collapsed"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Grid.Row="0"
+                        Grid.Column="2"/>
         <TextBlock x:Name="NameTextBlock"
                    Grid.Column="2"
                    Grid.Row="0"

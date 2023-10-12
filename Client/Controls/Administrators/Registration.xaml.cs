@@ -35,13 +35,13 @@ public partial class Registration : UserControl
     {
         try
         {
-            /*Инициализация всех компонентов*/
+            //Инициализация всех компонентов
             InitializeComponent();
 
-            /*Выставляем параметры десериализации*/
+            //Выставляем параметры десериализации
             _settings.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 
-            /*Проверяем доступность api*/
+            //Проверяем доступность api
             CheckConnection();
         }
         catch (Exception ex)
@@ -57,9 +57,9 @@ public partial class Registration : UserControl
     {
         try
         {
-            /*Если нажата кнопка enter*/
+            //Если нажата кнопка enter
             if (e.Key == Key.Enter)
-                /*Вызываем метод сохранения*/
+                //Вызываем метод сохранения
                 ButtonSave_Click(sender, e);
         }
         catch(Exception ex)
@@ -75,31 +75,31 @@ public partial class Registration : UserControl
     {
         try
         {
-            /*Объявляем переменную ссылки запроса*/
+            //Объявляем переменную ссылки запроса
             string path = null;
 
-            /*Если в конфиге есть данные для формирования ссылки запроса*/
+            //Если в конфиге есть данные для формирования ссылки запроса
             if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
                 && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
                 && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Roles"])
                 && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Token"]))
             {
-                /*Формируем ссылку запроса*/
+                //Формируем ссылку запроса
                 path = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] + 
                     ConfigurationManager.AppSettings["Roles"] + "list";
 
-                /*Формируем клиента и добавляем токен*/
+                //Формируем клиента и добавляем токен
                 using HttpClient client = new();
 
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["Token"]);
 
-                /*Получаем данные по запросу*/
+                //Получаем данные по запросу
                 using var result = await client.GetAsync(path);
 
-                /*Если получили успешный результат*/
+                //Если получили успешный результат
                 if (result != null && result.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    /*Десериализуем ответ и заполняем combobox ролей*/
+                    //Десериализуем ответ и заполняем combobox ролей
                     var content = await result.Content.ReadAsStringAsync();
 
                     BaseResponseList response = JsonSerializer.Deserialize<BaseResponseList>(content, _settings);
@@ -134,10 +134,10 @@ public partial class Registration : UserControl
     {
         try
         {
-            /*Если есть фотографий*/
+            //Если есть фотографий
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                /*Получаем массив перетянутых фотографий*/
+                //Получаем массив перетянутых фотографий
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop); 
                 
                 string extention = files[0].Substring(files[0].LastIndexOf('.')+1);
@@ -145,11 +145,11 @@ public partial class Registration : UserControl
                 if (!_allowedExtensions.Contains(extention))
                     SetError("Некорректное расширение файла", false);
 
-                /*Включаем компоненту изображений и отображаем загруженную фото в нём*/
+                //Включаем компоненту изображений и отображаем загруженную фото в нём
                 ImageLoad.IsEnabled = true;
                 ImageLoad.Source = new BitmapImage(new Uri(files[0]));
 
-                /*Сохраняем путь к файлу*/
+                //Сохраняем путь к файлу
                 _filePath = files[0];
             }
         }
@@ -168,20 +168,20 @@ public partial class Registration : UserControl
     {
         try
         {
-            /*Формируем новое окно загрузки фотографий*/
+            //Формируем новое окно загрузки фотографий
             OpenFileDialog openFileDialog = new();
 
-            /*Ставим фильтры на типы файлов*/
+            //Ставим фильтры на типы файлов
             openFileDialog.Filter = "Image files (*.pdf;*.png;*.jpeg;*.jpg;*.bmp)|*.pdf;*.png;*.jpeg;*.jpg;*.bmp";
 
-            /*Если есть выбранные файлы,*/
+            //Если есть выбранные файлы,
             if (openFileDialog.ShowDialog() == true)
             {
-                /*Включаем компоненту изображений и отображаем выбранное фото в нём*/
+                //Включаем компоненту изображений и отображаем выбранное фото в нём
                 ImageLoad.IsEnabled = true;
                 ImageLoad.Source = new BitmapImage(new Uri(openFileDialog.FileName));
 
-                /*Сохраняем путь к файлу*/
+                //Сохраняем путь к файлу
                 _filePath = openFileDialog.FileName;
             }
         }
@@ -200,13 +200,13 @@ public partial class Registration : UserControl
     {
         try        
         {
-            /*Отключаем кнопку для нажатия*/
+            //Отключаем кнопку для нажатия
             ButtonSave.IsEnabled = false;
 
-            /*Убираем тест ошибки*/
+            //Убираем тест ошибки
             ErrorText.Text = null;
 
-            /*Проверяем ошибки*/
+            //Проверяем ошибки
             if (String.IsNullOrEmpty(Username.Text) || Username.Text == "Логин")
             {
                 SetError("Не указан логин", false);
@@ -261,7 +261,7 @@ public partial class Registration : UserControl
                 return;
             }
 
-            /*Формируем модель для регистрации пользователей*/
+            //Формируем модель для регистрации пользователей
             List<string> roles = new()
             {
                 Roles.SelectedValue.ToString()
@@ -269,78 +269,78 @@ public partial class Registration : UserControl
 
             AddUserRequest request = new(Username.Text, Password.Text, Email.Text, PhoneNumber.Text, LastName.Text, FirstName.Text, Patronymic.Text, roles);
 
-            /*Если в конфиге есть данные для формирования ссылки запроса*/
+            //Если в конфиге есть данные для формирования ссылки запроса
             if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
                 && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
                 && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Registration"])
                 && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Token"]))
             {
-                /*Формируем ссылку запроса*/
+                //Формируем ссылку запроса
                 string url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
                     ConfigurationManager.AppSettings["Registration"] + "add";
 
-                /*Формируем клиента, добавляем ему токен и тело запроса*/
+                //Формируем клиента, добавляем ему токен и тело запроса
                 using HttpClient client = new();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["Token"]);
                 StringContent stringCintent = new(JsonSerializer.Serialize(request, _settings).ToString(), Encoding.UTF8, "application/json");
 
-                /*Получаем результат запроса*/
+                //Получаем результат запроса
                 using var result = await client.PostAsync(url, stringCintent);
 
-                /*Если получили успешный результат*/
+                //Если получили успешный результат
                 if (result != null)
                 {
                     if (result.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                         SetError("Некорректный токен", false);
 
-                    /*Десериализуем ответ*/
+                    //Десериализуем ответ
                     var content = await result.Content.ReadAsStringAsync();
 
                     BaseResponse response = JsonSerializer.Deserialize<BaseResponse>(content, _settings);
 
-                    /*Если успешно, сохраняем фото*/
+                    //Если успешно, сохраняем фото
                     if (response.Success && response.Id != null)
                     {
-                        /*Формируем тело запроса*/
+                        //Формируем тело запроса
                         using var multipartFormContent = new MultipartFormDataContent();
 
-                        /*Загружаем отправляемый файл*/
+                        //Загружаем отправляемый файл
                         var fileStreamContent = new StreamContent(File.OpenRead(_filePath));
 
-                        /*Получем тип контента*/
+                        //Получем тип контента
                         var extention = _filePath.Substring(_filePath.LastIndexOf('.') + 1);
                         var contentType = "image/" + extention;
                         var fileName = _filePath.Substring(_filePath.LastIndexOf('\\') + 1);
 
-                        /*Устанавливаем заголовок Content-Type*/
+                        //Устанавливаем заголовок Content-Type
                         fileStreamContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
 
-                        /*Добавляем загруженный файл в MultipartFormDataContent*/
+                        //Добавляем загруженный файл в MultipartFormDataContent
                         multipartFormContent.Add(fileStreamContent, name: "file", fileName: fileName);
 
-                        /*Если в конфиге есть данные для формирования ссылки запроса*/
+                        //Если в конфиге есть данные для формирования ссылки запроса
                         if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["Files"]))
                         {
-                            /*Формируем ссылку запроса*/
+                            //Формируем ссылку запроса
                             url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
                                 ConfigurationManager.AppSettings["Files"] + "add/User/" + response.Id;
 
-                            /*Формируем клиента и добавляем токен доступа*/
+                            //Формируем клиента и добавляем токен доступа
                             using HttpClient clientFile = new();
                             clientFile.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["Token"]);
 
-                            /*Получаем реузльтат запроса*/
+                            //Получаем реузльтат запроса
                             using var resultFile = await clientFile.PostAsync(url, multipartFormContent);
 
-                            /*Если получили успешный результат*/
+                            //Если получили успешный результат
                             if (resultFile != null)
                             {
-                                /*Десериализуем ответ*/
+                                //Десериализуем ответ
                                 var contentFile = await resultFile.Content.ReadAsStringAsync();
 
                                 BaseResponse responseFile = JsonSerializer.Deserialize<BaseResponse>(contentFile, _settings);
 
-                                /*Если успешно, обнуляем поля*/
+                                //Если успешно, обнуляем поля
                                 if (responseFile.Success)
                                 {
                                     Username.Text = "Логин";
@@ -365,7 +365,7 @@ public partial class Registration : UserControl
                             else
                                 SetError("Ошибка сервера", true);
                         }
-                        /*Иначе возвращаем ошибку*/
+                        //Иначе возвращаем ошибку
                         else
                             SetError("Не указаны адреса api. Обратитесь в техническую поддержку", true);
                     }
@@ -375,11 +375,11 @@ public partial class Registration : UserControl
                 else
                     SetError("Ошибка сервера", true);
             }
-            /*Иначе возвращаем ошибку*/
+            //Иначе возвращаем ошибку
             else
                 SetError("Не указаны адреса api. Обратитесь в техническую поддержку", true);
 
-            /*Включаем кнопку для нажатия*/
+            //Включаем кнопку для нажатия
             ButtonSave.IsEnabled = true;
 
             //MessageBox.Show("Пользователь успешно зергистрирован");
@@ -538,7 +538,7 @@ public partial class Registration : UserControl
     {
         try
         {
-            /*Блокируем все элементы*/
+            //Блокируем все элементы
             Username.IsEnabled = false;
             Password.IsEnabled = false;
             Email.IsEnabled = false;
@@ -550,26 +550,26 @@ public partial class Registration : UserControl
             ButtonSave.IsEnabled = false;
             ButtonLoadImage.IsEnabled = false;
 
-            /*Объявляем переменную ссылки запроса*/
+            //Объявляем переменную ссылки запроса
             string url = null;
 
             try
             {
-                /*Если в конфиге есть данные для формирования ссылки запроса*/
+                //Если в конфиге есть данные для формирования ссылки запроса
                 if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"]))
                 {
-                    /*Формируем ссылку запроса*/
+                    //Формируем ссылку запроса
                     url = ConfigurationManager.AppSettings["DefaultConnection"];
 
-                    /*Получаем данные по запросу*/
+                    //Получаем данные по запросу
                     using HttpClient client = new();
 
                     using var result = await client.GetAsync(url);
 
-                    /*Если получили успешный результат*/
+                    //Если получили успешный результат
                     if (result != null && result.StatusCode == System.Net.HttpStatusCode.OK)
                     {
-                        /*Разблокируем все элементы*/
+                        //Разблокируем все элементы
                         Username.IsEnabled = true;
                         Password.IsEnabled = true;
                         Email.IsEnabled = true;
@@ -581,14 +581,14 @@ public partial class Registration : UserControl
                         ButtonSave.IsEnabled = true;
                         ButtonLoadImage.IsEnabled = true;
 
-                        /*Заполняем роли*/
+                        //Заполняем роли
                         GetRoles();
                     }
-                    /*Иначе возвращаем ошибку*/
+                    //Иначе возвращаем ошибку
                     else
                         SetError("Сервер временно недоступен, попробуйте позднее или обратитесь в техническую поддержку", true);
                 }
-                /*Иначе возвращаем ошибку*/
+                //Иначе возвращаем ошибку
                 else
                     SetError("Не указан адрес api. Обратитесь в техническую поддержку", true);
             }
@@ -612,23 +612,23 @@ public partial class Registration : UserControl
     {
         try
         {
-            /*Объявляем переменные*/
+            //Объявляем переменные
             string style; //стиль
 
-            /*Определяем наименование стиля*/
+            //Определяем наименование стиля
             if (criticalException)
                 style = "CriticalExceptionTextBlock";
             else
                 style = "InnerExceptionTextBlock";
 
-            /*Находим стиль*/
+            //Находим стиль
             var serverExceptionStyle = FindResource(style) as Style;
 
-            /*Устанавливаем текст и стиль*/
+            //Устанавливаем текст и стиль
             ErrorText.Style = serverExceptionStyle;
             ErrorText.Text = message;
 
-            /*Включаем кнопку сохранения*/
+            //Включаем кнопку сохранения
             ButtonSave.IsEnabled = true;
         }
         catch(Exception ex)
@@ -650,7 +650,7 @@ public partial class Registration : UserControl
             {
                 string phoneNumber = string.Empty;
 
-                /*Проверяем на валидность введённые цифры*/
+                //Проверяем на валидность введённые цифры
                 if(PhoneNumber.Text.Length > 4 && !_allowedSymbolsPhone.Contains(PhoneNumber.Text[4]))
                 {
                     PhoneNumber.Text = PhoneNumber.Text.Substring(0, 4);
@@ -692,20 +692,20 @@ public partial class Registration : UserControl
                     PhoneNumber.Text = PhoneNumber.Text.Substring(0, 16);
                 }
 
-                /*Если первая цифра 7 или 8 меняем на +7*/
+                //Если первая цифра 7 или 8 меняем на +7
                 if (PhoneNumber.Text[0] == '8' || PhoneNumber.Text[0] == '7')
                 {
                     phoneNumber = "+7" + PhoneNumber.Text.Substring(1);
                 }
-                /*Иначе просто добавляем +7*/
+                //Иначе просто добавляем +7
                 else
                 {
-                    /*Если уже не добавили*/
+                    //Если уже не добавили
                     if(!PhoneNumber.Text.Contains("+7"))
                         phoneNumber = "+7" + PhoneNumber.Text.Substring(0);
                 }
 
-                /*Если есть цирфа после +7, добавляем скобки*/
+                //Если есть цирфа после +7, добавляем скобки
                 if (PhoneNumber.Text.Length > 2 && PhoneNumber.Text[2] != ' ')
                 {
                     phoneNumber = PhoneNumber.Text.Substring(0, 2) + " (" + PhoneNumber.Text.Substring(2);
@@ -715,26 +715,26 @@ public partial class Registration : UserControl
                     phoneNumber = phoneNumber.Substring(0, 2) + " (" + phoneNumber.Substring(2);
                 }
 
-                /*Если это последняя цирфа кода оператора, добавляем скобки*/
+                //Если это последняя цирфа кода оператора, добавляем скобки
                 if (PhoneNumber.Text.Length > 6 && PhoneNumber.Text[6] != ' ')
                 {
-                    /*Если уже не добавили*/
+                    //Если уже не добавили
                     if (PhoneNumber.Text.Length < 8 || (PhoneNumber.Text.Length > 7 && PhoneNumber.Text[7] != ')'))
                         phoneNumber = PhoneNumber.Text.Substring(0, 7) + ") " + PhoneNumber.Text.Substring(7);
                 }
 
-                /*Если это последняя цифра первых 3 цифр после кода оператора, добавляем тире*/
+                //Если это последняя цифра первых 3 цифр после кода оператора, добавляем тире
                 if (PhoneNumber.Text.Length > 11 && PhoneNumber.Text[11] != ' ')
                 {
-                    /*Если уже не добавили*/
+                    //Если уже не добавили
                     if (PhoneNumber.Text.Length < 13 || (PhoneNumber.Text.Length > 12 && PhoneNumber.Text[12] != '-'))
                         phoneNumber = PhoneNumber.Text.Substring(0, 12) + "-" + PhoneNumber.Text.Substring(12);
                 }
 
-                /*Если это последняя цифра первых 5 цифр после кода оператора, добавляем тире*/
+                //Если это последняя цифра первых 5 цифр после кода оператора, добавляем тире
                 if (PhoneNumber.Text.Length > 14 && PhoneNumber.Text[14] != ' ')
                 {
-                    /*Если уже не добавили*/
+                    //Если уже не добавили
                     if (PhoneNumber.Text.Length < 16 || (PhoneNumber.Text.Length > 15 && PhoneNumber.Text[15] != '-'))
                         phoneNumber = PhoneNumber.Text.Substring(0, 15) + "-" + PhoneNumber.Text.Substring(15);
                 }

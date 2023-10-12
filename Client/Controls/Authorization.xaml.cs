@@ -27,13 +27,13 @@ public partial class Authorization : UserControl
     {
         try
         {
-            /*Инициализация компонентов*/
+            //Инициализация компонентов
             InitializeComponent();
 
-            /*Выставлыяем параметры десериализации*/
+            //Выставлыяем параметры десериализации
             _jsonSettings.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 
-            /*Проверяем соединения с api*/
+            //Проверяем соединения с api
             CheckConnection();
         }
         catch(Exception ex)
@@ -67,14 +67,14 @@ public partial class Authorization : UserControl
     {
         try
         {
-            /*Отключаем для нажатия кнопку авторизации*/
+            //Отключаем для нажатия кнопку авторизации
             ButtonLogin.IsEnabled = false;
 
-            /*Объявляем переменные*/
+            //Объявляем переменные
             string username = Username.Text; //логин
             string password = Password.Text; //пароль
 
-            /*Проверяем корректность данных*/
+            //Проверяем корректность данных
             if (String.IsNullOrEmpty(username) || username == "Логин")
             {
                 SetError("Не указан логин", false);
@@ -86,37 +86,37 @@ public partial class Authorization : UserControl
                 return;
             }
 
-            /*Если в конфиге есть данные для формирования ссылки запроса*/
+            //Если в конфиге есть данные для формирования ссылки запроса
             if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
                 && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
                 && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Authorization"]))
             {
-                /*Формируем ссылку запроса*/
+                //Формируем ссылку запроса
                 string url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
                     ConfigurationManager.AppSettings["Authorization"] + "login";
 
-                /*Добавляем параметры строки*/
+                //Добавляем параметры строки
                 var queryParams = new Dictionary<string, string>
                 {
                     ["username"] = username,
                     ["password"] = password
                 };
 
-                /*Получаем данные по запросу*/
+                //Получаем данные по запросу
                 using HttpClient client = new();
 
-                /*Получаем результат запроса*/
+                //Получаем результат запроса
                 using var result = await client.GetAsync(QueryHelpers.AddQueryString(url, queryParams));
 
-                /*Если получили успешный результат*/
+                //Если получили успешный результат
                 if (result != null)
                 {
-                    /*Десериализуем ответ*/
+                    //Десериализуем ответ
                     var content = await result.Content.ReadAsStringAsync();
 
                     AuthorizationResponse response = JsonSerializer.Deserialize<AuthorizationResponse>(content, _jsonSettings);
 
-                    /*Если успешно, открываем основное окно и записываем в конфиг токен*/
+                    //Если успешно, открываем основное окно и записываем в конфиг токен
                     if (response.Success)
                     {
                         ConfigurationManager.AppSettings["Token"] = response.Token;
@@ -131,7 +131,7 @@ public partial class Authorization : UserControl
                 else
                     SetError("Ошибка сервера", true);
             }
-            /*Иначе возвращаем ошибку*/
+            //Иначе возвращаем ошибку
             else
                 SetError("Не указаны адреса api.Обратитесь в техническую поддержку", true);
         }
@@ -224,19 +224,19 @@ public partial class Authorization : UserControl
     {
         try
         {
-            /*Объявляем переменные*/
+            //Объявляем переменные
             string style; //стиль
 
-            /*Определяем наименование стиля*/
+            //Определяем наименование стиля
             if (criticalException)
                 style = "CriticalExceptionTextBlock";
             else
                 style = "InnerExceptionTextBlock";
 
-            /*Находим стиль*/
+            //Находим стиль
             var serverExceptionStyle = FindResource(style) as Style;
 
-            /*Устанавливаем текст и стиль*/
+            //Устанавливаем текст и стиль
             Error.Style = serverExceptionStyle;
             Error.Text = message;
         }
@@ -253,40 +253,40 @@ public partial class Authorization : UserControl
     {
         try
         {
-            /*Блокируем все элементы*/
+            //Блокируем все элементы
             Username.IsEnabled = false;
             Password.IsEnabled = false;
             ButtonLogin.IsEnabled = false;
 
-            /*Объявляем переменную ссылки запроса*/
+            //Объявляем переменную ссылки запроса
             string url = null;
 
             try
             {
-                /*Если в конфиге есть данные для формирования ссылки запроса*/
+                //Если в конфиге есть данные для формирования ссылки запроса
                 if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"]))
                 {
-                    /*Формируем ссылку запроса*/
+                    //Формируем ссылку запроса
                     url = ConfigurationManager.AppSettings["DefaultConnection"];
 
-                    /*Получаем данные по запросу*/
+                    //Получаем данные по запросу
                     using HttpClient client = new();
 
                     using var result = await client.GetAsync(url);
 
-                    /*Если получили успешный результат*/
+                    //Если получили успешный результат
                     if (result != null && result.StatusCode == System.Net.HttpStatusCode.OK)
                     {
-                        /*Разблокируем все элементы*/
+                        //Разблокируем все элементы
                         Username.IsEnabled = true;
                         Password.IsEnabled = true;
                         ButtonLogin.IsEnabled = true;
                     }
-                    /*Иначе возвращаем ошибку*/
+                    //Иначе возвращаем ошибку
                     else
                         SetError("Сервер временно недоступен, попробуйте позднее или обратитесь в техническую поддержку", true);
                 }
-                /*Иначе возвращаем ошибку*/
+                //Иначе возвращаем ошибку
                 else
                     SetError("Не указан адрес api. Обратитесь в техническую поддержку", true);
             }

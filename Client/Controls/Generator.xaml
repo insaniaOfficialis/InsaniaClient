@@ -30,6 +30,11 @@
                              Content="Генератор имён"
                              Height="60px"
                              MouseLeftButtonUp="Element_MouseLeftButtonUp"/>
+                <ListBoxItem x:Name="GeneratorCreatePersonalNameItem"
+                             Style="{StaticResource DarkListItem}"
+                             Content="Генератор создания имён"
+                             Height="60px"
+                             MouseLeftButtonUp="Element_MouseLeftButtonUp"/>
             </ListBox>
         </StackPanel>
         <ContentControl x:Name="Element"

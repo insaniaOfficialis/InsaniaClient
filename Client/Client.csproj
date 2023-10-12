@@ -261,6 +261,9 @@
     <Compile Include="Controls\Administrators\Registration.xaml.cs">
       <DependentUpon>Registration.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Generators\GeneratorCreatePersonalName.xaml.cs">
+      <DependentUpon>GeneratorCreatePersonalName.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Generators\GeneratorPersonalNames.xaml.cs">
       <DependentUpon>GeneratorPersonalNames.xaml</DependentUpon>
     </Compile>
@@ -322,6 +325,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Generators\GeneratorCreatePersonalName.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Generators\GeneratorPersonalNames.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -375,6 +382,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Sociology\Names\Response\GeneratedName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

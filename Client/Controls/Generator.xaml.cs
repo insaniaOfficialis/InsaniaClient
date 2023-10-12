@@ -62,6 +62,15 @@ public partial class Generator : UserControl
                         Element.Content = generatorPersonalNames;
                     }
                     break;
+                case "GeneratorCreatePersonalNameItem":
+                    {
+                        //Формируем страницу генерации создания личных имён
+                        GeneratorCreatePersonalName generatorCreatePersonalName = new();
+
+                        //Меняем контент элемента на странице на страницу генерации создания личных имён
+                        Element.Content = generatorCreatePersonalName;
+                    }
+                    break;
             }
         }
         catch (Exception ex)

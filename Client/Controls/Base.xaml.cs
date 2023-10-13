@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using Client.Controls.InformationArticles;
+using Serilog;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -95,6 +96,27 @@ public partial class Base : UserControl
         catch (Exception ex)
         {
             _logger.Error("Base. HomeButton_Click. Ошибка: {0}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Логика нажатия кнопки отображения информационных статей
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void InformationArticleButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            //Формируем новую домашнюю страницу
+            InformationArticleList informationArticleList = new();
+
+            //Меняем контент на странице на домашнюю страницу
+            BaseContent.Content = informationArticleList;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Base. InformationArticleButton_Click. Ошибка: {0}", ex);
         }
     }
 }

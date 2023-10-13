@@ -9,6 +9,7 @@
 
         <SolidColorBrush x:Key="CustomGrey" Color="#FF4D4D4D"/>
         <SolidColorBrush x:Key="CustomBlack" Color="#FF2B2B2B"/>
+        <SolidColorBrush x:Key="CustomTransparentSilver" Color="#44969696"/>
         <SolidColorBrush x:Key="CustomWhite" Color="#FFFFFFFF"/>
         <SolidColorBrush x:Key="CustomSilver" Color="#FF969696"/>
         <SolidColorBrush x:Key="CustomLightSilver" Color="#FFD9D9D9"/>
@@ -314,6 +315,31 @@
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Cursor" Value="Hand" />
                     <Setter Property="Background" Value="{StaticResource CustomBlack}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!--Системные кнопки-->
+        <Style x:Key="TransparentButton" TargetType="Button">
+            <!--Значения по умолчанию-->
+            <Setter Property="Button.Background" Value="Transparent"/>
+            <Setter Property="Button.BorderBrush" Value="Transparent"/>
+            <!--Привязываем через шаблон фон к background-->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Margin="5px,5px,5px,5px"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <!--Значения при наведении-->
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Cursor" Value="Hand" />
+                    <Setter Property="Background" Value="{StaticResource CustomTransparentSilver}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>

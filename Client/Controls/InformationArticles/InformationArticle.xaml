@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="Client.Controls.InformationArticles.InformationArticle"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Height="680px"
+             Width="1400px"
+             Background="{DynamicResource CustomBlack}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50px"/>
+            <ColumnDefinition Width="25px"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="25px"/>
+            <ColumnDefinition Width="50px"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="400px"/>
+                <RowDefinition Height="100px"/>
+                <RowDefinition Height="180px"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0"
+                  Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50px"/>
+                    <ColumnDefinition Width="25px"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="25px"/>
+                    <ColumnDefinition Width="50px"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="GoBackImageButton"
+                    Style="{DynamicResource TransparentButton}"
+                    Grid.Column="0">
+                    <ContentControl>
+                        <Image Source="/Dependens/Images/less_then.png"/>
+                    </ContentControl>
+                </Button>
+                <Image x:Name="Images"
+                   Grid.Column="2"/>
+                <Button x:Name="GoNextImageButton"
+                    Style="{DynamicResource TransparentButton}"
+                    Grid.Column="4">
+                    <ContentControl>
+                        <Image Source="/Dependens/Images/more_then.png"/>
+                    </ContentControl>
+                </Button>
+            </Grid>
+            <TextBlock x:Name="ErrorTextBlock"
+                   Grid.Row="1"/>
+            <TextBlock x:Name="Text"
+                   Grid.Row="2"
+                   Style="{DynamicResource LightTextBlock}"
+                   Text="Имя Add-Migartion не распознано как имя командлета, функции, файла сценария или выполняемой программы. Проверьте правильность написания имени, а также наличие и правильность пути, после чего повторите попытку."/>
+        </Grid>
+        <Button x:Name="GoBackButton"
+                    Style="{DynamicResource TransparentButton}"
+                    Grid.Column="0">
+            <ContentControl>
+                <Image Source="/Dependens/Images/less_then.png"/>
+            </ContentControl>
+        </Button>
+        <Button x:Name="GoNextButton"
+                    Style="{DynamicResource TransparentButton}"
+                    Grid.Column="4">
+            <ContentControl>
+                <Image Source="/Dependens/Images/more_then.png"/>
+            </ContentControl>
+        </Button>
+    </Grid>
+</UserControl>

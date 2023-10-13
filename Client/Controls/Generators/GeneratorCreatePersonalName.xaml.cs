@@ -257,7 +257,7 @@ public partial class GeneratorCreatePersonalName : UserControl
             {
                 //Формируем ссылку запроса
                 path = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
-                    ConfigurationManager.AppSettings["PersonalNames"] + "beginningsNames";
+                    ConfigurationManager.AppSettings["PersonalNames"] + "beginnings";
 
                 //Формируем клиента и добавляем токен
                 using HttpClient client = new();
@@ -272,12 +272,62 @@ public partial class GeneratorCreatePersonalName : UserControl
                 {
                     //Десериализуем ответ и заполняем combobox
                     var content = await result.Content.ReadAsStringAsync();
-
                     BaseResponseList response = JsonSerializer.Deserialize<BaseResponseList>(content, _settings);
-                    
-                    StartComboBox.IsEnabled = true;
-
                     StartComboBox.ItemsSource = response.Items;
+                }
+                else
+                {
+                    if (result.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                        SetError("Некорректный токен", false);
+                    else
+                        SetError("Ошибка сервера", true);
+                }
+            }
+            else
+                SetError("Не указаны адреса api. Обратитесь в техническую поддержку", true);
+        }
+        catch (Exception ex)
+        {
+            SetError(ex.Message, true);
+        }
+    }
+
+    /// <summary>
+    /// Метод получения окончания имён
+    /// </summary>
+    public async Task GetEndingsNames()
+    {
+        try
+        {
+            //Объявляем переменную ссылки запроса
+            string path = null;
+
+            //Если в конфиге есть данные для формирования ссылки запроса
+            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["PersonalNames"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Token"]))
+            {
+                //Формируем ссылку запроса
+                path = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
+                    ConfigurationManager.AppSettings["PersonalNames"] + "endings";
+
+                //Формируем клиента и добавляем токен
+                using HttpClient client = new();
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["Token"]);
+
+                //Получаем данные по запросу
+                using var result = await client.GetAsync(path);
+
+                //Если получили успешный результат
+                if (result != null && result.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    //Десериализуем ответ и заполняем combobox
+                    var content = await result.Content.ReadAsStringAsync();
+                    BaseResponseList response = JsonSerializer.Deserialize<BaseResponseList>(content, _settings);
+
+                    EndComboBox.ItemsSource = response.Items;
                 }
                 else
                 {
@@ -350,10 +400,13 @@ public partial class GeneratorCreatePersonalName : UserControl
                 var getBegginigsName = GetBeginningsNames();
 
                 //Получаем окончания имён
+                var getEndingsNames = GetEndingsNames();
 
                 //Включаем кнопку генерации, когда закончатся все задачи и отключаем анимацию загрузки
-                await Task.WhenAll(getBegginigsName);
-                GenerateButton.IsEnabled = true;                
+                await Task.WhenAll(getBegginigsName, getEndingsNames);
+                GenerateButton.IsEnabled = true;
+                StartComboBox.IsEnabled = true;
+                EndComboBox.IsEnabled = true;
                 LoadCircleContentControl.Visibility = Visibility.Collapsed;
                 LoadCircleContentControl.Content = null;
             }

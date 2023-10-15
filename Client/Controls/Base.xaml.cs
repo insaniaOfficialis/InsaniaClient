@@ -1,6 +1,8 @@
 ﻿using Client.Controls.InformationArticles;
+using Client.Services.Base;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -12,19 +14,32 @@ namespace Client.Controls;
 public partial class Base : UserControl
 {
     public ILogger _logger { get { return Log.ForContext<Base>(); } } //логгер для записи логов
-    
+    public IBaseService _baseService; //базовый сервис
+    List<string> _accessRights; //права доступа
+
     /// <summary>
     /// Конструктор базового окна
     /// </summary>
-    public Base()
+    public Base(IBaseService baseService, List<string> accessRights)
     {
         try
         {
             //Инициализируем компоненты
             InitializeComponent();
 
-            //Заполняем контент из главного окна
-            Main main = new();
+            //Записывае права доступа
+            _accessRights = accessRights;
+
+            //Если есть право доступа на страницу адимнистрирования
+            if (_accessRights.Contains("Stranitsa_administrirovaniya"))
+                //Отображаем кнопку администрирования
+                AdministratorButton.Visibility = Visibility.Visible;
+
+            //Формируем базовый сервис
+            _baseService = baseService;
+
+            //Формируем главную страницу и отображаем её
+            Main main = new(_baseService);
             BaseContent.Content = main;
         }
         catch (Exception ex)
@@ -43,7 +58,7 @@ public partial class Base : UserControl
         try
         {
             //Формируем новую страницу авторизации
-            Authorization authorization = new();
+            Authorization authorization = new(_baseService);
 
             //Убираем отступы
             Padding = new(0, 0, 0, 0);
@@ -88,7 +103,7 @@ public partial class Base : UserControl
         try
         {
             //Формируем новую домашнюю страницу
-            Main main = new();
+            Main main = new(_baseService);
 
             //Меняем контент на странице на домашнюю страницу
             BaseContent.Content = main;

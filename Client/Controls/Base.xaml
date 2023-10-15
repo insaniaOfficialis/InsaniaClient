@@ -41,22 +41,23 @@
                 <RowDefinition Height="40px"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
-            <Button x:Name="HomeButton"
+            <Button x:Name="AdministratorButton"
                     Style="{StaticResource SytemButton}"
                     Grid.Column="2"
+                    Grid.Row="1"
+                    Visibility="Hidden"
+                    Click="AdministratorButton_Click">
+                <ContentControl>
+                    <Image Source="/Dependens/Images/administrator.png"/>
+                </ContentControl>
+            </Button>
+            <Button x:Name="HomeButton"
+                    Style="{StaticResource SytemButton}"
+                    Grid.Column="4"
                     Grid.Row="1"
                     Click="HomeButton_Click">
                 <ContentControl>
                     <Image Source="/Dependens/Images/home.png"/>
-                </ContentControl>
-            </Button>
-            <Button Style="{StaticResource SytemButton}"
-                    x:Name="AdministratorButton"
-                    Grid.Column="4"
-                    Grid.Row="1"
-                    Click="AdministratorButton_Click">
-                <ContentControl>
-                    <Image Source="/Dependens/Images/administrator.png"/>
                 </ContentControl>
             </Button>
             <Button x:Name="InformationArticleButton"

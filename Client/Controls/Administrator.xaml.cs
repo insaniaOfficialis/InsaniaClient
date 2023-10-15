@@ -20,7 +20,7 @@ public partial class Administrator : UserControl
     {
         try
         {
-            /*Инициализируем компоненты*/
+            //Инициализируем компоненты
             InitializeComponent();
         }
         catch (Exception ex)
@@ -38,27 +38,27 @@ public partial class Administrator : UserControl
     {
         try
         {
-            /*Определяем нажатый элемент как элемент списка*/
+            //Определяем нажатый элемент как элемент списка
             var element = sender as ListBoxItem;
 
-            /*Ищем наименование нажатого элемента*/
+            //Ищем наименование нажатого элемента
             switch (element.Name)
             {
                 case "RegistrationItem":
                     {
-                        /*Формируем страницу регистрации*/
+                        //Формируем страницу регистрации
                         Registration registration = new();
 
-                        /*Меняем контент элемента на странице на страницу регистрации*/
+                        //Меняем контент элемента на странице на страницу регистрации
                         Element.Content = registration;
                     }
                     break;
                 case "RolesItem":
                     {
-                        /*Формируем страницу ролей*/
+                        //Формируем страницу ролей
                         Roles roles = new();
 
-                        /*Меняем контент элемента на странице на страницу ролей*/
+                        //Меняем контент элемента на странице на страницу ролей
                         Element.Content = roles;
                     }
                     break;

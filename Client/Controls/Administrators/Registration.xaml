@@ -9,10 +9,9 @@
              Background="{StaticResource CustomBlack}">
     <Grid PreviewKeyDown="Enter">
         <Grid.RowDefinitions>
-            <RowDefinition Height="480px"></RowDefinition>
+            <RowDefinition Height="540px"></RowDefinition>
             <RowDefinition Height="50px"></RowDefinition>
             <RowDefinition Height="70px"></RowDefinition>
-            <RowDefinition Height="80px"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100px"></ColumnDefinition>
@@ -22,6 +21,8 @@
         </Grid.ColumnDefinitions>
         <Grid Grid.Row="0" Grid.Column="1">
             <Grid.RowDefinitions>
+                <RowDefinition Height="50px"></RowDefinition>
+                <RowDefinition Height="10px"></RowDefinition>
                 <RowDefinition Height="50px"></RowDefinition>
                 <RowDefinition Height="10px"></RowDefinition>
                 <RowDefinition Height="50px"></RowDefinition>
@@ -89,6 +90,11 @@
                       SelectedValuePath="Name"
                       Grid.Row="14"
                       Text="Роли"/>
+            <CheckBox x:Name="GenderRadioButton"
+                      Grid.Row="16"
+                      Content="Женский"
+                      Tag="Мужской"
+                      Style="{DynamicResource LightCheckBox}"/>
         </Grid>
         <StackPanel Grid.Column="2"
                     Grid.Row="0"

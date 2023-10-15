@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Client.Controls.Main"
+﻿<UserControl  x:Class="Client.Controls.Main"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -6,7 +6,8 @@
              mc:Ignorable="d"
              Height="853px"
              Width="1800px"
-             Background="{StaticResource CustomBlack}">
+             Background="{StaticResource CustomBlack}"
+             Loaded="UserControl_Loaded">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="720px"></ColumnDefinition>

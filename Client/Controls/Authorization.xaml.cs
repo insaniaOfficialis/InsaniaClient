@@ -1,4 +1,5 @@
 ﻿using Client.Models.Identification.Authorization.Response;
+using Client.Services.Base;
 using Microsoft.AspNetCore.WebUtilities;
 using Serilog;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -18,23 +20,20 @@ namespace Client.Controls;
 public partial class Authorization : UserControl
 {
     public ILogger _logger { get { return Log.ForContext<Authorization>(); } } //логгер для записи логов
-    readonly JsonSerializerOptions _jsonSettings = new(); //настройки десериализации json
+    public IBaseService _baseService; //базовый сервис
 
     /// <summary>
     /// Конструктор страницы авторизации
     /// </summary>
-    public Authorization()
+    public Authorization(IBaseService baseService)
     {
         try
         {
             //Инициализация компонентов
             InitializeComponent();
 
-            //Выставлыяем параметры десериализации
-            _jsonSettings.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-
-            //Проверяем соединения с api
-            CheckConnection();
+            //Получаем базовый сервис
+            _baseService = baseService;
         }
         catch(Exception ex)
         {
@@ -113,16 +112,14 @@ public partial class Authorization : UserControl
                 {
                     //Десериализуем ответ
                     var content = await result.Content.ReadAsStringAsync();
+                    AuthorizationResponse response = JsonSerializer.Deserialize<AuthorizationResponse>(content, _baseService.GetJsonSettings());
 
-                    AuthorizationResponse response = JsonSerializer.Deserialize<AuthorizationResponse>(content, _jsonSettings);
-
-                    //Если успешно, открываем основное окно и записываем в конфиг токен
+                    //Если успешно, записываем в конфиг токен, получаем права доступа и открываем основное окно
                     if (response.Success)
                     {
                         ConfigurationManager.AppSettings["Token"] = response.Token;
-
-                        Base main = new();
-
+                        var accessRights = await GetAccessRights();
+                        Base main = new(_baseService, accessRights);
                         Content = main;
                     }
                     else
@@ -247,57 +244,64 @@ public partial class Authorization : UserControl
     }
 
     /// <summary>
-    /// Метод проверки соединения с api
+    /// Событие загрузки окна
     /// </summary>
-    public async void CheckConnection()
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
         try
         {
-            //Блокируем все элементы
-            Username.IsEnabled = false;
-            Password.IsEnabled = false;
+            //Отключаем кнопку авторизации
             ButtonLogin.IsEnabled = false;
 
-            //Объявляем переменную ссылки запроса
-            string url = null;
-
-            try
-            {
-                //Если в конфиге есть данные для формирования ссылки запроса
-                if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"]))
-                {
-                    //Формируем ссылку запроса
-                    url = ConfigurationManager.AppSettings["DefaultConnection"];
-
-                    //Получаем данные по запросу
-                    using HttpClient client = new();
-
-                    using var result = await client.GetAsync(url);
-
-                    //Если получили успешный результат
-                    if (result != null && result.StatusCode == System.Net.HttpStatusCode.OK)
-                    {
-                        //Разблокируем все элементы
-                        Username.IsEnabled = true;
-                        Password.IsEnabled = true;
-                        ButtonLogin.IsEnabled = true;
-                    }
-                    //Иначе возвращаем ошибку
-                    else
-                        SetError("Сервер временно недоступен, попробуйте позднее или обратитесь в техническую поддержку", true);
-                }
-                //Иначе возвращаем ошибку
-                else
-                    SetError("Не указан адрес api. Обратитесь в техническую поддержку", true);
-            }
-            catch
-            {
-                SetError("Сервер временно недоступен, попробуйте позднее или обратитесь в техническую поддержку", true);
-            }
+            //Проверяем соединение
+            await _baseService.CheckConnection();
+            
+            //Включаем кнопку авторизации
+            ButtonLogin.IsEnabled = true;
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
             SetError(ex.Message, true);
+        }
+    }
+
+    /// <summary>
+    /// Метод получения прав доступа
+    /// </summary>
+    /// <returns></returns>
+    public async Task<List<string>> GetAccessRights()
+    {
+        try
+        {
+            //Получаем информацию о пользователе
+            var userInfo = await _baseService.GetUserInfo();
+
+            //Если получили информацию о пользователе
+            if (userInfo != null)
+            {
+                //Возвращаем список прав доступа
+                return userInfo.AccessRights;
+            }
+            //Иначе
+            else
+            {
+                //Отображаем ошибку
+                _baseService.SetError("Не удалось получить информацию о пользователе");
+
+                //Возвращаем пустоту
+                return null;
+            }
+        }
+        //В случае ошибки
+        catch (Exception ex)
+        {
+            //Логгируем ошибку
+            _logger.Error("Authorization. VisibleAdminButton. Ошибка: {0}", ex);
+
+            //Возвращаем пустоту
+            return null;
         }
     }
 }

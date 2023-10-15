@@ -1,4 +1,6 @@
 ﻿using Client.Controls;
+using Client.Models.Identification.Users.Response;
+using Client.Services.Base;
 using Serilog;
 using System;
 using System.Threading.Tasks;
@@ -13,6 +15,7 @@ namespace Client;
 public partial class MainWindow : Window
 {
     public ILogger _logger { get { return Log.ForContext<MainWindow>(); } } //логгер для записи логов
+    public IBaseService _baseService; //базовый сервис
 
     /// <summary>
     /// Конструктор главного окна
@@ -21,10 +24,13 @@ public partial class MainWindow : Window
     {
         try
         {
-            /*Инициализируем окно*/
+            //Инициализируем окно
             InitializeComponent();
 
-            /*Определяем действие для кнопки esc*/
+            //Формируем базовый сервис
+            _baseService = new BaseService();
+
+            //Определяем действие для кнопки esc
             PreviewKeyDown += new KeyEventHandler(Close);
         }
         catch(Exception ex)
@@ -40,9 +46,9 @@ public partial class MainWindow : Window
     {
         try
         {
-            /*Если нажата клавиша escape*/
+            //Если нажата клавиша escape
             if (e.Key == Key.Escape)
-                /*Закрываем окно*/
+                //Закрываем окно
                 Close();
         }
         catch (Exception ex)
@@ -58,13 +64,15 @@ public partial class MainWindow : Window
     {
         try
         {
-            /*Формируем окно авторизации*/
-            Authorization authorization = new();
+            //Формируем окно авторизации
+            Authorization authorization = new(_baseService);
 
-            /*Делаем паузу*/
-            await Task.Delay(1000);
+            //Делаем паузу
+            var stop = Task.Delay(1000);
 
-            /*Меняем контент*/
+            await Task.WhenAll(stop);
+
+            //Меняем контент
             Content = authorization;
         }
         catch (Exception ex)
@@ -82,13 +90,13 @@ public partial class MainWindow : Window
     {
         try
         {
-            /*Формируем стартовое окно*/
+            //Формируем стартовое окно
             Screensaver screensaver = new Screensaver();
 
-            /*Меняем контент*/
+            //Меняем контент
             Content = screensaver;
 
-            /*Отображаем страницу авторизации*/
+            //Отображаем страницу авторизации
             await ShowAuthoriztion();
         }
         catch (Exception ex)

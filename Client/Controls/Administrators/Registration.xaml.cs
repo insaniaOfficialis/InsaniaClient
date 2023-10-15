@@ -90,7 +90,6 @@ public partial class Registration : UserControl
 
                 //Формируем клиента и добавляем токен
                 using HttpClient client = new();
-
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["Token"]);
 
                 //Получаем данные по запросу
@@ -267,7 +266,8 @@ public partial class Registration : UserControl
                 Roles.SelectedValue.ToString()
             };
 
-            AddUserRequest request = new(Username.Text, Password.Text, Email.Text, PhoneNumber.Text, LastName.Text, FirstName.Text, Patronymic.Text, roles);
+            AddUserRequest request = new(Username.Text, Password.Text, Email.Text, PhoneNumber.Text, LastName.Text,
+                FirstName.Text, Patronymic.Text, GenderRadioButton.IsChecked ?? false, roles);
 
             //Если в конфиге есть данные для формирования ссылки запроса
             if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
@@ -276,13 +276,15 @@ public partial class Registration : UserControl
                 && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Token"]))
             {
                 //Формируем ссылку запроса
-                string url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
-                    ConfigurationManager.AppSettings["Registration"] + "add";
+                string url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] 
+                    + ConfigurationManager.AppSettings["Registration"] + "add";
 
                 //Формируем клиента, добавляем ему токен и тело запроса
                 using HttpClient client = new();
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["Token"]);
-                StringContent stringCintent = new(JsonSerializer.Serialize(request, _settings).ToString(), Encoding.UTF8, "application/json");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                    ConfigurationManager.AppSettings["Token"]);
+                StringContent stringCintent = new(JsonSerializer.Serialize(request, _settings).ToString(),
+                    Encoding.UTF8, "application/json");
 
                 //Получаем результат запроса
                 using var result = await client.PostAsync(url, stringCintent);
@@ -323,7 +325,7 @@ public partial class Registration : UserControl
                         {
                             //Формируем ссылку запроса
                             url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
-                                ConfigurationManager.AppSettings["Files"] + "add/User/" + response.Id;
+                                ConfigurationManager.AppSettings["Files"] + "add/Pol'zovatel'/" + response.Id;
 
                             //Формируем клиента и добавляем токен доступа
                             using HttpClient clientFile = new();
@@ -354,6 +356,7 @@ public partial class Registration : UserControl
                                     Roles.Text = "Роли";
                                     ImageLoad.Source = null;
                                     ImageLoad.IsEnabled = false;
+                                    GenderRadioButton.IsChecked = false;
 
                                     Message message = new("Успешно");
 
@@ -386,7 +389,7 @@ public partial class Registration : UserControl
         }
         catch(Exception ex)
         {
-            SetError("Не удалось зарегистрировать полоьзователя. Обратитесь в техническую поддержку", true);
+            SetError("Не удалось зарегистрировать пользователя. Обратитесь в техническую поддержку", true);
             _logger.Error("Registration. ButtonSave_Click. Ошибка: {0}", ex);
         }
     }

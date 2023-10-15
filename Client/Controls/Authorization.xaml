@@ -6,7 +6,8 @@
              mc:Ignorable="d"
              Height="1080px"
              Width="1920px"
-             Background="{StaticResource CustomBlack}">
+             Background="{StaticResource CustomBlack}"
+             Loaded="UserControl_Loaded">
     <Grid PreviewKeyDown="Enter">
         <Grid.RowDefinitions>
             <RowDefinition Height="320px"></RowDefinition>

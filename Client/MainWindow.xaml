@@ -12,5 +12,6 @@
         Background="#FF2B2B2B"
         Loaded="Window_Loaded">
     <Grid Margin="60,0,60,51">
+        <TextBlock x:Name="ErrorText"/>
     </Grid>
 </Window>

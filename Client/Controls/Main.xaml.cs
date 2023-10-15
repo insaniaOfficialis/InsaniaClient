@@ -1,15 +1,15 @@
-﻿using Client.Controls.Administrators;
-using Client.Models.MainWindow;
+﻿using Client.Models.MainWindow;
+using Client.Services.Base;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
-using System.Xml.Linq;
 
 namespace Client.Controls;
 
@@ -19,22 +19,20 @@ namespace Client.Controls;
 public partial class Main : UserControl
 {
     public ILogger _logger { get { return Log.ForContext<Main>(); } } //логгер для записи логов
+    public IBaseService _baseService;
 
     /// <summary>
     /// Конструктор главной страницы
     /// </summary>
-    public Main()
+    public Main(IBaseService baseService)
     {
         try
         {
-            /*Инициализируем компоненты*/
+            //Инициализируем компоненты
             InitializeComponent();
 
-            /*Получаем новости*/
-            GetNews();
-
-            /*Получаем изображение*/
-            GetLogo();
+            //Формируем новый базовый сервис
+            _baseService = baseService;
         }
         catch(Exception ex)
         {
@@ -51,13 +49,13 @@ public partial class Main : UserControl
     {
         try
         {
-            /*Получаем элемент*/
+            //Получаем элемент
             var element = sender as FrameworkElement;
 
-            /*Формируем новый конвертер цветов*/
+            //Формируем новый конвертер цветов
             var bc = new BrushConverter();
 
-            /*Определяем наведенный элемент и в зависимости от него устанавливаем новый цвет*/
+            //Определяем наведенный элемент и в зависимости от него устанавливаем новый цвет
             switch (element.Name)
             {
                 case "Label1": Polygon1.Fill = (Brush)bc.ConvertFrom("#696969"); break;
@@ -84,13 +82,13 @@ public partial class Main : UserControl
     {
         try
         {
-            /*Получаем элемент*/
+            //Получаем элемент
             var element = sender as FrameworkElement;
 
-            /*Формируем новый конвертер цветов*/
+            //Формируем новый конвертер цветов
             var bc = new BrushConverter();
 
-            /*Определяем наведенный элемент и в зависимости от него устанавливаем новый цвет*/
+            //Определяем наведенный элемент и в зависимости от него устанавливаем новый цвет
             switch (element.Name)
             {
                 case "Label1": Polygon1.Fill = (Brush)bc.ConvertFrom("#4D4D4D"); break;
@@ -109,54 +107,6 @@ public partial class Main : UserControl
     }
 
     /// <summary>
-    /// Метод получения новостей
-    /// </summary>
-    private void GetNews()
-    {
-        try
-        {
-            /*Формируем новый список новостей*/
-            List<ShortNew> list = new();
-
-            /*Создаём подключение*/
-            /*using (SqlConnection connection = new(connectionString))
-            {
-                await connection.OpenAsync();
-
-                if (connection.State == ConnectionState.Open)
-                {
-                    string sqlExpression = "SELECT * FROM rNews WHERE isShow = 1 ORDER BY dateCreate DESC";
-
-                    SqlCommand command = new(sqlExpression, connection);
-                    SqlDataReader reader = command.ExecuteReader();
-
-                    if (reader.HasRows)
-                    {
-                        while (reader.Read())
-                        {
-                            ShortNew shortNew = new()
-                            {
-                                Id = (Guid)reader["id"],
-                                Title = (string)reader["title"],
-                                ShortBody = (string)reader["shortBody"]
-                            };
-
-                            list.Add(shortNew);
-                        }
-                    }
-                }
-            }*/
-
-            /*Добавляем новостям источник в виде листа*/
-            //News.ItemsSource = list;
-        }
-        catch (Exception ex)
-        {
-            _logger.Error("Main. GetNews. Ошибка: {0}", ex);
-        }
-    }
-
-    /// <summary>
     /// События нажатия на пункт меню "Калькуляторы"
     /// </summary>
     /// <param name="sender"></param>
@@ -165,14 +115,14 @@ public partial class Main : UserControl
     {
         try
         {
-            /*Формируем новое окно калькулятора*/
+            //Формируем новое окно калькулятора
             Calculator calculator = new();
 
-            /*Убираем отступы*/
-            Padding = new(0, 0, 0, 0);
+            //Убираем отступы
+            base.Padding = new(0, 0, 0, 0);
 
-            /*Заменяем контент*/
-            Content = calculator;
+            //Заменяем контент
+            base.Content = calculator;
         }
         catch (Exception ex)
         {
@@ -189,47 +139,18 @@ public partial class Main : UserControl
     {
         try
         {
-            /*Формируем новое окно калькулятора*/
+            //Формируем новое окно калькулятора
             Generator generator = new();
 
-            /*Убираем отступы*/
-            Padding = new(0, 0, 0, 0);
+            //Убираем отступы
+            base.Padding = new(0, 0, 0, 0);
 
-            /*Заменяем контент*/
-            Content = generator;
+            //Заменяем контент
+            base.Content = generator;
         }
         catch (Exception ex)
         {
             _logger.Error("Main. Polygon5_MouseLeftButtonDown. Ошибка: {0}", ex);
-        }
-    }
-
-    /// <summary>
-    /// Метод получения изображения пользователя
-    /// </summary>
-    private void GetLogo()
-    {
-        try
-        {
-            /*Записываем путь изображения*/
-            //LogoImage.Source = ImageSourceValueSerializer(@"I:\\Files\System\afe36d54-028a-4b44-934e-39841aac59bb\Alv.png");
-
-            /*Создаём анимацию*/
-            DoubleAnimation animation = new()
-            {
-                From = 0.4,
-                To = 0.6,
-                AutoReverse = true,
-                Duration = TimeSpan.FromSeconds(3),
-                RepeatBehavior = RepeatBehavior.Forever,
-            };
-
-            /*Запускаем анимацию*/
-            LogoImage.BeginAnimation(UIElement.OpacityProperty, animation);
-        }
-        catch (Exception ex)
-        {
-            _logger.Error("Main. GetLogo. Ошибка: {0}", ex);
         }
     }
 
@@ -242,25 +163,25 @@ public partial class Main : UserControl
     {
         try
         {
-            /*Убираем отступы*/
-            Padding = new(0, 0, 0, 0);
+            //Убираем отступы
+            base.Padding = new(0, 0, 0, 0);
 
-            /*Определяем нажатый элемент как полигон*/
+            //Определяем нажатый элемент как полигон
             var elementPolygon = sender as Polygon;
             var elementLabel = sender as Label;
 
             if (elementPolygon != null)
             {
-                /*Ищем наименование нажатого элемента*/
+                //Ищем наименование нажатого элемента
                 switch (elementPolygon.Name)
                 {
                     case "StatisticsPolygon":
                         {
-                            /*Формируем страницу статистики*/
+                            //Формируем страницу статистики
                             Statistic statistic = new();
 
-                            /*Меняем контент элемента на странице на страницу статистики*/
-                            Content = statistic;
+                            //Меняем контент элемента на странице на страницу статистики
+                            base.Content = statistic;
                         }
                         break;
                     default:
@@ -271,16 +192,16 @@ public partial class Main : UserControl
             {
                 if (elementLabel != null)
                 {
-                    /*Ищем наименование нажатого элемента*/
+                    //Ищем наименование нажатого элемента
                     switch (elementLabel.Name)
                     {
                         case "StatisticsLabel":
                             {
-                                /*Формируем страницу статистики*/
+                                //Формируем страницу статистики
                                 Statistic statistic = new();
 
-                                /*Меняем контент элемента на странице на страницу статистики*/
-                                Content = statistic;
+                                //Меняем контент элемента на странице на страницу статистики
+                                base.Content = statistic;
                             }
                             break;
                         default:
@@ -297,4 +218,73 @@ public partial class Main : UserControl
         }
     }
 
+    /// <summary>
+    /// Метод получения новостей
+    /// </summary>
+    private async Task GetNews()
+    {
+        try
+        {
+            //Формируем новый список новостей
+            List<ShortNew> list = new();
+
+            //Добавляем новостям источник в виде листа
+            //News.ItemsSource = list;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Main. GetNews. Ошибка: {0}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Метод получения изображения пользователя
+    /// </summary>
+    private async Task GetLogo()
+    {
+        try
+        {
+            //Записываем путь изображения
+            //LogoImage.Source = ImageSourceValueSerializer(@"I:\\Files\System\afe36d54-028a-4b44-934e-39841aac59bb\Alv.png");
+
+            //Создаём анимацию
+            DoubleAnimation animation = new()
+            {
+                From = 0.4,
+                To = 0.6,
+                AutoReverse = true,
+                Duration = TimeSpan.FromSeconds(3),
+                RepeatBehavior = RepeatBehavior.Forever,
+            };
+
+            //Запускаем анимацию
+            LogoImage.BeginAnimation(UIElement.OpacityProperty, animation);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Main. GetLogo. Ошибка: {0}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Метод загрузки страницы
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <returns></returns>
+    private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            //Получаем основные данные
+            var connection = _baseService.CheckConnection();
+            var news = GetNews();
+            var logo = GetLogo();
+            await Task.WhenAll(news, logo, connection);
+        }
+        catch (Exception ex)
+        {
+            _baseService.SetError(ex.Message);
+        }
+    }
 }

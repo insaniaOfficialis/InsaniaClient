@@ -140,7 +140,7 @@ public partial class Main : UserControl
         try
         {
             //Формируем новое окно калькулятора
-            Generator generator = new();
+            Generator generator = new(_baseService);
 
             //Убираем отступы
             base.Padding = new(0, 0, 0, 0);

@@ -1,4 +1,5 @@
 ﻿using Client.Controls.Generators;
+using Client.Services.Base;
 using Serilog;
 using System;
 using System.Windows.Controls;
@@ -12,16 +13,23 @@ namespace Client.Controls;
 public partial class Generator : UserControl
 {
     public ILogger _logger { get { return Log.ForContext<Generator>(); } } //сервис для записи логов
+    public IBaseService _baseService; //базовый сервис
 
     /// <summary>
     /// Конструктор страницы администраторской части
     /// </summary>
-    public Generator()
+    public Generator(IBaseService baseService)
     {
         try
         {
             //Инициализируем компоненты
             InitializeComponent();
+
+            //Получаем базовый сервис
+            _baseService = baseService;
+
+            //Проверяем доступность api
+            _baseService.CheckConnection();
         }
         catch (Exception ex)
         {
@@ -65,7 +73,7 @@ public partial class Generator : UserControl
                 case "GeneratorCreatePersonalNameItem":
                     {
                         //Формируем страницу генерации создания личных имён
-                        GeneratorCreatePersonalName generatorCreatePersonalName = new();
+                        GeneratorCreatePersonalName generatorCreatePersonalName = new(_baseService);
 
                         //Меняем контент элемента на странице на страницу генерации создания личных имён
                         Element.Content = generatorCreatePersonalName;

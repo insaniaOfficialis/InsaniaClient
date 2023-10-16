@@ -55,7 +55,14 @@
                       Text="Нации"
                       IsEnabled="False"
                       SelectionChanged="NationsComboBox_SelectionChanged"/>
-            <StackPanel Grid.Row="4" Orientation="Horizontal">
+            <CheckBox x:Name="GenderRadioButton"
+                      Grid.Row="4"
+                      Content="Женское"
+                      Tag="Мужское"
+                      IsEnabled="False"
+                      Style="{DynamicResource LightCheckBox}"
+                      Click="GenderRadioButton_Click"/>
+            <StackPanel Grid.Row="6" Orientation="Horizontal">
                 <ComboBox x:Name="StartComboBox"
                           Style="{StaticResource LightComboBox}"
                           ItemContainerStyle="{StaticResource LightComboBoxItem}"
@@ -69,16 +76,11 @@
                           Style="{StaticResource LightComboBox}"
                           ItemContainerStyle="{StaticResource LightComboBoxItem}"
                           DisplayMemberPath="Name"
-                          SelectedValuePath="Id"
+                          SelectedValuePath="Name"
                           Width="225px"
                           IsEnabled="False"
                           Text="Окончание"/>
             </StackPanel>
-            <CheckBox x:Name="GenderRadioButton"
-                      Grid.Row="6"
-                      Content="Женское"
-                      Tag="Мужское"
-                      Style="{DynamicResource LightCheckBox}"/>
         </Grid>
         <ContentControl x:Name="LoadCircleContentControl"
                         Visibility="Collapsed"
@@ -105,7 +107,8 @@
                 Height="60px"
                 Width="400px"
                 IsEnabled="False"
-                Content="Сгенерировать"/>
+                Content="Сгенерировать"
+                Click="GenerateButton_Click"/>
         <Button x:Name="SaveButton"
                 Style="{StaticResource LightButton}"
                 Grid.Row="2"
@@ -113,6 +116,7 @@
                 Height="60px"
                 Width="400px"
                 Visibility="Hidden"
-                Content="Сохранить"/>
+                Content="Сохранить"
+                Click="SaveButton_Click"/>
     </Grid>
 </UserControl>

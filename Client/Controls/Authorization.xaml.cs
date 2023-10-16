@@ -112,7 +112,8 @@ public partial class Authorization : UserControl
                 {
                     //Десериализуем ответ
                     var content = await result.Content.ReadAsStringAsync();
-                    AuthorizationResponse response = JsonSerializer.Deserialize<AuthorizationResponse>(content, _baseService.GetJsonSettings());
+                    AuthorizationResponse response = JsonSerializer
+                        .Deserialize<AuthorizationResponse>(content, _baseService.GetJsonSettings());
 
                     //Если успешно, записываем в конфиг токен, получаем права доступа и открываем основное окно
                     if (response.Success)

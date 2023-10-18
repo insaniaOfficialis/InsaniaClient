@@ -1,4 +1,5 @@
 ﻿using Client.Controls.Administrators;
+using Client.Services.Base;
 using Serilog;
 using System;
 using System.Windows.Controls;
@@ -12,16 +13,23 @@ namespace Client.Controls;
 public partial class Administrator : UserControl
 {
     public ILogger _logger { get { return Log.ForContext<Administrator>(); } } //логгер для записи логов
+    public IBaseService _baseService; //базовый сервис
 
     /// <summary>
     /// Конструктор страницы администраторской части
     /// </summary>
-    public Administrator()
+    public Administrator(IBaseService baseService)
     {
         try
         {
             //Инициализируем компоненты
             InitializeComponent();
+
+            //Получаем базовый сервис
+            _baseService = baseService;
+
+            //Проверяем доступность api
+            _baseService.CheckConnection();
         }
         catch (Exception ex)
         {
@@ -60,6 +68,15 @@ public partial class Administrator : UserControl
 
                         //Меняем контент элемента на странице на страницу ролей
                         Element.Content = roles;
+                    }
+                    break;
+                case "CreatePersonalName":
+                    {
+                        //Формируем страницу создания имени
+                        CreatePersonalName page = new(_baseService);
+
+                        //Меняем контент элемента на странице на страницу создания имени
+                        Element.Content = page;
                     }
                     break;
             }

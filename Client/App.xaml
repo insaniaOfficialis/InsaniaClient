@@ -846,5 +846,17 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        
+        <!--КАЛЕНДАРИ-->
+        
+        <!--Светлый календарь-->
+        <Style x:Key="LightDatePickerStyle" TargetType="{x:Type DatePicker}">
+            <!--Значения по умолчанию-->
+            <Setter Property="Background" Value="{StaticResource CustomWhite}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource CustomWhite}"/>
+            <Setter Property="Foreground" Value="{StaticResource CustomSilver}"/>
+            <Setter Property="FontFamily" Value="Georgia"/>
+            <Setter Property="FontSize" Value="15px"/>
+        </Style>
     </Application.Resources>
 </Application>

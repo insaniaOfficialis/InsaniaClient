@@ -82,7 +82,7 @@ public partial class Base : UserControl
         try
         {
             //Формируем новую страницуи администрирования
-            Administrator administrator = new();
+            Administrator administrator = new(_baseService);
 
             //Меняем контент на странице на страницу администрирования
             BaseContent.Content = administrator;

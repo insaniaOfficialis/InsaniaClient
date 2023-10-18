@@ -30,6 +30,16 @@
                              Content="Роли"
                              Height="60px"
                              MouseLeftButtonUp="Element_MouseLeftButtonUp"/>
+                <ListBoxItem x:Name="LogsItem"
+                             Style="{StaticResource DarkListItem}"
+                             Content="Логи"
+                             Height="60px"
+                             MouseLeftButtonUp="Element_MouseLeftButtonUp"/>
+                <ListBoxItem x:Name="CreatePersonalName"
+                             Style="{StaticResource DarkListItem}"
+                             Content="Добавление имени"
+                             Height="60px"
+                             MouseLeftButtonUp="Element_MouseLeftButtonUp"/>
             </ListBox>
         </StackPanel>
         <ContentControl Grid.Column="1"

@@ -322,6 +322,12 @@
     <Compile Include="Controls\Administrator.xaml.cs">
       <DependentUpon>Administrator.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Administrators\CreatePersonalName.xaml.cs">
+      <DependentUpon>CreatePersonalName.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Administrators\Logs.xaml.cs">
+      <DependentUpon>Logs.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Administrators\Roles.xaml.cs">
       <DependentUpon>Roles.xaml</DependentUpon>
     </Compile>
@@ -386,6 +392,14 @@
     <Compile Include="Models\MainWindow\ShortNew.cs" />
     <Compile Include="Services\Base\BaseService.cs" />
     <Compile Include="Services\Base\IBaseService.cs" />
+    <Page Include="Controls\Administrators\CreatePersonalName.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Administrators\Logs.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Administrators\Roles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

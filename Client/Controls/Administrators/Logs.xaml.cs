@@ -1,28 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using Client.Services.Base;
+using Serilog;
+using System;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-namespace Client.Controls.Administrators
+namespace Client.Controls.Administrators;
+
+/// <summary>
+/// Логика взаимодействия для Logs.xaml
+/// </summary>
+public partial class Logs : UserControl
 {
+    public ILogger _logger { get { return Log.ForContext<Logs>(); } } //интиерфейс для записи логов
+    public IBaseService _baseService; //базовый сервис
+
     /// <summary>
-    /// Логика взаимодействия для Logs.xaml
+    /// Конструктор страницы логов
     /// </summary>
-    public partial class Logs : UserControl
+    public Logs(IBaseService baseService)
     {
-        public Logs()
+        try
         {
+            //Инициализируем компоненты
             InitializeComponent();
+
+            //Получаем базовый сервис
+            _baseService = baseService;
+
+            //Проверяем доступность api
+            _baseService.CheckConnection();
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Logs. Ошибка: {0}", ex);
         }
     }
 }

@@ -17,16 +17,16 @@
         <Grid VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="50px"/>
-                <ColumnDefinition Width="500px"/>
+                <ColumnDefinition Width="300px"/>
                 <ColumnDefinition Width="50px"/>
                 <ColumnDefinition Width="50px"/>
                 <ColumnDefinition Width="250px"/>
                 <ColumnDefinition Width="50px"/>
-                <ColumnDefinition Width="75px"/>
-                <ColumnDefinition Width="100px"/>
                 <ColumnDefinition Width="50px"/>
-                <ColumnDefinition Width="75px"/>
-                <ColumnDefinition Width="100px"/>
+                <ColumnDefinition Width="200px"/>
+                <ColumnDefinition Width="50px"/>
+                <ColumnDefinition Width="50px"/>
+                <ColumnDefinition Width="200px"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -65,18 +65,25 @@
                        Grid.Column="6"
                        Grid.Row="1"
                        VerticalAlignment="Center"
-                       Text="От: "/>
+                       Text="От:"/>
             <DatePicker x:Name="FromDatePicker"
+                        Style="{DynamicResource LightDatePickerStyle}"
+                        CalendarStyle="{DynamicResource LightCalendar}"
                         Grid.Column="7"
                         Grid.Row="1"
-                        Language="Russian"
                         VerticalAlignment="Center"/>
             <TextBlock x:Name="ToTextBlock"
                        Style="{DynamicResource LightTextBlock}"
                        Grid.Column="9"
                        Grid.Row="1"
                        VerticalAlignment="Center"
-                       Text="До: "/>
+                       Text="До:"/>
+            <DatePicker x:Name="ToDatePicker"
+                        Style="{DynamicResource LightDatePickerStyle}"
+                        CalendarStyle="{DynamicResource LightCalendar}"
+                        Grid.Column="10"
+                        Grid.Row="1"
+                        VerticalAlignment="Center"/>
         </Grid>
         <DataGrid x:Name="LogsDataGrid"
                   Style="{DynamicResource LightDataGridStyle}"

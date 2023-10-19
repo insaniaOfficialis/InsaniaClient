@@ -79,6 +79,15 @@ public partial class Administrator : UserControl
                         Element.Content = page;
                     }
                     break;
+                case "LogsItem":
+                    {
+                        //Формируем страницу логов
+                        Logs page = new(_baseService);
+
+                        //Меняем контент элемента на странице на страницу логов
+                        Element.Content = page;
+                    }
+                    break;
             }
         }
         catch (Exception ex)

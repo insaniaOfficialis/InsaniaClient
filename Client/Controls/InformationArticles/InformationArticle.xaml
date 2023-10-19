@@ -59,8 +59,8 @@
             </ContentControl>
         </Button>
         <Button x:Name="GoNextButton"
-                    Style="{DynamicResource TransparentButton}"
-                    Grid.Column="4">
+                Style="{DynamicResource TransparentButton}"
+                Grid.Column="4">
             <ContentControl>
                 <Image Source="/Dependens/Images/more_then.png"/>
             </ContentControl>

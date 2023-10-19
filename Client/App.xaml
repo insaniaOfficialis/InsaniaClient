@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        
-        
+
         <!--ЦВЕТА-->
 
         <SolidColorBrush x:Key="CustomGrey" Color="#FF4D4D4D"/>
@@ -12,14 +11,14 @@
         <SolidColorBrush x:Key="CustomTransparentSilver" Color="#44969696"/>
         <SolidColorBrush x:Key="CustomWhite" Color="#FFFFFFFF"/>
         <SolidColorBrush x:Key="CustomSilver" Color="#FF969696"/>
+        <SolidColorBrush x:Key="CustomSilverRgb" Color="#969"/>
         <SolidColorBrush x:Key="CustomLightSilver" Color="#FFD9D9D9"/>
         <SolidColorBrush x:Key="OriginalSilver" Color="Silver"/>
         <SolidColorBrush x:Key="CustomGold" Color="#FFFF8200"/>
         <SolidColorBrush x:Key="CustomRed" Color="#FFFF0000"/>
 
-
         <!--КНОПКИ-->
-        
+
         <!--Системные кнопки-->
         <Style x:Key="SytemButton" TargetType="Button">
             <!--Значения по умолчанию-->
@@ -343,10 +342,109 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-
+        <!--Светлая кнопка дней календаря-->
+        <Style x:Key="LightCalendarDayButtonStyle" TargetType="{x:Type CalendarDayButton}">
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Background" Value="{StaticResource CustomWhite}" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="FontSize" Value="15px"/>
+            <Setter Property="FontFamily" Value="Georgia"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CalendarDayButton}">
+                        <Grid x:Name="Grid" Margin="{TemplateBinding Margin}">
+                            <Border x:Name="Bg"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="3"
+                                    Margin="1"
+                                    BorderThickness="1"
+                                    BorderBrush="{x:Null}"/>
+                            <ContentPresenter x:Name="NormalText"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              Margin="5,2,5,2"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              TextElement.Foreground="{StaticResource CustomSilver}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="{StaticResource CustomLightSilver}" TargetName="Bg"></Setter>
+                                <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}" TargetName="Bg"></Setter>
+                                <Setter Property="TextElement.Foreground" Value="{StaticResource CustomSilver}" TargetName="NormalText"/>
+                            </Trigger>
+                            <Trigger Property="IsToday" Value="True">
+                                <Setter Property="Background" Value="{StaticResource CustomLightSilver}" TargetName="Bg"></Setter>
+                                <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}" TargetName="Bg"></Setter>
+                                <Setter Property="TextElement.Foreground" Value="{StaticResource CustomSilver}" TargetName="NormalText"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource CustomLightSilver}" TargetName="Bg"></Setter>
+                                <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}" TargetName="Bg"></Setter>
+                                <Setter Property="TextElement.Foreground" Value="{StaticResource CustomSilver}" TargetName="NormalText"/>
+                            </Trigger>
+                            <Trigger Property="IsBlackedOut" Value="True">
+                                <Setter Property="Opacity" Value="0.4" TargetName="Grid"></Setter>
+                            </Trigger>
+                            <Trigger Property="IsInactive" Value="True">
+                                <Setter Property="Opacity" Value="0.4" TargetName="Grid"></Setter>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.4" TargetName="Grid"></Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--Светлая кнопка календаря-->
+        <Style x:Key="LightCalendarButtonStyle" TargetType="{x:Type CalendarButton}">
+            <Setter Property="Background" Value="{StaticResource CustomLightSilver}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="15px"/>
+            <Setter Property="FontFamily" Value="Georgia"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CalendarButton}">
+                        <Grid x:Name="Grid" Margin="{TemplateBinding Margin}">
+                            <Border x:Name="Bg"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="3"
+                                    Margin="1"
+                                    BorderThickness="1"
+                                    BorderBrush="{x:Null}"/>
+                            <ContentPresenter x:Name="NormalText"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              Margin="5,2,5,2"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              TextElement.Foreground="{StaticResource CustomSilver}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="Background" Value="{StaticResource CustomLightSilver}" TargetName="Bg"></Setter>
+                                <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}" TargetName="Bg"></Setter>
+                                <Setter Property="TextElement.Foreground" Value="{StaticResource CustomSilver}" TargetName="NormalText"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource CustomLightSilver}" TargetName="Bg"></Setter>
+                                <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}" TargetName="Bg"></Setter>
+                                <Setter Property="TextElement.Foreground" Value="{StaticResource CustomSilver}" TargetName="NormalText"/>
+                            </Trigger>
+                            <Trigger Property="IsInactive" Value="True">
+                                <Setter Property="Opacity" Value="0.4" TargetName="Grid"></Setter>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.4" TargetName="Grid"></Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <!--ПОЛЯ ВВОДА-->
-        
+
         <!--Светлые поля ввода-->
         <Style x:Key="LightTextBox" TargetType="{x:Type TextBox}">
             <!--Значения по умолчанию-->
@@ -517,7 +615,24 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-
+        <!--Ствелое поле ввода календаря-->
+        <Style x:Key="LightDatePickerTextBoxStyle" TargetType="{x:Type DatePickerTextBox}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DatePickerTextBox}">
+                        <TextBox BorderThickness="0"
+                                 Text="{Binding Path=SelectedDate, StringFormat='dd.MM.yyyy', RelativeSource={RelativeSource AncestorType=DatePicker}}"
+                                 Foreground="{StaticResource CustomSilver}"
+                                 FontFamily="Georgia"
+                                 FontSize="20px"
+                                 SelectionBrush="{StaticResource CustomGrey}"
+                                 VerticalContentAlignment="Center"
+                                 Padding="5,0,5,0"
+                                 Background="{x:Null}" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <!--СПИСКИ-->
 
@@ -666,9 +781,8 @@
             </Style.Triggers>
         </Style>
 
-        
         <!--НАДПИСИ-->
-        
+
         <!--Внутренние исключения-->
         <Style x:Key="InnerExceptionTextBlock"
                TargetType="{x:Type TextBlock}">
@@ -846,17 +960,310 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        
+
         <!--КАЛЕНДАРИ-->
-        
-        <!--Светлый календарь-->
+
+        <!--Светлый выбор даты-->
         <Style x:Key="LightDatePickerStyle" TargetType="{x:Type DatePicker}">
             <!--Значения по умолчанию-->
-            <Setter Property="Background" Value="{StaticResource CustomWhite}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource CustomWhite}"/>
             <Setter Property="Foreground" Value="{StaticResource CustomSilver}"/>
-            <Setter Property="FontFamily" Value="Georgia"/>
-            <Setter Property="FontSize" Value="15px"/>
+            <Setter Property="IsTodayHighlighted" Value="True"/>
+            <Setter Property="SelectedDateFormat" Value="Short"/>
+            <Setter Property="Background" Value="{StaticResource CustomWhite}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DatePicker}">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}"
+                                Padding="{TemplateBinding Padding}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0"
+                                                             To="1"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             Storyboard.TargetName="PART_DisabledVisual"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid x:Name="PART_Root"
+                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalAlignment="Stretch"
+                                  Margin="0,0,0,0" >
+                                <Grid.Resources>
+                                    <ControlTemplate x:Key="DropDownButtonTemplate" TargetType="{x:Type Button}">
+                                        <Grid Background="{StaticResource CustomGrey}"
+                                              FlowDirection="LeftToRight"
+                                              HorizontalAlignment="Center"
+                                              Margin="0"
+                                              VerticalAlignment="Center"
+                                              Width="32"
+                                              Height="32">
+                                            <Path Fill="{StaticResource CustomSilver}"
+                                                  HorizontalAlignment="Center"
+                                                  Stretch="Fill"
+                                                  VerticalAlignment="Center"
+                                                  Data="M 890.127 145.672 h -43.389 V 132.78 c 0 -38.644 -31.466 -70.234 -69.922 -70.234 h -1.032 c -38.458 0 -69.922 31.59 -69.922 70.234 v 12.892 h -386.7 V 132.78 c 0 -38.644 -31.465 -70.234 -69.922 -70.234 h -1.063 c -38.457 0 -69.923 31.59 -69.923 70.234 v 12.892 h -43.296 c -38.458 0 -69.923 31.622 -69.923 70.207 v 671.446 c 0 38.644 31.466 70.236 69.923 70.236 h 755.17 c 38.458 0 69.922 -31.592 69.922 -70.236 V 215.879 c 0 -38.585 -31.464 -70.207 -69.923 -70.207 Z M 733.83 132.78 c 0 -23.222 18.793 -42.139 41.954 -42.139 h 1.032 c 23.13 0 41.954 18.918 41.954 42.139 v 124.927 c 0 23.224 -18.824 42.14 -41.954 42.14 h -1.032 c -23.161 0 -41.954 -18.916 -41.954 -42.14 V 132.779 Z m -527.607 0 c 0 -23.222 18.793 -42.139 41.955 -42.139 h 1.063 c 23.098 0 41.954 18.918 41.954 42.139 v 124.927 c 0 23.224 -18.856 42.14 -41.954 42.14 h -1.063 c -23.162 0 -41.955 -18.916 -41.955 -42.14 V 132.779 Z m 683.904 768.626 H 134.958 c -7.585 0 -13.985 -6.525 -13.985 -14.08 V 393.649 h 783.138 v 493.676 c 0 7.555 -6.399 14.08 -13.984 14.08 Z" />
+                                            <Path Fill="{StaticResource CustomSilver}"
+                                                  Margin="7"
+                                                  HorizontalAlignment="Center"
+                                                  Stretch="Fill"
+                                                  VerticalAlignment="Center"
+                                                  Data="M 223.755 494.2 H 352.78 v 63.488 H 223.755 V 494.2 Z M 449.035 494.2 h 128 v 63.488 h -128 V 494.2 Z M 673.291 494.2 h 125.952 v 63.488 H 673.291 V 494.2 Z M 223.755 623.224 H 352.78 v 62.464 H 223.755 v -62.464 Z M 449.035 623.224 h 128 v 62.464 h -128 v -62.464 Z M 673.291 623.224 h 125.952 v 62.464 H 673.291 v -62.464 Z M 223.755 749.176 H 352.78 v 65.536 H 223.755 v -65.536 Z M 449.035 749.176 h 128 v 65.536 h -128 v -65.536 Z M 673.291 749.176 h 125.952 v 65.536 H 673.291 v -65.536 Z" StrokeThickness="2"/>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Grid.Resources>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Button x:Name="PART_Button"
+                                        Grid.Column="1"
+                                        Foreground="{TemplateBinding Foreground}"
+                                        Focusable="False"
+                                        HorizontalAlignment="Left"
+                                        Margin="3,0,3,0"
+                                        Grid.Row="0"
+                                        Template="{StaticResource DropDownButtonTemplate}"
+                                        VerticalAlignment="Center"
+                                        Width="30"/>
+                                <DatePickerTextBox x:Name="PART_TextBox"
+                                                   Grid.Column="0"
+                                                   Foreground="{TemplateBinding Foreground}"
+                                                   Focusable="{TemplateBinding Focusable}"
+                                                   HorizontalContentAlignment="Stretch"
+                                                   Grid.Row="0"
+                                                   VerticalContentAlignment="Center"
+                                                   Style="{DynamicResource LightDatePickerTextBoxStyle}"
+                                                   Background="{x:Null}"
+                                                   Margin="0,0,0,0" />
+                                <Grid x:Name="PART_DisabledVisual"
+                                      Grid.ColumnSpan="2"
+                                      Grid.Column="0"
+                                      IsHitTestVisible="False"
+                                      Opacity="0"
+                                      Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Rectangle Grid.Column="0" Fill="{StaticResource CustomWhite}"
+                                               RadiusY="1"
+                                               Grid.Row="0"
+                                               RadiusX="1"/>
+                                    <Rectangle Grid.Column="1"
+                                               Fill="{StaticResource CustomWhite}"
+                                               Height="32" Margin="3,0,3,0"
+                                               RadiusY="1"
+                                               Grid.Row="0"
+                                               RadiusX="1"
+                                               Width="32"/>
+                                    <Popup x:Name="PART_Popup"
+                                           AllowsTransparency="True"
+                                           Placement="Bottom"
+                                           PlacementTarget="{Binding ElementName=PART_TextBox}"
+                                           StaysOpen="False"/>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--Светлый календарь-->
+        <Style x:Key="LightCalendar" TargetType="{x:Type Calendar}">
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Foreground" Value="{StaticResource CustomSilver}"/>
+            <Setter Property="Background" Value="{StaticResource CustomWhite}"/>
+            <Setter Property="CalendarDayButtonStyle" Value="{DynamicResource LightCalendarDayButtonStyle}"/>
+            <Setter Property="CalendarButtonStyle" Value="{DynamicResource LightCalendarButtonStyle}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Width" Value="200px"/>
+            <Setter Property="IsTodayHighlighted" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Calendar}">
+                        <CalendarItem x:Name="PART_CalendarItem"
+                                      BorderBrush="{TemplateBinding BorderBrush}" 
+                                      FontFamily="{TemplateBinding FontFamily}"
+                                      BorderThickness="{TemplateBinding BorderThickness}"
+                                      Background="{TemplateBinding Background}"
+                                      FontSize="{TemplateBinding FontSize}"
+                                      Style="{DynamicResource LightCalendarItemStyle}" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--Светлый элемент календара-->
+        <Style x:Key="LightCalendarItemStyle"
+                TargetType="{x:Type CalendarItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CalendarItem}">
+                        <ControlTemplate.Resources>
+                            <DataTemplate x:Key="{x:Static CalendarItem.DayTitleTemplateResourceKey}">
+                                <TextBlock Foreground="{StaticResource CustomGrey}"
+                                           FontWeight="Bold"
+                                           FontSize="15px"
+                                           FontFamily="Georgia"
+                                           Margin="0,6,0,6"
+                                           Text="{Binding}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </DataTemplate>
+                        </ControlTemplate.Resources>
+                        <Grid x:Name="PART_Root">
+                            <Grid.Resources>
+                                <SolidColorBrush x:Key="DisabledColor"
+                                                 Color="#FFFFFFFF"/>
+                            </Grid.Resources>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0"
+                                                             To="1"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             Storyboard.TargetName="PART_DisabledVisual" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="1">
+                                <Border BorderBrush="#FFFFFFFF"
+                                        BorderThickness="2"
+                                        CornerRadius="1">
+                                    <Grid>
+                                        <Grid.Resources>
+                                        </Grid.Resources>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="40px" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Button x:Name="PART_PreviousButton"
+                                                Style="{StaticResource TransparentButton}"
+                                                Focusable="False"
+                                                HorizontalAlignment="Left"
+                                                Grid.Column="0"
+                                                Grid.Row="0"
+                                                Height="30px"
+                                                Width="30px">
+                                            <ContentControl>
+                                                <Image Source="/Dependens/Images/less_then.png"/>
+                                            </ContentControl>                                            
+                                        </Button>
+                                        <Button x:Name="PART_HeaderButton"
+                                                Style="{StaticResource TransparentButton}"
+                                                Foreground="{StaticResource CustomGrey}"
+                                                FontFamily="Georgia"
+                                                FontSize="15px"
+                                                FontWeight="Bold"
+                                                Focusable="False"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Height="30px"
+                                                Grid.Column="1"
+                                                Grid.Row="0"/>
+                                        <Button x:Name="PART_NextButton"
+                                                Style="{StaticResource TransparentButton}"
+                                                Focusable="False"
+                                                HorizontalAlignment="Right"
+                                                Grid.Column="2"
+                                                Grid.Row="0"
+                                                Height="30px"
+                                                Width="30px">
+                                            <ContentControl>
+                                                <Image Source="/Dependens/Images/more_then.png"/>
+                                            </ContentControl>
+                                        </Button>
+                                        <Grid x:Name="PART_MonthView"
+                                              Visibility="Visible"
+                                              Grid.ColumnSpan="3"
+                                              Grid.Row="1"
+                                              Margin="3,0,3,0"
+                                              HorizontalAlignment="Center">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                        </Grid>
+                                        <Grid x:Name="PART_YearView"
+                                              Visibility="Hidden"
+                                              Grid.ColumnSpan="3"
+                                              Grid.Row="1"
+                                              HorizontalAlignment="Center">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </Border>
+                            <Rectangle x:Name="PART_DisabledVisual"
+                                       Fill="{StaticResource CustomLightSilver}"
+                                       Opacity="0"
+                                       RadiusY="2"
+                                       RadiusX="2"
+                                       Stretch="Fill"
+                                       Stroke="{StaticResource CustomLightSilver}"
+                                       StrokeThickness="1"
+                                       Visibility="Collapsed" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Visibility" TargetName="PART_DisabledVisual" Value="Visible" />
+                            </Trigger>
+                            <DataTrigger Binding="{Binding DisplayMode, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Calendar}}}"
+                                         Value="Year">
+                                <Setter Property="Visibility" TargetName="PART_MonthView" Value="Hidden" />
+                                <Setter Property="Visibility" TargetName="PART_YearView" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding DisplayMode, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Calendar}}}"
+                                         Value="Decade">
+                                <Setter Property="Visibility" TargetName="PART_MonthView" Value="Hidden" />
+                                <Setter Property="Visibility" TargetName="PART_YearView" Value="Visible" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </Application.Resources>
 </Application>

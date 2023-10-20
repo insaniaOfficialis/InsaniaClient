@@ -24,21 +24,25 @@
                              Style="{StaticResource DarkListItem}"
                              Content="Регистрация"
                              Height="60px"
+                             Visibility="Collapsed"
                              MouseLeftButtonUp="Element_MouseLeftButtonUp"/>
                 <ListBoxItem x:Name="RolesItem"
                              Style="{StaticResource DarkListItem}"
-                             Content="Роли"
+                             Content="Добавление ролей"
                              Height="60px"
+                             Visibility="Collapsed"
                              MouseLeftButtonUp="Element_MouseLeftButtonUp"/>
                 <ListBoxItem x:Name="LogsItem"
                              Style="{StaticResource DarkListItem}"
                              Content="Логи"
                              Height="60px"
+                             Visibility="Collapsed"
                              MouseLeftButtonUp="Element_MouseLeftButtonUp"/>
-                <ListBoxItem x:Name="CreatePersonalName"
+                <ListBoxItem x:Name="CreatePersonalNameItem"
                              Style="{StaticResource DarkListItem}"
                              Content="Добавление имени"
                              Height="60px"
+                             Visibility="Collapsed"
                              MouseLeftButtonUp="Element_MouseLeftButtonUp"/>
             </ListBox>
         </StackPanel>

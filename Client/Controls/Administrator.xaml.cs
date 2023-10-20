@@ -2,8 +2,10 @@
 using Client.Services.Base;
 using Serilog;
 using System;
-using System.Windows.Controls;
+using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Controls;
 
 namespace Client.Controls;
 
@@ -14,11 +16,12 @@ public partial class Administrator : UserControl
 {
     public ILogger _logger { get { return Log.ForContext<Administrator>(); } } //логгер для записи логов
     public IBaseService _baseService; //базовый сервис
+    List<string> _accessRights; //права доступа
 
     /// <summary>
     /// Конструктор страницы администраторской части
     /// </summary>
-    public Administrator(IBaseService baseService)
+    public Administrator(IBaseService baseService, List<string> accessRights)
     {
         try
         {
@@ -30,6 +33,25 @@ public partial class Administrator : UserControl
 
             //Проверяем доступность api
             _baseService.CheckConnection();
+
+            //Получаем права доступа
+            _accessRights = accessRights;
+
+            //Если есть право доступа "Регистрация пользователей"
+            if (accessRights.Contains("Registratsiya_pol'zovateley"))
+                RegistrationItem.Visibility = Visibility.Visible;
+
+            //Если есть право доступа "Создание ролей"
+            if (accessRights.Contains("Sozdanie_roley"))
+                RolesItem.Visibility = Visibility.Visible;
+
+            //Если есть право доступа "Просмотр логов"
+            if (accessRights.Contains("Prosmotr_logov"))
+                LogsItem.Visibility = Visibility.Visible;
+
+            //Если есть право доступа "Добавление имени"
+            if (accessRights.Contains("Dobavlenie_imeni"))
+                CreatePersonalNameItem.Visibility = Visibility.Visible;
         }
         catch (Exception ex)
         {
@@ -70,7 +92,7 @@ public partial class Administrator : UserControl
                         Element.Content = roles;
                     }
                     break;
-                case "CreatePersonalName":
+                case "CreatePersonalNameItem":
                     {
                         //Формируем страницу создания имени
                         CreatePersonalName page = new(_baseService);

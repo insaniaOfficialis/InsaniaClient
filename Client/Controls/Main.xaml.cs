@@ -1,4 +1,4 @@
-﻿using Client.Models.MainWindow;
+﻿using Domain.Models.MainWindow;
 using Client.Services.Base;
 using Serilog;
 using System;

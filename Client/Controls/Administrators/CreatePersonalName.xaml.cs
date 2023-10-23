@@ -1,5 +1,5 @@
 ﻿using Client.Controls.Bases;
-using Client.Models.Base;
+using Domain.Models.Base;
 using Client.Services.Base;
 using Microsoft.AspNetCore.WebUtilities;
 using Serilog;

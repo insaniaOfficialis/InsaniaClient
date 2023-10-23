@@ -6,7 +6,8 @@
              mc:Ignorable="d"
              Height="850px"
              Width="1400px"
-             Background="{StaticResource CustomBlack}">
+             Background="{StaticResource CustomBlack}"
+             Loaded="UserControl_Loaded">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="100px"/>
@@ -95,28 +96,28 @@
             <!--Sorting="LogsDataGrid_Sorting"-->
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Id"
-                                    Binding="{Binding Path=Number, UpdateSourceTrigger=PropertyChanged}"
+                                    Binding="{Binding Path=Id, UpdateSourceTrigger=PropertyChanged}"
                                     EditingElementStyle="{DynamicResource EditLightTextBox}"/>
                 <DataGridTextColumn Header="Метод"
-                                    Binding="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}"
+                                    Binding="{Binding Path=Method, UpdateSourceTrigger=PropertyChanged}"
                                     EditingElementStyle="{DynamicResource EditLightTextBox}"/>
                 <DataGridTextColumn Header="Тип"
-                                    Binding="{Binding Path=Color, UpdateSourceTrigger=PropertyChanged}"
+                                    Binding="{Binding Path=Type, UpdateSourceTrigger=PropertyChanged}"
                                     EditingElementStyle="{DynamicResource EditLightTextBox}"/>
                 <DataGridCheckBoxColumn Header="Успешность"
-                                        Binding="{Binding Path=LanguageForNames, UpdateSourceTrigger=PropertyChanged}"
+                                        Binding="{Binding Path=Success, UpdateSourceTrigger=PropertyChanged}"
                                         EditingElementStyle="{DynamicResource EditLightTextBox}"/>
                 <DataGridTextColumn Header="Дата от"
-                                    Binding="{Binding Path=Color, UpdateSourceTrigger=PropertyChanged}"
+                                    Binding="{Binding Path=DateStart, UpdateSourceTrigger=PropertyChanged}"
                                     EditingElementStyle="{DynamicResource EditLightTextBox}"/>
                 <DataGridTextColumn Header="Дата до"
-                                    Binding="{Binding Path=Color, UpdateSourceTrigger=PropertyChanged}"
+                                    Binding="{Binding Path=DateEnd, UpdateSourceTrigger=PropertyChanged}"
                                     EditingElementStyle="{DynamicResource EditLightTextBox}"/>
                 <DataGridTextColumn Header="Входящие данные"
-                                    Binding="{Binding Path=Color, UpdateSourceTrigger=PropertyChanged}"
+                                    Binding="{Binding Path=DataIn, UpdateSourceTrigger=PropertyChanged}"
                                     EditingElementStyle="{DynamicResource EditLightTextBox}"/>
                 <DataGridTextColumn Header="Исходящие данные"
-                                    Binding="{Binding Path=Color, UpdateSourceTrigger=PropertyChanged}"
+                                    Binding="{Binding Path=DataOut, UpdateSourceTrigger=PropertyChanged}"
                                     EditingElementStyle="{DynamicResource EditLightTextBox}"/>
             </DataGrid.Columns>
         </DataGrid>

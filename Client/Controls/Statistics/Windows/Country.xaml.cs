@@ -1,5 +1,5 @@
-﻿using Client.Models.Base;
-using Client.Models.Politics.Countries.Request;
+﻿using Domain.Models.Base;
+using Domain.Models.Politics.Countries.Request;
 using Serilog;
 using System;
 using System.Configuration;

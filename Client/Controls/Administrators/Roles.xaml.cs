@@ -1,7 +1,6 @@
-﻿using Client.Models.Base;
-using Client.Models.Identification.Registration.Request;
-using Client.Models.Identification.Roles.Request;
-using DevExpress.Xpf.Editors.Internal;
+﻿using Domain.Models.Base;
+using Domain.Models.Identification.Registration.Request;
+using Domain.Models.Identification.Roles.Request;
 using Serilog;
 using System;
 using System.Collections.Generic;

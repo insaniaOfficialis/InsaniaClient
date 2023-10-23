@@ -1,5 +1,5 @@
-﻿using Client.Models.Base;
-using Client.Models.Identification.Registration.Request;
+﻿using Domain.Models.Base;
+using Domain.Models.Identification.Registration.Request;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-﻿using Client.Models.Identification.Authorization.Response;
+﻿using Domain.Models.Identification.Authorization.Response;
 using Client.Services.Base;
 using Microsoft.AspNetCore.WebUtilities;
 using Serilog;
@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Queries;
 
 namespace Client.Controls;
 
@@ -21,6 +22,7 @@ public partial class Authorization : UserControl
 {
     public ILogger _logger { get { return Log.ForContext<Authorization>(); } } //логгер для записи логов
     public IBaseService _baseService; //базовый сервис
+    private ConfigurationFile _configuration; //класс конфигурации
 
     /// <summary>
     /// Конструктор страницы авторизации
@@ -34,6 +36,9 @@ public partial class Authorization : UserControl
 
             //Получаем базовый сервис
             _baseService = baseService;
+
+            //Создаём экземпляр класса конфигурации
+            _configuration = new();
         }
         catch(Exception ex)
         {
@@ -119,6 +124,7 @@ public partial class Authorization : UserControl
                     if (response.Success)
                     {
                         ConfigurationManager.AppSettings["Token"] = response.Token;
+                        _configuration.SetValue("Token", response.Token);
                         var accessRights = await GetAccessRights();
                         Base main = new(_baseService, accessRights);
                         Content = main;

@@ -1,6 +1,6 @@
 ﻿using Client.Controls.Bases;
-using Client.Models.Base;
-using Client.Models.Sociology.Names;
+using Domain.Models.Base;
+using Domain.Models.Sociology.Names;
 using Client.Services.Base;
 using Microsoft.AspNetCore.WebUtilities;
 using Serilog;

@@ -1,8 +1,7 @@
 ﻿using Client.Controls.Administrators;
 using Client.Controls.Statistics.Windows;
-using Client.Models.Base;
-using Client.Models.Politics.Countries.Response;
-using DevExpress.Mvvm.Native;
+using Domain.Models.Base;
+using Domain.Models.Politics.Countries.Response;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -31,7 +30,7 @@ public partial class Countries : UserControl
     private bool isDeleted; //признак удалённых записей
     private List<BaseSortRequest?>? sort = new(); //список сортировки
     private ObservableCollection<CountriesResponseListItem?>? countries = new(); //коллекция стран
-    Country _country; //окно страны
+    private Country _country; //окно страны
 
     /// <summary>
     /// Конструктор страницы стран
@@ -465,7 +464,9 @@ public partial class Countries : UserControl
                     //Иначе
                     else
                         //Меняем порядлок сортировки
-                        sort.Where(x => x.SortKey == sortKey && x.IsAscending != isAscending).ForEach(x => x.IsAscending = isAscending);
+                        sort.Where(x => x.SortKey == sortKey && x.IsAscending != isAscending)
+                            .ToList()
+                            .ForEach(x => x.IsAscending = isAscending);
                 }
                 //Иначе
                 else

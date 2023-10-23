@@ -1,5 +1,5 @@
 ﻿using Client.Controls;
-using Client.Models.Identification.Users.Response;
+using Domain.Models.Identification.Users.Response;
 using Client.Services.Base;
 using Serilog;
 using System;

@@ -1,4 +1,4 @@
-﻿using Client.Models.Identification.Users.Response;
+﻿using Domain.Models.Identification.Users.Response;
 using System.Text.Json;
 using System.Threading.Tasks;
 

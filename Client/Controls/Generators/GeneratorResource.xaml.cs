@@ -1,5 +1,5 @@
 ﻿using Client.Controls.Administrators;
-using Client.Models.Base;
+using Domain.Models.Base;
 using Serilog;
 using System;
 using System.Configuration;

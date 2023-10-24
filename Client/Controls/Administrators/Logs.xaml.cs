@@ -17,11 +17,11 @@ namespace Client.Controls.Administrators;
 /// </summary>
 public partial class Logs : UserControl
 {
-    private ILogger _logger { get { return Log.ForContext<Logs>(); } } //интиерфейс для записи логов
+    private ILogger _logger { get { return Log.ForContext<Logs>(); } } //сервис для записи логов
     private IBaseService _baseService; //базовый сервис
     private IGetLogs _getLogs; //сервис получения логов
     private ObservableCollection<GetLogsResponseItem> _logs = new(); //коллекция логов
-    private int? _skip, _take = 20; //пагинация
+    private int? _skip = 0, _take = 20; //пагинация
     private string? _search; //строка поиска
     private bool _success = true; //признак успешности
     private DateTime? _from, _to;
@@ -88,7 +88,7 @@ public partial class Logs : UserControl
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private async void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+    private async void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
         try
         {
@@ -109,5 +109,43 @@ public partial class Logs : UserControl
             SetError(ex.Message, true);
         }
 
+    }
+
+    /// <summary>
+    /// Событие нажатия кнопки пагинации
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void PaginationButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            //Блокируем кнопку пагинации
+            PaginationButton.IsEnabled = false;
+
+            //Устанавливаем новое количество пропускаемых элементов
+            _skip += _take;
+
+            //Получаем логи
+            var response = await _getLogs.Handler(_search, _skip, _take, _sort, _from, _to, _success);
+
+            //Наполняем коллекцию логов
+            if (response != null && response.Items.Any())
+            {
+                foreach (var item in response.Items)
+                    _logs.Add(item);
+            }
+
+            LogsDataGrid.Items.Refresh();
+        }
+        catch (Exception ex)
+        {
+            SetError(ex.Message, true);
+        }
+        finally
+        {
+            //Разблокируем кнопку пагинации
+            PaginationButton.IsEnabled = true;
+        }
     }
 }

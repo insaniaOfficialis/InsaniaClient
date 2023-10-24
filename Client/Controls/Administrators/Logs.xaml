@@ -130,7 +130,7 @@
                 Grid.Row="3"
                 Width="300px"
                 Height="50px"
-                Content="Показать ещё"/>
-        <!--Click="PaginationButton_Click"-->
+                Content="Показать ещё"
+                Click="PaginationButton_Click"/>
     </Grid>
 </UserControl>

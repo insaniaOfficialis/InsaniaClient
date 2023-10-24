@@ -19,6 +19,13 @@
             <ColumnDefinition Width="*"></ColumnDefinition>
             <ColumnDefinition Width="720px"></ColumnDefinition>
         </Grid.ColumnDefinitions>
+        <ContentControl x:Name="LoadContent"
+                        Visibility="Collapsed"
+                        Grid.RowSpan="3"
+                        Grid.ColumnSpan="3"
+                        Height="1080px"
+                        Width="1920px"
+                        Panel.ZIndex="1"/>
         <Label Grid.Row="0"
                Grid.Column="1"
                Content="Insania" 

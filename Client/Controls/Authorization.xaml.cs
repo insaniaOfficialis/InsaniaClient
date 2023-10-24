@@ -1,6 +1,8 @@
-﻿using Domain.Models.Identification.Authorization.Response;
+﻿using Client.Controls.Bases;
 using Client.Services.Base;
+using Domain.Models.Identification.Authorization.Response;
 using Microsoft.AspNetCore.WebUtilities;
+using Queries;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -11,7 +13,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Queries;
 
 namespace Client.Controls;
 
@@ -23,6 +24,7 @@ public partial class Authorization : UserControl
     public ILogger _logger { get { return Log.ForContext<Authorization>(); } } //логгер для записи логов
     public IBaseService _baseService; //базовый сервис
     private ConfigurationFile _configuration; //класс конфигурации
+    private LoadCircle _load = new();
 
     /// <summary>
     /// Конструктор страницы авторизации
@@ -73,6 +75,10 @@ public partial class Authorization : UserControl
         {
             //Отключаем для нажатия кнопку авторизации
             ButtonLogin.IsEnabled = false;
+
+            //Включаем полосу пргогрузки
+            LoadContent.Content = _load;
+            LoadContent.Visibility = Visibility.Visible;
 
             //Объявляем переменные
             string username = Username.Text; //логин
@@ -145,6 +151,11 @@ public partial class Authorization : UserControl
         }
         finally
         {
+            //Выключаем полосу пргогрузки
+            LoadContent.Content = null;
+            LoadContent.Visibility = Visibility.Collapsed;
+
+            //Включаем кнопку авторизации
             ButtonLogin.IsEnabled = true;
         }
     }

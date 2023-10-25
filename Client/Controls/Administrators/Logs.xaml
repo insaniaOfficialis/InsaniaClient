@@ -15,6 +15,12 @@
             <RowDefinition Height="100px"/>
             <RowDefinition Height="100px"/>
         </Grid.RowDefinitions>
+        <ContentControl x:Name="LoadContent"
+                        Visibility="Collapsed"
+                        Grid.RowSpan="4"
+                        Height="850px"
+                        Width="1400px"
+                        Panel.ZIndex="1"/>
         <Grid VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="50px"/>
@@ -40,16 +46,14 @@
                      Grid.Row="1"
                      Grid.Column="1"
                      Style="{DynamicResource SilverTextBox}"
-                     />
-                     <!--GotFocus="TextBox_GotFocus"
+                     GotFocus="TextBox_GotFocus"
                      LostFocus="TextBox_LostFocus"
-                     PreviewKeyDown="TextBoxEnter"-->
+                     PreviewKeyDown="TextBoxEnter"/>
             <Button x:Name="SearchButton"
                     Grid.Column="2"
                     Grid.Row="1"
                     Style="{DynamicResource SilverButton}"
-                    >
-                <!--Click="SearchButton_Click"-->
+                    Click="SearchButton_Click">
                 <Button.Content>
                     <Image Source="/Dependens/Images/magnifier.png"/>
                 </Button.Content>
@@ -59,8 +63,9 @@
                       Grid.Row="1"
                       Content="Не успешные"
                       Tag="Успешные"
-                      Style="{DynamicResource LightCheckBox}"/>
-            <!--Click="SuccessRadioButton_Click"-->
+                      IsChecked="True"
+                      Style="{DynamicResource LightCheckBox}"
+                      Click="SuccessRadioButton_Click"/>
             <TextBlock x:Name="FromTextBlock"
                        Style="{DynamicResource LightTextBlock}"
                        Grid.Column="6"
@@ -72,7 +77,8 @@
                         CalendarStyle="{DynamicResource LightCalendar}"
                         Grid.Column="7"
                         Grid.Row="1"
-                        VerticalAlignment="Center"/>
+                        VerticalAlignment="Center"
+                        SelectedDateChanged="FromDatePicker_SelectedDateChanged"/>
             <TextBlock x:Name="ToTextBlock"
                        Style="{DynamicResource LightTextBlock}"
                        Grid.Column="9"
@@ -84,14 +90,17 @@
                         CalendarStyle="{DynamicResource LightCalendar}"
                         Grid.Column="10"
                         Grid.Row="1"
-                        VerticalAlignment="Center"/>
+                        VerticalAlignment="Center"
+                        SelectedDateChanged="ToDatePicker_SelectedDateChanged"/>
         </Grid>
         <DataGrid x:Name="LogsDataGrid"
+                  SelectionUnit="Cell"
                   Style="{DynamicResource LightDataGridStyle}"
                   ColumnHeaderStyle="{DynamicResource LightDataGridColumnHeaderStyle}"
                   RowStyle="{DynamicResource LightDataGridRows}"
                   CellStyle="{DynamicResource LightDataGridCells}"
                   RowHeaderStyle="{DynamicResource LightDataGridRowHeaders}"
+                  RowHeight="30"
                   Grid.Row="1">
             <!--Sorting="LogsDataGrid_Sorting"-->
             <DataGrid.Columns>
@@ -108,17 +117,64 @@
                                         Binding="{Binding Path=Success, UpdateSourceTrigger=PropertyChanged}"
                                         EditingElementStyle="{DynamicResource EditLightTextBox}"/>
                 <DataGridTextColumn Header="Дата от"
-                                    Binding="{Binding Path=DateStart, UpdateSourceTrigger=PropertyChanged}"
+                                    Binding="{Binding Path=DateStart, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:dd.MM.yy HH:mm:ss\}}"
                                     EditingElementStyle="{DynamicResource EditLightTextBox}"/>
                 <DataGridTextColumn Header="Дата до"
-                                    Binding="{Binding Path=DateEnd, UpdateSourceTrigger=PropertyChanged}"
+                                    Binding="{Binding Path=DateEnd, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:dd.MM.yy HH:mm:ss\}}"
                                     EditingElementStyle="{DynamicResource EditLightTextBox}"/>
                 <DataGridTextColumn Header="Входящие данные"
+                                    Width="200"
+                                    ToolTipService.ToolTip="{Binding Path=DataIn, UpdateSourceTrigger=PropertyChanged}"
                                     Binding="{Binding Path=DataIn, UpdateSourceTrigger=PropertyChanged}"
-                                    EditingElementStyle="{DynamicResource EditLightTextBox}"/>
+                                    EditingElementStyle="{DynamicResource EditLightTextBox}">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
+                            <Setter Property="ToolTip">
+                                <Setter.Value>
+                                    <ToolTip Content="{Binding Path=DataIn}"
+                                             HorizontalContentAlignment="Left"
+                                             VerticalContentAlignment="Top"/>
+                                </Setter.Value>
+                            </Setter>
+                            <!--Устанавливаем поведение-->
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource CustomLightSilver}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource CustomGrey}"/>
+                                    <Setter Property="BorderBrush" Value="{StaticResource CustomGrey}"/>
+                                    <Setter Property="BorderThickness" Value="0px"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn Header="Исходящие данные"
+                                    Width="200"
                                     Binding="{Binding Path=DataOut, UpdateSourceTrigger=PropertyChanged}"
-                                    EditingElementStyle="{DynamicResource EditLightTextBox}"/>
+                                    EditingElementStyle="{DynamicResource EditLightTextBox}">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
+                            <Setter Property="ToolTip">
+                                <Setter.Value>
+                                    <ToolTip Content="{Binding Path=DataOut}"
+                                             HorizontalContentAlignment="Left"
+                                             VerticalContentAlignment="Top"/>
+                                </Setter.Value>
+                            </Setter>
+                            <!--Устанавливаем поведение-->
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource CustomLightSilver}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource CustomGrey}"/>
+                                    <Setter Property="BorderBrush" Value="{StaticResource CustomGrey}"/>
+                                    <Setter Property="BorderThickness" Value="0px"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
         <TextBlock x:Name="ErrorTextBlock"

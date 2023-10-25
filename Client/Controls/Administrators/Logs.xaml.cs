@@ -1,4 +1,5 @@
-﻿using Client.Services.Base;
+﻿using Client.Controls.Bases;
+using Client.Services.Base;
 using Domain.Models.Base;
 using Domain.Models.General.Logs.Response;
 using Queries.General.Logs.GetLogs;
@@ -9,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Client.Controls.Administrators;
 
@@ -26,6 +28,7 @@ public partial class Logs : UserControl
     private bool _success = true; //признак успешности
     private DateTime? _from, _to;
     private List<BaseSortRequest>? _sort = new(); //список сортировки
+    private LoadCircle _load = new(); //элемент загрузки
 
     /// <summary>
     /// Конструктор страницы логов
@@ -92,6 +95,10 @@ public partial class Logs : UserControl
     {
         try
         {
+            //Включаем элемент загрузки
+            LoadContent.Content = _load;
+            LoadContent.Visibility = Visibility.Visible;
+
             //Получаем логи
             var response = await _getLogs.Handler(_search, _skip, _take, _sort, _from, _to, _success);
 
@@ -108,7 +115,12 @@ public partial class Logs : UserControl
         {
             SetError(ex.Message, true);
         }
-
+        finally
+        {
+            //Отключаем элемент загрузки
+            LoadContent.Content = null;
+            LoadContent.Visibility = Visibility.Visible;
+        }
     }
 
     /// <summary>
@@ -120,8 +132,9 @@ public partial class Logs : UserControl
     {
         try
         {
-            //Блокируем кнопку пагинации
-            PaginationButton.IsEnabled = false;
+            //Включаем элемент загрузки
+            LoadContent.Content = _load;
+            LoadContent.Visibility = Visibility.Visible;
 
             //Устанавливаем новое количество пропускаемых элементов
             _skip += _take;
@@ -144,8 +157,271 @@ public partial class Logs : UserControl
         }
         finally
         {
-            //Разблокируем кнопку пагинации
-            PaginationButton.IsEnabled = true;
+            //Отключаем элемент загрузки
+            LoadContent.Content = null;
+            LoadContent.Visibility = Visibility.Visible;
+        }
+    }
+
+    /// <summary>
+    /// Метод обнуления полей ввода по нажатию
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var textbox = sender as TextBox;
+
+            switch (textbox.Name)
+            {
+                case "SearchTextBox":
+                    {
+                        if (SearchTextBox.Text == "Поиск...")
+                            SearchTextBox.Text = "";
+
+                    }
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Countries. TextBox_GotFocus. Ошибка: {0}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Метод возвращения значений по умолчанию полей ввода по потере фокуса
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void TextBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var textbox = sender as TextBox;
+
+            switch (textbox.Name)
+            {
+                case "SearchTextBox":
+                    {
+                        if (SearchTextBox.Text == "")
+                            SearchTextBox.Text = "Поиск...";
+
+                    }
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Logs. TextBox_LostFocus. Ошибка: {0}", ex);
+        }
+    }    
+    
+    /// <summary>
+    /// Обработка поиска по enter
+    /// </summary>
+    public void TextBoxEnter(object sender, KeyEventArgs e)
+    {
+        try
+        {
+            //Если нражатая клавиша - Enter
+            if (e.Key == Key.Enter)
+                //Вызываем метод нажатия на кнопку поиска
+                SearchButton_Click(sender, e);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Logs. TextBoxEnter. Ошибка: {0}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Метод нажатия на поиск
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void SearchButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            //Включаем элемент загрузки
+            LoadContent.Content = _load;
+            LoadContent.Visibility = Visibility.Visible;
+
+            //Если есть введённый текст, кроме дефолтного
+            if (!String.IsNullOrEmpty(SearchTextBox.Text) && SearchTextBox.Text != "Поиск...")
+            {
+                //Устанавливаем параметры поиска
+                _search = SearchTextBox.Text;
+                _skip = 0;
+                _take = 20;
+
+                //Получаем логи
+                var response = await _getLogs.Handler(_search, _skip, _take, _sort, _from, _to, _success);
+
+                //Очищаем и наполняем коллекцию логов
+                if (response != null && response.Items.Any())
+                {
+                    _logs.Clear();
+
+                    foreach (var item in response.Items)
+                        _logs.Add(item);
+                }
+
+                //Обновляем таблицу
+                LogsDataGrid.Items.Refresh();
+            }
+            else
+            {
+                SetError("Не указано значение для поиска", false);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Logs. SearchButton_Click. Ошибка: {0}", ex);
+        }
+        finally
+        {
+            //Отключаем элемент загрузки
+            LoadContent.Content = null;
+            LoadContent.Visibility = Visibility.Visible;
+        }
+    }
+
+    /// <summary>
+    /// Событие нажатия на переключатель успешности
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void SuccessRadioButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            //Включаем элемент загрузки
+            LoadContent.Content = _load;
+            LoadContent.Visibility = Visibility.Visible;
+
+            //Устанавливаем параметры поиска
+            _success = SuccessRadioButton.IsChecked ?? false;
+            _skip = 0;
+            _take = 20;
+
+            //Получаем логи
+            var response = await _getLogs.Handler(_search, _skip, _take, _sort, _from, _to, _success);
+
+            //Очищаем и наполняем коллекцию логов
+            if (response != null && response.Items.Any())
+            {
+                _logs.Clear();
+
+                foreach (var item in response.Items)
+                    _logs.Add(item);
+            }
+
+            //Обновляем таблицу
+            LogsDataGrid.Items.Refresh();
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Logs. DeletedRadioButton_Checked. Ошибка: {0}", ex);
+        }
+        finally
+        {
+            //Отключаем элемент загрузки
+            LoadContent.Content = null;
+            LoadContent.Visibility = Visibility.Visible;
+        }
+    }
+
+    /// <summary>
+    /// Событие выбора даты от
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void FromDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+    {
+        try
+        {
+            //Включаем элемент загрузки
+            LoadContent.Content = _load;
+            LoadContent.Visibility = Visibility.Visible;
+
+            //Устанавливаем параметры поиска
+            _from = FromDatePicker.SelectedDate;
+            _skip = 0;
+            _take = 20;
+
+            //Получаем логи
+            var response = await _getLogs.Handler(_search, _skip, _take, _sort, _from, _to, _success);
+
+            //Очищаем и наполняем коллекцию логов
+            if (response != null && response.Items.Any())
+            {
+                _logs.Clear();
+
+                foreach (var item in response.Items)
+                    _logs.Add(item);
+            }
+
+            //Обновляем таблицу
+            LogsDataGrid.Items.Refresh();
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Logs. FromDatePicker_SelectedDateChanged. Ошибка: {0}", ex);
+        }
+        finally
+        {
+            //Отключаем элемент загрузки
+            LoadContent.Content = null;
+            LoadContent.Visibility = Visibility.Visible;
+        }
+    }
+
+    /// <summary>
+    /// Событие выбора даты до
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void ToDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+    {
+        try
+        {
+            //Включаем элемент загрузки
+            LoadContent.Content = _load;
+            LoadContent.Visibility = Visibility.Visible;
+
+            //Устанавливаем параметры поиска
+            _to = ToDatePicker.SelectedDate;
+            _skip = 0;
+            _take = 20;
+
+            //Получаем логи
+            var response = await _getLogs.Handler(_search, _skip, _take, _sort, _from, _to, _success);
+
+            //Очищаем и наполняем коллекцию логов
+            if (response != null && response.Items.Any())
+            {
+                _logs.Clear();
+
+                foreach (var item in response.Items)
+                    _logs.Add(item);
+            }
+
+            //Обновляем таблицу
+            LogsDataGrid.Items.Refresh();
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Logs. ToDatePicker_SelectedDateChanged. Ошибка: {0}", ex);
+        }
+        finally
+        {
+            //Отключаем элемент загрузки
+            LoadContent.Content = null;
+            LoadContent.Visibility = Visibility.Visible;
         }
     }
 }

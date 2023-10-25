@@ -2,6 +2,7 @@
 using Domain.Models.General.Logs.Response;
 using Microsoft.Extensions.Configuration;
 using System.Configuration;
+using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -108,11 +109,11 @@ public class GetLogs : IGetLogs
 
         //Если указана дата от, добавляем
         if(from != null)
-            url += string.Format("&from={0}", from);
+            url += string.Format("&from={0}", from.Value.ToString("o", CultureInfo.InvariantCulture));
 
         //Если указана дата до, добавляем
         if (to != null)
-            url += string.Format("&to={0}", to);
+            url += string.Format("&to={0}", to.Value.ToString("o", CultureInfo.InvariantCulture));
 
         //Если есть поля сортировки
         if (sort != null && sort.Any())

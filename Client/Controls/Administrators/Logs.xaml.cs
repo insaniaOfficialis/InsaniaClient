@@ -7,6 +7,9 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.DirectoryServices;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -98,6 +101,10 @@ public partial class Logs : UserControl
             //Включаем элемент загрузки
             LoadContent.Content = _load;
             LoadContent.Visibility = Visibility.Visible;
+
+            //Ставим сортировки по умолчанию
+            _sort.Add(new("id", false));
+            LogsDataGrid.Items.SortDescriptions.Add(new SortDescription("Id", ListSortDirection.Descending));
 
             //Получаем логи
             var response = await _getLogs.Handler(_search, _skip, _take, _sort, _from, _to, _success);
@@ -416,6 +423,94 @@ public partial class Logs : UserControl
         catch (Exception ex)
         {
             _logger.Error("Logs. ToDatePicker_SelectedDateChanged. Ошибка: {0}", ex);
+        }
+        finally
+        {
+            //Отключаем элемент загрузки
+            LoadContent.Content = null;
+            LoadContent.Visibility = Visibility.Visible;
+        }
+    }
+
+    /// <summary>
+    /// Событие сортировки таблицы
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void LogsDataGrid_Sorting(object sender, DataGridSortingEventArgs e)
+    {
+        try
+        {
+            //Включаем элемент загрузки
+            LoadContent.Content = _load;
+            LoadContent.Visibility = Visibility.Visible;
+
+            //Объявляем переменные сортировки
+            string sortKey = String.Empty;
+            bool? isAscending;
+
+            //Если у нас есть поля для сортировки
+            if (!String.IsNullOrEmpty(e.Column.SortMemberPath.ToString()))
+            {
+                //Получаем наименование сортируемого поля
+                sortKey = e.Column.SortMemberPath.ToString().ToLower();
+
+                //Получаем порядок сортировки
+                isAscending = e.Column.SortDirection == null ? true : e.Column.SortDirection == ListSortDirection.Ascending ? false : null;
+
+                //Если не был зажат shift
+                if ((Keyboard.Modifiers & ModifierKeys.Shift) != ModifierKeys.Shift)
+                {
+                    //Очищаем сортировку
+                    _sort.Clear();
+                }
+
+                //Если уже есть такое поле сортировки
+                if (_sort.Any(x => x.SortKey == sortKey))
+                {
+                    //Если порядок сортировки исчезает
+                    if (isAscending == null)
+                        //Убираем из полей сортировки
+                        _sort.RemoveAll(x => x.SortKey == sortKey);
+                    //Иначе
+                    else
+                        //Меняем порядлок сортировки
+                        _sort.Where(x => x.SortKey == sortKey && x.IsAscending != isAscending)
+                            .ToList()
+                            .ForEach(x => x.IsAscending = isAscending);
+                }
+                //Иначе
+                else
+                {
+                    //Если есть порядок сортировки
+                    if (isAscending != null)
+                        //Добавляем в сортировку новое поле
+                        _sort.Add(new(sortKey, isAscending ?? false));
+                }
+
+                //Обнуляем пагинацию
+                _skip = 0;
+                _take = 20;
+
+                //Получаем логи
+                var response = await _getLogs.Handler(_search, _skip, _take, _sort, _from, _to, _success);
+
+                //Очищаем и наполняем коллекцию логов
+                if (response != null && response.Items.Any())
+                {
+                    _logs.Clear();
+
+                    foreach (var item in response.Items)
+                        _logs.Add(item);
+                }
+
+                //Обновляем таблицу
+                LogsDataGrid.Items.Refresh();
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Logs. LogsDataGrid_Sorting. Ошибка: {0}", ex);
         }
         finally
         {

@@ -101,8 +101,8 @@
                   CellStyle="{DynamicResource LightDataGridCells}"
                   RowHeaderStyle="{DynamicResource LightDataGridRowHeaders}"
                   RowHeight="30"
-                  Grid.Row="1">
-            <!--Sorting="LogsDataGrid_Sorting"-->
+                  Grid.Row="1"
+                  Sorting="LogsDataGrid_Sorting">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Id"
                                     Binding="{Binding Path=Id, UpdateSourceTrigger=PropertyChanged}"

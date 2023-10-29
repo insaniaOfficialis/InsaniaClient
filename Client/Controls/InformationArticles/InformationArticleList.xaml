@@ -6,7 +6,8 @@
              mc:Ignorable="d"
              Height="853px"
              Width="1800px"
-             Background="{StaticResource CustomBlack}">
+             Background="{StaticResource CustomBlack}"
+             Loaded="UserControl_Loaded">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="400px"/>
@@ -20,7 +21,18 @@
                      Height="60px"
                      Width="400px"
                      Text="Поиск..."/>
-            <ListBox Style="{StaticResource DarkList}">
+            <ListBox x:Name="InformationArticlesListBox"
+                     Style="{StaticResource DarkList}"
+                     ItemContainerStyle="{DynamicResource SimpleDarkListItem}"
+                     VerticalContentAlignment="Center">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <ListBoxItem Height="60px"
+                                     Style="{DynamicResource DarkListItem}"
+                                     Content="{Binding Path=Name}"
+                                     Width="396px"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
             </ListBox>
         </StackPanel>
         <ContentControl x:Name="Element"

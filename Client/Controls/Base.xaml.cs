@@ -124,7 +124,7 @@ public partial class Base : UserControl
         try
         {
             //Формируем новую домашнюю страницу
-            InformationArticleList informationArticleList = new();
+            InformationArticleList informationArticleList = new(_baseService);
 
             //Меняем контент на странице на домашнюю страницу
             BaseContent.Content = informationArticleList;

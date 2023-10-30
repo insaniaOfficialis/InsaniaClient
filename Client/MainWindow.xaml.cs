@@ -6,6 +6,8 @@ using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Queries.General.CheckConnection.CheckAuthorize;
+using System.Collections.Generic;
 
 namespace Client;
 
@@ -16,6 +18,7 @@ public partial class MainWindow : Window
 {
     public ILogger _logger { get { return Log.ForContext<MainWindow>(); } } //логгер для записи логов
     public IBaseService _baseService; //базовый сервис
+    private ICheckAuthorize _checkAuthorize; //сервис проверки соединения
 
     /// <summary>
     /// Конструктор главного окна
@@ -29,6 +32,9 @@ public partial class MainWindow : Window
 
             //Формируем базовый сервис
             _baseService = new BaseService();
+
+            //Формируем сервис проверки соединения
+            _checkAuthorize = new CheckAuthorize();
 
             //Определяем действие для кнопки esc
             PreviewKeyDown += new KeyEventHandler(Close);
@@ -82,6 +88,28 @@ public partial class MainWindow : Window
     }
 
     /// <summary>
+    /// Смена контента на основную страницу
+    /// </summary>
+    public async Task ShowBase()
+    {
+        try
+        {
+            //Получаем информацию о пользователе
+            var userInfo = await _baseService.GetUserInfo();
+
+            //Формируем окно авторизации
+            Base baseWindow = new(_baseService, userInfo.AccessRights);
+
+            //Меняем контент
+            Content = baseWindow;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("MainWindow. ShowAuthoriztion. Ошибка: {0}", ex);
+        }
+    }
+
+    /// <summary>
     /// Событие загрузки экрана
     /// </summary>
     /// <param name="sender"></param>
@@ -96,8 +124,24 @@ public partial class MainWindow : Window
             //Меняем контент
             Content = screensaver;
 
-            //Отображаем страницу авторизации
-            await ShowAuthoriztion();
+            //Проверяем соединение
+            bool validateToken = false;
+            try
+            {
+                if (await _checkAuthorize.Handler())
+                    validateToken = true;
+            }
+            catch(Exception ex)
+            {
+                validateToken = false;
+            }
+
+            //Если проверка соединения пройдена
+            if (validateToken)
+                await ShowBase();
+            //Иначе отображаем страницу авторизации
+            else
+                await ShowAuthoriztion();
         }
         catch (Exception ex)
         {

@@ -1,14 +1,17 @@
-﻿using Domain.Models.MainWindow;
-using Client.Services.Base;
+﻿using Client.Services.Base;
+using Domain.Models.Informations.News.Response;
+using Queries.Informations.News.GetListNews;
 using Serilog;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace Client.Controls;
@@ -19,7 +22,9 @@ namespace Client.Controls;
 public partial class Main : UserControl
 {
     public ILogger _logger { get { return Log.ForContext<Main>(); } } //логгер для записи логов
-    public IBaseService _baseService;
+    public IBaseService _baseService; //базовый сервис
+    public IGetListNews _getListNews; //сервис получения списка новостей
+    ObservableCollection<GetNewsResponseItem> _newsList = new(); //коллекция списка новостей
 
     /// <summary>
     /// Конструктор главной страницы
@@ -33,6 +38,12 @@ public partial class Main : UserControl
 
             //Формируем новый базовый сервис
             _baseService = baseService;
+
+            //Формируем сервис получения списка новостей
+            _getListNews = new GetListNews();
+
+            //Добавляем новостям источник в виде листа
+            News.ItemsSource = _newsList;
         }
         catch(Exception ex)
         {
@@ -167,10 +178,7 @@ public partial class Main : UserControl
             base.Padding = new(0, 0, 0, 0);
 
             //Определяем нажатый элемент как полигон
-            var elementPolygon = sender as Polygon;
-            var elementLabel = sender as Label;
-
-            if (elementPolygon != null)
+            if (sender is Polygon elementPolygon)
             {
                 //Ищем наименование нажатого элемента
                 switch (elementPolygon.Name)
@@ -190,7 +198,7 @@ public partial class Main : UserControl
             }
             else
             {
-                if (elementLabel != null)
+                if (sender is Label elementLabel)
                 {
                     //Ищем наименование нажатого элемента
                     switch (elementLabel.Name)
@@ -225,11 +233,20 @@ public partial class Main : UserControl
     {
         try
         {
-            //Формируем новый список новостей
-            List<ShortNew> list = new();
+            //Получаем новости
+            var response = await _getListNews.Handler(null);
 
-            //Добавляем новостям источник в виде листа
-            //News.ItemsSource = list;
+            //Очищаем и наполняем коллекцию логов
+            if (response != null && response.Items.Any())
+            {
+                _newsList.Clear();
+
+                foreach (var item in response.Items)
+                    _newsList.Add(item);
+            }
+
+            //Обновляем список новостей
+            News.Items.Refresh();
         }
         catch (Exception ex)
         {
@@ -245,20 +262,7 @@ public partial class Main : UserControl
         try
         {
             //Записываем путь изображения
-            //LogoImage.Source = ImageSourceValueSerializer(@"I:\\Files\System\afe36d54-028a-4b44-934e-39841aac59bb\Alv.png");
-
-            //Создаём анимацию
-            DoubleAnimation animation = new()
-            {
-                From = 0.4,
-                To = 0.6,
-                AutoReverse = true,
-                Duration = TimeSpan.FromSeconds(3),
-                RepeatBehavior = RepeatBehavior.Forever,
-            };
-
-            //Запускаем анимацию
-            LogoImage.BeginAnimation(UIElement.OpacityProperty, animation);
+            LogoImage.Source = new BitmapImage(new Uri("https://localhost:7193/api/v1/files/1"));
         }
         catch (Exception ex)
         {

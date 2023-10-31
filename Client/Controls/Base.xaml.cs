@@ -15,7 +15,7 @@ public partial class Base : UserControl
 {
     public ILogger _logger { get { return Log.ForContext<Base>(); } } //логгер для записи логов
     public IBaseService _baseService; //базовый сервис
-    List<string> _accessRights; //права доступа
+    public List<string> _accessRights; //права доступа
 
     /// <summary>
     /// Конструктор базового окна

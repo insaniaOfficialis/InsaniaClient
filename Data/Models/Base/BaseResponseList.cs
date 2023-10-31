@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Domain.Models.Base;
+﻿namespace Domain.Models.Base;
 
 /// <summary>
 /// Модель стандартного ответа для списка
@@ -47,6 +45,22 @@ public class BaseResponseList : BaseResponse
 /// </summary>
 public class BaseResponseListItem
 {
+    /// <summary>
+    /// Пустой конструктор модели элемента списка
+    /// </summary>
+    public BaseResponseListItem()
+    {
+    }
+
+    /// <summary>
+    /// Конструктор модели элемента списка с id
+    /// </summary>
+    /// <param name="id"></param>
+    public BaseResponseListItem(long? id)
+    {
+        Id = id;
+    }
+
     /// <summary>
     /// Первичный ключ
     /// </summary>

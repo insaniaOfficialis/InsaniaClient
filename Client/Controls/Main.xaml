@@ -180,11 +180,11 @@
                 </ContentControl>
             </Button>
         </Grid>
-        <!--<ListBox x:Name="News"
+        <ListBox x:Name="News"
                  Grid.Column="2" 
                  Grid.Row="2"
-                 Background="#00000000"
-                 BorderBrush="#00000000">
+                 Background="Transparent"
+                 BorderBrush="Transparent">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="Margin" Value="15px"/>
@@ -203,7 +203,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Border Grid.Column="2"
                                 Grid.Row="1"
-                                Background="#D9D9D9"
+                                Background="{DynamicResource CustomLightSilver}"
                                 CornerRadius ="20"
                                 Height="202px"
                                 Width="415px"
@@ -218,52 +218,36 @@
                                 <TextBlock Grid.Row="0"
                                            TextWrapping="Wrap"
                                            FontFamily="Georgia"
-                                           Foreground="#2B2B2B"
+                                           Foreground="{DynamicResource CustomGrey}"
                                            FontSize="20px"
                                            Text="{Binding Title}"
                                            VerticalAlignment="Top"/>
                                 <TextBlock Grid.Row="1"
                                            TextWrapping="Wrap"     
                                            FontFamily="Georgia"
-                                           Foreground="#5E5E5E"
+                                           Foreground="{DynamicResource CustomGrey}"
                                            FontSize="15px"
-                                           Text="{Binding ShortBody}"
+                                           Text="{Binding Introduction}"
                                            VerticalAlignment="Top"/>
-                                <Button Style="{DynamicResource ButtonStyle1}"
+                                <Button Style="{DynamicResource DarkButton}"
+                                        FontSize="15px"
                                         Grid.Row="2"
-                                        Background="#2B2B2B"
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Right"
                                         Height="40px"
                                         Width="150px"
-                                        Foreground="#D9D9D9"
-                                        FontFamily="Georgia"
-                                        FontSize="15px"                        
                                         Content="Читать">
-                                    <Button.Resources>
-                                        <Style TargetType="{x:Type Border}">
-                                            <Setter Property="CornerRadius" Value="10"/>
-                                            <Style.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Background" Value="#4D4D4D"/>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Button.Resources>
                                 </Button>
                             </Grid>
                         </Border>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-        </ListBox>-->
+        </ListBox>
         <Image x:Name="LogoImage"
                Grid.Column="1"
                HorizontalAlignment="Center"
                Grid.Row="1"
-               VerticalAlignment="Top"
-               Source="I:\\Files\System\afe36d54-028a-4b44-934e-39841aac59bb\Alv.png"
-               Margin="40,40,40,0"
-               Opacity="0.5"/>
+               VerticalAlignment="Top"/>
     </Grid>
 </UserControl>

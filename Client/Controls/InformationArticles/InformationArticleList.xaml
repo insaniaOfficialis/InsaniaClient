@@ -30,7 +30,9 @@
                         <ListBoxItem Height="60px"
                                      Style="{DynamicResource DarkListItem}"
                                      Content="{Binding Path=Name}"
-                                     Width="396px"/>
+                                     Width="396px"
+                                     Tag="{Binding Path=Id}"
+                                     MouseLeftButtonUp = "ListBoxItem_MouseLeftButtonUp"/>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>

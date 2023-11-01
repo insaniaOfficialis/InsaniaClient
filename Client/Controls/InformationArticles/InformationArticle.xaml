@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Height="680px"
              Width="1325px"
-             Background="{DynamicResource CustomBlack}">
+             Background="{DynamicResource CustomBlack}"
+             Loaded="UserControl_Loaded">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="50px"/>
@@ -48,8 +49,7 @@
                    Grid.Row="1"/>
             <TextBlock x:Name="Text"
                    Grid.Row="2"
-                   Style="{DynamicResource LightTextBlock}"
-                   Text="Имя Add-Migartion не распознано как имя командлета, функции, файла сценария или выполняемой программы. Проверьте правильность написания имени, а также наличие и правильность пути, после чего повторите попытку."/>
+                   Style="{DynamicResource LightTextBlock}"/>
         </Grid>
         <Button x:Name="GoBackButton"
                     Style="{DynamicResource TransparentButton}"
@@ -65,5 +65,11 @@
                 <Image Source="/Dependens/Images/more_then.png"/>
             </ContentControl>
         </Button>
+        <ContentControl x:Name="Element"
+                        Grid.Column="2"
+                        Grid.Row="1"
+                        Width="Auto"
+                        Height="Auto"
+                        Opacity="1"/>
     </Grid>
 </UserControl>

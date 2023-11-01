@@ -22,7 +22,7 @@ public partial class InformationArticleList : UserControl
     private IGetListInformationArticles _getListInformationArticles; //сервис получения списка информационных статей
     private LoadCircle _load = new(); //элемент загрузки
     private ObservableCollection<BaseResponseListItem> _informationArticles = new(); //коллекция информационных статей
-    public string _search;
+    public string _search; //строка поиска
 
     /// <summary>
     /// Конструктор страницы списка информациионных статей
@@ -94,7 +94,7 @@ public partial class InformationArticleList : UserControl
             Element.Content = _load;
             Element.Visibility = Visibility.Visible;
 
-            //Получаем логи
+            //Получаем информационные статьи
             var response = await _getListInformationArticles.Handler(_search);
 
             //Наполняем коллекцию логов
@@ -115,6 +115,38 @@ public partial class InformationArticleList : UserControl
             //Отключаем элемент загрузки
             Element.Content = null;
             Element.Visibility = Visibility.Visible;
+        }
+    }
+
+    /// <summary>
+    /// Событие нажатия на элемент списка
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void ListBoxItem_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        try
+        {
+            //Определяем нажатый элемент как элемент списка
+            var element = sender as ListBoxItem;
+
+            //Получаем id выбранного элемента
+            long? id = Convert.ToInt64(element.Tag);
+
+            if (id.HasValue)
+            {
+                //Формируем новый экземпляр информационной статьи
+                InformationArticle informationArticle = new(id);
+
+                //Меняем контент элемента на информационную статью
+                Element.Content = informationArticle;
+            }
+            else
+                SetError("Не удалось определить нажатый элемент", false);
+        }
+        catch (Exception ex)
+        {
+            SetError(ex.Message, true);
         }
     }
 }

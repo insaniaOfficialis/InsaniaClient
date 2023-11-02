@@ -44,16 +44,17 @@ public class GetFileUrl : IGetFileUrl
     /// Формирование строки запроса
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="entityId"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public string BuilderUrl(long id)
+    public string BuilderUrl(long id, long entityId)
     {
         //Проверяем конфигурацию файла
         if (ValidateConfiguration())
         {
             //Формируем ссылку запроса
             string url = _configuration.GetValue("DefaultConnection") + _configuration.GetValue("Api")
-                + _configuration.GetValue("Files") + id;
+                + _configuration.GetValue("Files") + entityId + "/" + id;
 
             //Возвращаем результат
             return url;

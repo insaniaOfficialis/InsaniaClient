@@ -15,6 +15,7 @@ public interface IGetFileUrl
     /// Формирование строки запроса
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="entityId"></param>
     /// <returns></returns>
-    string BuilderUrl(long id);
+    string BuilderUrl(long id, long entityId);
 }

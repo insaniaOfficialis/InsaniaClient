@@ -275,7 +275,7 @@ public partial class Main : UserControl
             //Получаем ссылку на изображение
             string fileUrl = string.Empty;
             if (fileId != null)
-                fileUrl = _getFileUrl.BuilderUrl(fileId ?? 0);
+                fileUrl = _getFileUrl.BuilderUrl(userInfo.Id ?? 0, fileId ?? 0);
 
             //Записываем путь изображения
             LogoImage.Source = new BitmapImage(new Uri(fileUrl));

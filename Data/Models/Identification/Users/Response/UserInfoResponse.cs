@@ -1,5 +1,4 @@
 ﻿using Domain.Models.Base;
-using System.Collections.Generic;
 
 namespace Domain.Models.Identification.Users.Response;
 
@@ -67,4 +66,9 @@ public class UserInfoResponse : BaseResponse
     /// Список прав доступа
     /// </summary>
     public List<string>? AccessRights { get; set; }
+
+    /// <summary>
+    /// Список файлов пользователя
+    /// </summary>
+    public List<long?>? Files { get; set; }
 }

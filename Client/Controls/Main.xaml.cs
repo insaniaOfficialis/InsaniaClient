@@ -1,5 +1,6 @@
 ﻿using Client.Services.Base;
 using Domain.Models.Informations.News.Response;
+using Queries.General.Files.GetFileUrl;
 using Queries.Informations.News.GetListNews;
 using Serilog;
 using System;
@@ -24,6 +25,7 @@ public partial class Main : UserControl
     public ILogger _logger { get { return Log.ForContext<Main>(); } } //логгер для записи логов
     public IBaseService _baseService; //базовый сервис
     public IGetListNews _getListNews; //сервис получения списка новостей
+    public IGetFileUrl _getFileUrl; //сервис получения ссылки файла
     ObservableCollection<GetNewsResponseItem> _newsList = new(); //коллекция списка новостей
 
     /// <summary>
@@ -41,6 +43,9 @@ public partial class Main : UserControl
 
             //Формируем сервис получения списка новостей
             _getListNews = new GetListNews();
+
+            //Формируем экземпляр сервиса получения ссылки файла
+            _getFileUrl = new GetFileUrl();
 
             //Добавляем новостям источник в виде листа
             News.ItemsSource = _newsList;
@@ -261,8 +266,19 @@ public partial class Main : UserControl
     {
         try
         {
+            //Получаем данные пользователя
+            var userInfo = await _baseService.GetUserInfo();
+
+            //Получаем первый файл пользователя
+            long? fileId = userInfo.Files.FirstOrDefault();
+
+            //Получаем ссылку на изображение
+            string fileUrl = string.Empty;
+            if (fileId != null)
+                fileUrl = _getFileUrl.BuilderUrl(fileId ?? 0);
+
             //Записываем путь изображения
-            LogoImage.Source = new BitmapImage(new Uri("https://localhost:7193/api/v1/files/1"));
+            LogoImage.Source = new BitmapImage(new Uri(fileUrl));
         }
         catch (Exception ex)
         {

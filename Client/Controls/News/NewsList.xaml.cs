@@ -1,35 +1,28 @@
 ﻿using Client.Controls.Bases;
 using Client.Controls.Generators;
 using Client.Services.Base;
-using Domain.Models.Base;
-using Queries.Informations.InformationArticles.GetListInformationArticles;
 using Serilog;
 using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Client.Controls.InformationArticles;
+namespace Client.Controls.News;
 
 /// <summary>
-/// Логика взаимодействия для InformationArticle.xaml
+/// Логика взаимодействия для NewsList.xaml
 /// </summary>
-public partial class InformationArticleList : UserControl
+public partial class NewsList : UserControl
 {
     private ILogger _logger { get { return Log.ForContext<GeneratorCreatePersonalName>(); } } //сервис для записи логов
     private IBaseService _baseService; //базовый сервис
-    private IGetListInformationArticles _getListInformationArticles; //сервис получения списка информационных статей
     private LoadCircle _load = new(); //элемент загрузки
-    private ObservableCollection<BaseResponseListItem> _informationArticles = new(); //коллекция информационных статей
     public string _search; //строка поиска
-    private ListBoxItem _selectedElement; //выбранный элемент
 
     /// <summary>
-    /// Конструктор страницы списка информациионных статей
+    /// Конструктор страницы получения списка новостей
     /// </summary>
     /// <param name="baseService"></param>
-    public InformationArticleList(IBaseService baseService)
+    public NewsList(IBaseService baseService)
     {
         try
         {
@@ -41,9 +34,6 @@ public partial class InformationArticleList : UserControl
 
             //Проверяем доступность api
             _baseService.CheckConnection();
-
-            //Формируем сервис получения списка информационных статей
-            _getListInformationArticles = new GetListInformationArticles();
         }
         catch (Exception ex)
         {
@@ -96,7 +86,7 @@ public partial class InformationArticleList : UserControl
             Element.Visibility = Visibility.Visible;
 
             //Получаем информационные статьи
-            var response = await _getListInformationArticles.Handler(_search);
+            /*var response = await _getListInformationArticles.Handler(_search);
 
             //Наполняем коллекцию логов
             if (response != null && response.Items.Any())
@@ -105,7 +95,7 @@ public partial class InformationArticleList : UserControl
                     _informationArticles.Add(item);
             }
 
-            InformationArticlesListBox.ItemsSource = _informationArticles;
+            InformationArticlesListBox.ItemsSource = _informationArticles;*/
         }
         catch (Exception ex)
         {
@@ -137,22 +127,10 @@ public partial class InformationArticleList : UserControl
             if (id.HasValue)
             {
                 //Формируем новый экземпляр информационной статьи
-                InformationArticle informationArticle = new(id);
+                /*InformationArticle informationArticle = new(id);
 
                 //Меняем контент элемента на информационную статью
-                Element.Content = informationArticle;
-
-                //Убираем признак выбранного элемента у предыдущего элементов
-                if(_selectedElement != null)
-                    _selectedElement.IsSelected = false;
-
-                //Выставляем признак выбранного элемента для списка
-                element.IsSelected = true;
-
-                //Меняем выбранный элемент
-                _selectedElement = element;
-
-                //InformationArticlesListBox.SelectedItem = InformationArticlesListBox.Items.GetItemAt(element.TabIndex);
+                Element.Content = informationArticle;*/
             }
             else
                 SetError("Не удалось определить нажатый элемент", false);

@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Client.Controls.InformationArticles;
 
@@ -160,6 +161,120 @@ public partial class InformationArticleList : UserControl
         catch (Exception ex)
         {
             SetError(ex.Message, true);
+        }
+    }
+
+    /// <summary>
+    /// Метод обнуления полей ввода по нажатию
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var textbox = sender as TextBox;
+
+            switch (textbox.Name)
+            {
+                case "SearchTextBox":
+                    {
+                        if (SearchTextBox.Text == "Поиск...")
+                            SearchTextBox.Text = "";
+
+                    }
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("InformationArticleList. TextBox_GotFocus. Ошибка: {0}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Метод возвращения значений по умолчанию полей ввода по потере фокуса
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void TextBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var textbox = sender as TextBox;
+
+            switch (textbox.Name)
+            {
+                case "SearchTextBox":
+                    {
+                        if (SearchTextBox.Text == "")
+                            SearchTextBox.Text = "Поиск...";
+
+                    }
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("InformationArticleList. TextBox_LostFocus. Ошибка: {0}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Обработка поиска по enter
+    /// </summary>
+    public void TextBoxEnter(object sender, KeyEventArgs e)
+    {
+        try
+        {
+            //Если нражатая клавиша - Enter
+            if (e.Key == Key.Enter)
+                //Вызываем метод нажатия на кнопку поиска
+                SearchButton_Click(sender, e);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("InformationArticleList. TextBoxEnter. Ошибка: {0}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Метод нажатия на кнопку поиска
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void SearchButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            //Включаем элемент загрузки
+            Element.Content = _load;
+            Element.Visibility = Visibility.Visible;
+
+            //Устанавливаем параметры поиска
+            _search = SearchTextBox.Text != "Поиск..." ? SearchTextBox.Text : null;
+
+            //Получаем информационные статьи
+            var response = await _getListInformationArticles.Handler(_search);
+
+            //Наполняем коллекцию логов
+            if (response != null)
+            {
+                _informationArticles.Clear();
+                foreach (var item in response.Items)
+                    _informationArticles.Add(item);
+            }
+            InformationArticlesListBox.Items.Refresh();
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("InformationArticleList. SearchButton_Click. Ошибка: {0}", ex);
+        }
+        finally
+        {
+            //Отключаем элемент загрузки
+            Element.Content = null;
+            Element.Visibility = Visibility.Visible;
         }
     }
 }

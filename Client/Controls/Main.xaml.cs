@@ -1,4 +1,5 @@
-﻿using Client.Services.Base;
+﻿using Client.Controls.News;
+using Client.Services.Base;
 using Domain.Models.Informations.News.Response;
 using Queries.General.Files.GetFileUrl;
 using Queries.Informations.News.GetListNews;
@@ -301,6 +302,38 @@ public partial class Main : UserControl
             var news = GetNews();
             var logo = GetLogo();
             await Task.WhenAll(news, logo, connection);
+        }
+        catch (Exception ex)
+        {
+            _baseService.SetError(ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Событие нажатия на кнопку новости
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void NewsButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            //Получаем ссылку на новость по нажатой кнопке
+            var button = sender as Button;
+            long? id = (long)button.Tag;
+
+            //Если удалось определить ссылку на новость
+            if(id != null)
+            {
+                //Формируем новый экземпляр страницы новостей и меняем контент
+                NewsList newsList = new(_baseService, id ?? 0);
+
+                //Убираем отступы
+                Padding = new(0, 0, 0, 0);
+
+                //Заменяем контент
+                Content = newsList;
+            }
         }
         catch (Exception ex)
         {

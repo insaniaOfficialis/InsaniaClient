@@ -1,8 +1,12 @@
 ﻿using Client.Controls.Bases;
 using Client.Controls.Generators;
 using Client.Services.Base;
+using Domain.Models.Base;
+using Queries.Informations.News.GetFullListNews;
 using Serilog;
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -17,23 +21,33 @@ public partial class NewsList : UserControl
     private IBaseService _baseService; //базовый сервис
     private LoadCircle _load = new(); //элемент загрузки
     public string _search; //строка поиска
+    private long _id; //ссылка на новость
+    private IGetFullListNews _getFullListNews; //сервис получения полного списка новостей
+    private ObservableCollection<BaseResponseListItem> _news = new(); //список новостей
 
     /// <summary>
     /// Конструктор страницы получения списка новостей
     /// </summary>
     /// <param name="baseService"></param>
-    public NewsList(IBaseService baseService)
+    /// <param name="id"></param>
+    public NewsList(IBaseService baseService, long id)
     {
         try
         {
             //Инициализация всех компонентов
             InitializeComponent();
 
+            //Присваиваем ссылку новости
+            _id = id;
+
             //Получаем базовый сервис
             _baseService = baseService;
 
             //Проверяем доступность api
             _baseService.CheckConnection();
+
+            //Формируем сервис получения полного списка новостей
+            _getFullListNews = new GetFullListNews();
         }
         catch (Exception ex)
         {
@@ -85,17 +99,18 @@ public partial class NewsList : UserControl
             Element.Content = _load;
             Element.Visibility = Visibility.Visible;
 
-            //Получаем информационные статьи
-            /*var response = await _getListInformationArticles.Handler(_search);
+            //Получаем новости
+            var response = await _getFullListNews.Handler(_search);
 
-            //Наполняем коллекцию логов
+            //Наполняем коллекцию новостей
             if (response != null && response.Items.Any())
             {
                 foreach (var item in response.Items)
-                    _informationArticles.Add(item);
+                    _news.Add(item);
             }
+            NewsListBox.ItemsSource = _news;
 
-            InformationArticlesListBox.ItemsSource = _informationArticles;*/
+            _news.First(x => x.Id == _id).IsSelected = true;
         }
         catch (Exception ex)
         {

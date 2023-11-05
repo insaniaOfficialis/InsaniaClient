@@ -230,13 +230,15 @@
                                            Text="{Binding Introduction}"
                                            VerticalAlignment="Top"/>
                                 <Button Style="{DynamicResource DarkButton}"
+                                        Tag="{Binding Id}"
                                         FontSize="15px"
                                         Grid.Row="2"
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Right"
                                         Height="40px"
                                         Width="150px"
-                                        Content="Читать">
+                                        Content="Читать"
+                                        Click="NewsButton_Click">
                                 </Button>
                             </Grid>
                         </Border>

@@ -681,6 +681,11 @@
                     <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}"/>
                     <Setter Property="Cursor" Value="Hand"/>
                 </Trigger>
+                <!--Значение при программном выборе-->
+                <DataTrigger Binding="{Binding IsSelected}" Value="true">
+                    <Setter Property="Background" Value="{StaticResource CustomLightSilver}"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}"/>                    
+                </DataTrigger>
             </Style.Triggers>
         </Style>
         <!--Простой элемент тёмного списка-->

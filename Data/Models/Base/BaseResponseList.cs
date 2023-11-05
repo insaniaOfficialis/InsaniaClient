@@ -70,4 +70,9 @@ public class BaseResponseListItem
     /// Наименование
     /// </summary>
     public string? Name { get; set; }
+
+    /// <summary>
+    /// Признак выбранного
+    /// </summary>
+    public bool? IsSelected { get; set; }
 }

@@ -2,7 +2,6 @@
 using Client.Controls.Generators;
 using Client.Services.Base;
 using Domain.Models.Base;
-using Queries;
 using Queries.Informations.News.GetFullListNews;
 using Serilog;
 using System;
@@ -10,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Client.Controls.News;
 
@@ -170,6 +170,131 @@ public partial class NewsList : UserControl
         catch (Exception ex)
         {
             SetError(ex.Message, true);
+        }
+    }
+
+    /// <summary>
+    /// Метод обнуления полей ввода по нажатию
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var textbox = sender as TextBox;
+
+            switch (textbox.Name)
+            {
+                case "SearchTextBox":
+                    {
+                        if (SearchTextBox.Text == "Поиск...")
+                            SearchTextBox.Text = "";
+
+                    }
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("NewsList. TextBox_GotFocus. Ошибка: {0}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Метод возвращения значений по умолчанию полей ввода по потере фокуса
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void TextBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var textbox = sender as TextBox;
+
+            switch (textbox.Name)
+            {
+                case "SearchTextBox":
+                    {
+                        if (SearchTextBox.Text == "")
+                            SearchTextBox.Text = "Поиск...";
+
+                    }
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("NewsList. TextBox_LostFocus. Ошибка: {0}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Обработка поиска по enter
+    /// </summary>
+    public void TextBoxEnter(object sender, KeyEventArgs e)
+    {
+        try
+        {
+            //Если нражатая клавиша - Enter
+            if (e.Key == Key.Enter)
+                //Вызываем метод нажатия на кнопку поиска
+                SearchButton_Click(sender, e);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("InformationArticleList. TextBoxEnter. Ошибка: {0}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Метод нажатия на кнопку поиска
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void SearchButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            //Очищаем список новостей
+            _news.Clear();
+
+            //Устанавливаем параметры поиска
+            _search = SearchTextBox.Text != "Поиск..." ? SearchTextBox.Text : null;
+
+            //Получаем новости
+            var response = await _getFullListNews.Handler(_search);
+
+            //Наполняем коллекцию новостей
+            if (response != null && response.Items.Any())
+            {
+                foreach (var item in response.Items)
+                    _news.Add(item);
+            }
+
+            //Записываем id первого элемента
+            _id = _news.First().Id ?? 0;
+
+            //Отмечаем выбранным первый элемент
+            _news.First(x => x.Id == _id).IsSelected = true;
+
+            if (_id != 0)
+            {
+                //Формируем новый экземпляр новости
+                NewsDetail detail = new(_id);
+
+                //Меняем контент элемента на новость
+                Element.Content = detail;
+            }
+            else
+                SetError("Не удалось определить элемент", false);
+
+            //Обновляем список 
+            NewsListBox.Items.Refresh();
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("InformationArticleList. SearchButton_Click. Ошибка: {0}", ex);
         }
     }
 }

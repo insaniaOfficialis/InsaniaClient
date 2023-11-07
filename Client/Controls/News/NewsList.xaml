@@ -15,12 +15,27 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0">
-            <TextBox Style="{StaticResource SimplifiedLightTextBox}"
-                     x:Name="TextSearch"
-                     Grid.Row="1"
-                     Height="60px"
-                     Width="400px"
-                     Text="Поиск..."/>
+            <StackPanel Orientation="Horizontal"
+                        Height="60px">
+                <TextBox Style="{StaticResource SilverTextBox}"
+                         x:Name="SearchTextBox"
+                         Grid.Row="1"
+                         Height="60px"
+                         Width="340px"
+                         Text="Поиск..."
+                         GotFocus="TextBox_GotFocus"
+                         LostFocus="TextBox_LostFocus"
+                         PreviewKeyDown="TextBoxEnter"/>
+                <Button x:Name="SearchButton"
+                        Grid.Row="1"
+                        Style="{DynamicResource SilverButton}"
+                        Click="SearchButton_Click"
+                        Margin="0,0,0,0">
+                    <Button.Content>
+                        <Image Source="/Dependens/Images/magnifier.png"/>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
             <ListBox x:Name="NewsListBox"
                      Style="{StaticResource DarkList}"
                      ItemContainerStyle="{DynamicResource SimpleDarkListItem}"

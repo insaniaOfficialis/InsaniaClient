@@ -305,6 +305,10 @@ public partial class InformationArticle : UserControl
     {
         try
         {
+            //Отключаем видимость кнопок переключения изображений
+            GoBackImageButton.Visibility = Visibility.Hidden;
+            GoNextImageButton.Visibility = Visibility.Hidden;
+
             //Присваиваем текст
             Text.Text = _currentDetail.Value.Text;
 
@@ -321,8 +325,8 @@ public partial class InformationArticle : UserControl
             Images.Source = new BitmapImage(new Uri(_currentFile.Value));
 
             //Обрабатываем видимость кнопок переключения изображений
-            GoBackImageButton.Visibility = Visibility.Hidden;
-            GoNextImageButton.Visibility = Visibility.Visible;
+            if(_files.Count > 1)
+                GoNextImageButton.Visibility = Visibility.Visible;
         }
         catch (Exception ex)
         {

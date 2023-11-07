@@ -2,6 +2,7 @@
 using Client.Controls.Generators;
 using Client.Services.Base;
 using Domain.Models.Base;
+using Queries;
 using Queries.Informations.News.GetFullListNews;
 using Serilog;
 using System;
@@ -95,9 +96,8 @@ public partial class NewsList : UserControl
     {
         try
         {
-            //Включаем элемент загрузки
-            Element.Content = _load;
-            Element.Visibility = Visibility.Visible;
+            //Привязываем источник для списка новостей
+            NewsListBox.ItemsSource = _news;
 
             //Получаем новости
             var response = await _getFullListNews.Handler(_search);
@@ -108,19 +108,24 @@ public partial class NewsList : UserControl
                 foreach (var item in response.Items)
                     _news.Add(item);
             }
-            NewsListBox.ItemsSource = _news;
 
+            //Отмечаем выбранным первый элемент
             _news.First(x => x.Id == _id).IsSelected = true;
+
+            if (_id != 0)
+            {
+                //Формируем новый экземпляр новости
+                NewsDetail detail = new(_id);
+
+                //Меняем контент элемента на новость
+                Element.Content = detail;
+            }
+            else
+                SetError("Не удалось определить элемент", false);
         }
         catch (Exception ex)
         {
             SetError(ex.Message, true);
-        }
-        finally
-        {
-            //Отключаем элемент загрузки
-            Element.Content = null;
-            Element.Visibility = Visibility.Visible;
         }
     }
 
@@ -136,19 +141,31 @@ public partial class NewsList : UserControl
             //Определяем нажатый элемент как элемент списка
             var element = sender as ListBoxItem;
 
+            //Отмечаем не выбранным прошлый элемент
+            _news.First(x => x.Id == _id).IsSelected = false;
+
             //Получаем id выбранного элемента
             long? id = Convert.ToInt64(element.Tag);
 
+            //Записывае его в парметры
+            _id = id ?? 0;
+
+            //Отмечаем выбранным новый элемент
+            _news.First(x => x.Id == _id).IsSelected = true;
+
             if (id.HasValue)
             {
-                //Формируем новый экземпляр информационной статьи
-                /*InformationArticle informationArticle = new(id);
+                //Формируем новый экземпляр новости
+                NewsDetail detail = new(id);
 
-                //Меняем контент элемента на информационную статью
-                Element.Content = informationArticle;*/
+                //Меняем контент элемента на новость
+                Element.Content = detail;
             }
             else
                 SetError("Не удалось определить нажатый элемент", false);
+
+            //Обновляем список новостей
+            NewsListBox.Items.Refresh();
         }
         catch (Exception ex)
         {

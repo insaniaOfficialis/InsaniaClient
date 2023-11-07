@@ -681,10 +681,44 @@
                     <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}"/>
                     <Setter Property="Cursor" Value="Hand"/>
                 </Trigger>
-                <!--Значение при программном выборе-->
-                <DataTrigger Binding="{Binding IsSelected}" Value="true">
+                <!--Значения при выборе-->
+                <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Background" Value="{StaticResource CustomLightSilver}"/>
-                    <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}"/>                    
+                    <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!--Элемент сложного тёмного списка-->
+        <Style x:Key="DarkDifficultListItem" TargetType="{x:Type ListBoxItem}">
+            <!--Значения по умолчанию-->
+            <Setter Property="Background" Value="{StaticResource CustomGrey}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource CustomGrey}"/>
+            <Setter Property="FontFamily" Value="Georgia"/>
+            <Setter Property="FontSize" Value="20px"/>
+            <Setter Property="Foreground" Value="{StaticResource CustomSilver}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Left"
+                                              VerticalAlignment="Center"
+                                              Margin="40px,0,0,0"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <!--Значения при наведении-->
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource CustomLightSilver}"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+                <!--Значение при программном выборе-->
+                <DataTrigger Binding="{Binding Path=IsSelected}" Value="True">
+                    <Setter Property="Background" Value="{StaticResource CustomLightSilver}"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -713,12 +747,11 @@
                     <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}"/>
                     <Setter Property="Cursor" Value="Hand"/>
                 </Trigger>
-                <!--Значения при выборе-->
-                <Trigger Property="IsSelected" Value="True">
+                <!--Значение при программном выборе-->
+                <DataTrigger Binding="{Binding Path=IsSelected}" Value="True">
                     <Setter Property="Background" Value="{StaticResource CustomLightSilver}"/>
                     <Setter Property="BorderBrush" Value="{StaticResource CustomLightSilver}"/>
-                    <Setter Property="Cursor" Value="Hand"/>
-                </Trigger>
+                </DataTrigger>
             </Style.Triggers>
         </Style>
         <!--Светлый выпадающий список-->
@@ -853,7 +886,7 @@
             <Setter Property="TextWrapping" Value="Wrap"/>
         </Style>
 
-        <!--ТАБЛИЦА-->
+        <!--ТАБЛИЦЫ-->
 
         <!--Светлая таблица-->
         <Style x:Key="LightDataGridStyle" TargetType="{x:Type DataGrid}">

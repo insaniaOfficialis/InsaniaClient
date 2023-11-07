@@ -1,21 +1,21 @@
-﻿using Domain.Models.Informations.InformationArticlesDetails.Response;
+﻿using Domain.Models.Informations.NewsDetails.Response;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
-namespace Queries.Informations.InformationArticles.GetInformationArticleDetails;
+namespace Queries.Informations.News.GetNewsDetails;
 
 /// <summary>
-/// Получение списка информационных статей
+/// Получение детальных частей новости
 /// </summary>
-public class GetInformationArticleDetails : IGetInformationArticleDetails
+public class GetNewsDetails : IGetNewsDetails
 {
     private readonly JsonSerializerOptions _settings = new(); //настройки десериализации json
     private ConfigurationFile _configuration; //класс конфигурации
 
     /// <summary>
-    /// Конструктор получения списка информационных статей
+    /// Конструктор получения детальных частей новости
     /// </summary>
-    public GetInformationArticleDetails()
+    public GetNewsDetails()
     {
         _settings.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         _configuration = new();
@@ -38,8 +38,8 @@ public class GetInformationArticleDetails : IGetInformationArticleDetails
         if (string.IsNullOrEmpty(_configuration.GetValue("Token")))
             throw new Exception("Не указан токен");
 
-        if (string.IsNullOrEmpty(_configuration.GetValue("InformationArticles")))
-            throw new Exception("Не указан адрес сервиса информационных статей");
+        if (string.IsNullOrEmpty(_configuration.GetValue("News")))
+            throw new Exception("Не указан адрес сервиса новостей");
 
         //Возвращаем результат
         return true;
@@ -58,7 +58,7 @@ public class GetInformationArticleDetails : IGetInformationArticleDetails
         {
             //Формируем ссылку запроса
             string url = _configuration.GetValue("DefaultConnection") + _configuration.GetValue("Api")
-                + _configuration.GetValue("InformationArticles") + "details" + CreateQueryString(id);
+                + _configuration.GetValue("News") + "details" + CreateQueryString(id);
 
             //Возвращаем результат
             return url;
@@ -78,7 +78,7 @@ public class GetInformationArticleDetails : IGetInformationArticleDetails
         string url = string.Empty;
 
         //Если есть строка поиска добавляем в ссылку
-        if (id != 0)
+        if ((id ?? 0) != 0)
             url += string.Format("?id={0}", id);
 
         //Возвращаем результат
@@ -121,7 +121,7 @@ public class GetInformationArticleDetails : IGetInformationArticleDetails
     /// <param name="response"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public bool ValidateData(GetInformationArticleDetailsResponse? response)
+    public bool ValidateData(GetNewsDetailsResponse? response)
     {
         //Если ответ не пустой
         if (response != null)
@@ -151,7 +151,7 @@ public class GetInformationArticleDetails : IGetInformationArticleDetails
     /// <param name="id"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<GetInformationArticleDetailsResponse> Handler(long? id)
+    public async Task<GetNewsDetailsResponse> Handler(long? id)
     {
         //Получаем строку запроса
         string url = BuilderUrl(id);
@@ -167,7 +167,7 @@ public class GetInformationArticleDetails : IGetInformationArticleDetails
         {
             //Десериализуем ответ
             var content = await result.Content.ReadAsStringAsync();
-            var respose = JsonSerializer.Deserialize<GetInformationArticleDetailsResponse>(content, _settings);
+            var respose = JsonSerializer.Deserialize<GetNewsDetailsResponse>(content, _settings);
 
             if (ValidateData(respose))
             {

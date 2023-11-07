@@ -28,7 +28,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <ListBoxItem Height="60px"
-                                     Style="{DynamicResource DarkListItem}"
+                                     Style="{DynamicResource DarkDifficultListItem}"
                                      Content="{Binding Path=Name}"
                                      Width="396px"
                                      Tag="{Binding Path=Id}"

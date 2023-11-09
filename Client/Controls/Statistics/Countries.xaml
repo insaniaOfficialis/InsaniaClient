@@ -3,10 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Client.Services.Color"
              mc:Ignorable="d"
              Height="850px"
              Width="1400px"
              Background="{StaticResource CustomBlack}">
+    <UserControl.Resources>
+        <local:ColorConverter x:Key="ColorConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="100px"/>
@@ -80,8 +84,13 @@
                                     Binding="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}"
                                     EditingElementStyle="{DynamicResource EditLightTextBox}"/>
                 <DataGridTextColumn Header="Цвет"
-                                    Binding="{Binding Path=Color, UpdateSourceTrigger=PropertyChanged}"
-                                    EditingElementStyle="{DynamicResource EditLightTextBox}"/>
+                                    EditingElementStyle="{DynamicResource EditLightTextBox}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Background" Value="{Binding Color, Converter={StaticResource ColorConverter}}"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn Header="Язык для названий"
                                     Binding="{Binding Path=LanguageForNames, UpdateSourceTrigger=PropertyChanged}"
                                     EditingElementStyle="{DynamicResource EditLightTextBox}"/>

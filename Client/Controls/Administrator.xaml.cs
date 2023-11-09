@@ -52,6 +52,10 @@ public partial class Administrator : UserControl
             //Если есть право доступа "Добавление имени"
             if (accessRights.Contains("Dobavlenie_imeni"))
                 CreatePersonalNameItem.Visibility = Visibility.Visible;
+
+            //Если есть право доступа "Управление новостями"
+            if (accessRights.Contains("Upravlenie_novostyami"))
+                NewsItem.Visibility = Visibility.Visible;
         }
         catch (Exception ex)
         {
@@ -107,6 +111,15 @@ public partial class Administrator : UserControl
                         Logs page = new(_baseService);
 
                         //Меняем контент элемента на странице на страницу логов
+                        Element.Content = page;
+                    }
+                    break;
+                case "NewsItem":
+                    {
+                        //Формируем страницу новостей
+                        NewsManagment page = new(_baseService);
+
+                        //Меняем контент элемента на странице на страницу новостей
                         Element.Content = page;
                     }
                     break;

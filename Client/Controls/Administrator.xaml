@@ -44,6 +44,12 @@
                              Height="60px"
                              Visibility="Collapsed"
                              MouseLeftButtonUp="Element_MouseLeftButtonUp"/>
+                <ListBoxItem x:Name="NewsItem"
+                             Style="{StaticResource DarkListItem}"
+                             Content="Управление новостями"
+                             Height="60px"
+                             Visibility="Collapsed"
+                             MouseLeftButtonUp="Element_MouseLeftButtonUp"/>
             </ListBox>
         </StackPanel>
         <ContentControl Grid.Column="1"

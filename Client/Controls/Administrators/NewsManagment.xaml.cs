@@ -1,6 +1,7 @@
 ﻿using Client.Controls.Bases;
 using Client.Services.Base;
 using Domain.Models.Base;
+using Domain.Models.Identification.Users.Internal;
 using Domain.Models.Informations.News.Response;
 using Queries.Informations.News.GetNewsTable;
 using Serilog;
@@ -10,7 +11,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -31,11 +31,15 @@ public partial class NewsManagment : UserControl
     private bool _isDeleted = false; //признак увдалённой
     private List<BaseSortRequest>? _sort = new(); //список сортировки
     private LoadCircle _load = new(); //элемент загрузки
+    //private List<string> _accessRights; //права достуа
+    private AccessRightAction _accessRightAction = new();
 
     /// <summary>
     /// Конструктор страницы управления новостями
     /// </summary>
-    public NewsManagment(IBaseService baseService)
+    /// <param name="baseService"></param>
+    /// <param name="accessRights"></param>
+    public NewsManagment(IBaseService baseService, List<string> accessRights)
     {
         try
         {
@@ -50,12 +54,30 @@ public partial class NewsManagment : UserControl
 
             //Формируем сервис получения списка новостей для таблицы
             _getNewsTable = new GetNewsTable();
+
+            //Если есть право доступа "Добавление новости"
+            if (accessRights.Contains("Dobavlenie_novosti"))
+                AddButton.Visibility = Visibility.Visible;
+
+            //Если есть право доступа "Редактирование новости"
+            if (accessRights.Contains("Redaktirovanie_novosti"))
+                _accessRightAction.Edit = true;
+
+            //Если есть право доступа "Удаление новости"
+            if (accessRights.Contains("Udalenie_novosti"))
+                _accessRightAction.Delete = true;
+
+            //Если есть право доступа "Восстановление новости"
+            if (accessRights.Contains("Vosstanovlenie_novosti"))
+                _accessRightAction.Restore = true;
+
         }
         catch (Exception ex)
         {
             _logger.Error("News. Ошибка: {0}", ex);
         }
     }
+
     /// <summary>
     /// Метод отображения ошибок
     /// </summary>
@@ -104,17 +126,32 @@ public partial class NewsManagment : UserControl
             _sort.Add(new("id", false));
             NewsDataGrid.Items.SortDescriptions.Add(new SortDescription("Id", ListSortDirection.Descending));
 
-            //Получаем логи
+            //Получаем новости
             var response = await _getNewsTable.Handler(_search, _skip, _take, _sort, _isDeleted);
 
-            //Наполняем коллекцию логов
+            //Наполняем коллекцию новостей
             if (response != null && response.Items.Any())
             {
                 foreach (var item in response.Items)
+                {
+                    if (_accessRightAction != null)
+                    {
+                        item.Edit = _accessRightAction.Edit;
+                        item.Delete = _accessRightAction.Delete;
+                        item.Restore = _accessRightAction.Restore;
+                    }
                     _news.Add(item);
+                }
             }
 
+            //Обновляем таблицу
             NewsDataGrid.ItemsSource = _news;
+
+            //Обрабываем видимость кнопки пагинации
+            if (_news.Count > 19)
+                PaginationButton.Visibility = Visibility.Visible;
+            else
+                PaginationButton.Visibility = Visibility.Collapsed;
         }
         catch (Exception ex)
         {
@@ -144,17 +181,32 @@ public partial class NewsManagment : UserControl
             //Устанавливаем новое количество пропускаемых элементов
             _skip += _take;
 
-            //Получаем логи
+            //Получаме новости
             var response = await _getNewsTable.Handler(_search, _skip, _take, _sort, _isDeleted);
 
-            //Наполняем коллекцию логов
+            //Наполняем коллекцию новостей
             if (response != null && response.Items.Any())
             {
                 foreach (var item in response.Items)
+                {
+                    if (_accessRightAction != null)
+                    {
+                        item.Edit = _accessRightAction.Edit;
+                        item.Delete = _accessRightAction.Delete;
+                        item.Restore = _accessRightAction.Restore;
+                    }
                     _news.Add(item);
+                }
             }
 
+            //Обновляем таблицу
             NewsDataGrid.Items.Refresh();
+
+            //Обрабываем видимость кнопки пагинации
+            if (_news.Count > 19)
+                PaginationButton.Visibility = Visibility.Visible;
+            else
+                PaginationButton.Visibility = Visibility.Collapsed;
         }
         catch (Exception ex)
         {
@@ -263,20 +315,35 @@ public partial class NewsManagment : UserControl
                 _skip = 0;
                 _take = 20;
 
-                //Получаем логи
+                //Получаме новости
                 var response = await _getNewsTable.Handler(_search, _skip, _take, _sort, _isDeleted);
 
-                //Очищаем и наполняем коллекцию логов
+                //Очищаем коллекцию новостей
+                _news.Clear();
+
+                //Наполняем коллекцию новостей
                 if (response != null && response.Items.Any())
                 {
-                    _news.Clear();
-
                     foreach (var item in response.Items)
+                    {
+                        if (_accessRightAction != null)
+                        {
+                            item.Edit = _accessRightAction.Edit;
+                            item.Delete = _accessRightAction.Delete;
+                            item.Restore = _accessRightAction.Restore;
+                        }
                         _news.Add(item);
+                    }
                 }
 
                 //Обновляем таблицу
                 NewsDataGrid.Items.Refresh();
+
+                //Обрабываем видимость кнопки пагинации
+                if (_news.Count > 19)
+                    PaginationButton.Visibility = Visibility.Visible;
+                else
+                    PaginationButton.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -313,20 +380,47 @@ public partial class NewsManagment : UserControl
             _skip = 0;
             _take = 20;
 
-            //Получаем логи
+            //Получаме новости
             var response = await _getNewsTable.Handler(_search, _skip, _take, _sort, _isDeleted);
+            
+            //Очищаем коллекцию новостей
+            _news.Clear();
 
-            //Очищаем и наполняем коллекцию логов
+            //Наполняем коллекцию новостей
             if (response != null && response.Items.Any())
             {
-                _news.Clear();
-
                 foreach (var item in response.Items)
+                {
+                    if (_accessRightAction != null)
+                    {
+                        item.Edit = _accessRightAction.Edit;
+                        item.Delete = _accessRightAction.Delete;
+                        item.Restore = _accessRightAction.Restore;
+                    }
                     _news.Add(item);
+                }
+            }
+
+            //Меняем действие
+            if (_isDeleted)
+            {
+                Deleted.Visibility = Visibility.Collapsed;
+                Restored.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Deleted.Visibility = Visibility.Visible;
+                Restored.Visibility = Visibility.Collapsed;
             }
 
             //Обновляем таблицу
             NewsDataGrid.Items.Refresh();
+
+            //Обрабываем видимость кнопки пагинации
+            if (_news.Count > 19)
+                PaginationButton.Visibility = Visibility.Visible;
+            else
+                PaginationButton.Visibility = Visibility.Collapsed;
         }
         catch (Exception ex)
         {
@@ -400,20 +494,35 @@ public partial class NewsManagment : UserControl
                 _skip = 0;
                 _take = 20;
 
-                //Получаем логи
+                //Получаме новости
                 var response = await _getNewsTable.Handler(_search, _skip, _take, _sort, _isDeleted);
 
-                //Очищаем и наполняем коллекцию логов
+                //Очищаем коллекцию новостей
+                _news.Clear();
+
+                //Наполняем коллекцию новостей
                 if (response != null && response.Items.Any())
                 {
-                    _news.Clear();
-
                     foreach (var item in response.Items)
+                    {
+                        if (_accessRightAction != null)
+                        {
+                            item.Edit = _accessRightAction.Edit;
+                            item.Delete = _accessRightAction.Delete;
+                            item.Restore = _accessRightAction.Restore;
+                        }
                         _news.Add(item);
+                    }
                 }
 
                 //Обновляем таблицу
                 NewsDataGrid.Items.Refresh();
+
+                //Обрабываем видимость кнопки пагинации
+                if (_news.Count > 19)
+                    PaginationButton.Visibility = Visibility.Visible;
+                else
+                    PaginationButton.Visibility = Visibility.Collapsed;
             }
         }
         catch (Exception ex)
@@ -426,5 +535,214 @@ public partial class NewsManagment : UserControl
             LoadContent.Content = null;
             LoadContent.Visibility = Visibility.Visible;
         }
+    }
+
+    /// <summary>
+    /// События нажатия на кнопку добавления стран
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void AddButton_Click(object sender, RoutedEventArgs e)
+    {/*
+        try
+        {
+            //Создаём пустое окно страны
+            _country = new();
+
+            //Отображаем окно страны
+            _country.ShowDialog();
+
+            //Обновляем страны
+            GetCountries(search, 0, skip + take, sort, isDeleted, true);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Countries. AddButton_Click. Ошибка: {0}", ex);
+        }*/
+    }
+
+    /// <summary>
+    /// Событие нажатия на кнопку редактирвоания страны
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void EditButton_Click(object sender, RoutedEventArgs e)
+    {/*
+        try
+        {
+            //Получаем выбранную строку
+            CountriesResponseListItem item = CountriesDataGrid.SelectedItem as CountriesResponseListItem;
+
+            //Создаём заполненное окно страны
+            _country = new(item.Id ?? 0, item.Number, item.Name, item.Color, item.LanguageForNames);
+
+            //Отображаем окно страны
+            _country.ShowDialog();
+
+            //Обновляем страны
+            GetCountries(search, 0, skip + take, sort, isDeleted, true);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Countries. EditButton_Click. Ошибка: {0}", ex);
+        }*/
+    }
+
+    /// <summary>
+    /// Событие нажатия на кнопку удаления стран
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void DeletedButton_Click(object sender, RoutedEventArgs e)
+    {/*
+        try
+        {
+            //Получаем выбранную строку
+            CountriesResponseListItem item = CountriesDataGrid.SelectedItem as CountriesResponseListItem;
+
+            //Блокируем таблицу
+            CountriesDataGrid.IsEnabled = false;
+
+            //Проверяем ошибки
+            if (item.Id == null)
+            {
+                SetError("Не указан id страны", false);
+                return;
+            }
+
+            //Если в конфиге есть данные для формирования ссылки запроса
+            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Countries"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Token"]))
+            {
+                //Формируем ссылку запроса
+                string url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
+                    ConfigurationManager.AppSettings["Countries"] + "delete/" + item.Id;
+
+                //Формируем клиента, добавляем ему токен и тело запроса
+                using HttpClient client = new();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["Token"]);
+
+                //Получаем результат запроса
+                HttpResponseMessage result = await client.DeleteAsync(url);
+
+                //Если получили успешный результат
+                if (result != null)
+                {
+                    if (result.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                        SetError("Некорректный токен", false);
+
+                    //Десериализуем ответ
+                    var content = await result.Content.ReadAsStringAsync();
+
+                    BaseResponse response = JsonSerializer.Deserialize<BaseResponse>(content, _settings);
+
+                    //Если успешно, оповещяем пользователя и обновляем страны
+                    if (response.Success)
+                    {
+                        GetCountries(search, 0, skip + take, sort, isDeleted, true);
+                        Message message = new("Успешно");
+                        message.Show();
+                    }
+                    else
+                        SetError(response?.Error?.Message ?? "Ошибка сервера", false);
+                }
+                else
+                    SetError("Ошибка сервера", true);
+            }
+            //Иначе возвращаем ошибку
+            else
+                SetError("Не указаны адреса api. Обратитесь в техническую поддержку", true);
+
+            //Разблокируем таблицу
+            CountriesDataGrid.IsEnabled = true;
+
+            //Обновляем страны
+            GetCountries(search, 0, skip + take, sort, isDeleted, true);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Countries. DeletedButton_Click. Ошибка: {0}", ex);
+        }*/
+    }
+
+    /// <summary>
+    /// Событие нажатия на кнопку восстановления стран
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void RestoredButton_Click(object sender, RoutedEventArgs e)
+    {/*
+        try
+        {
+            //Получаем выбранную строку
+            CountriesResponseListItem item = CountriesDataGrid.SelectedItem as CountriesResponseListItem;
+
+            //Блокируем таблицу
+            CountriesDataGrid.IsEnabled = false;
+
+            //Проверяем ошибки
+            if (item.Id == null)
+            {
+                SetError("Не указан id страны", false);
+                return;
+            }
+
+            //Если в конфиге есть данные для формирования ссылки запроса
+            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Countries"])
+                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Token"]))
+            {
+                //Формируем ссылку запроса
+                string url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
+                    ConfigurationManager.AppSettings["Countries"] + "restore/" + item.Id;
+
+                //Формируем клиента, добавляем ему токен и тело запроса
+                using HttpClient client = new();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["Token"]);
+
+                //Получаем результат запроса
+                HttpResponseMessage result = await client.DeleteAsync(url);
+
+                //Если получили успешный результат
+                if (result != null)
+                {
+                    if (result.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                        SetError("Некорректный токен", false);
+
+                    //Десериализуем ответ
+                    var content = await result.Content.ReadAsStringAsync();
+
+                    BaseResponse response = JsonSerializer.Deserialize<BaseResponse>(content, _settings);
+
+                    //Если успешно, оповещяем пользователя и обновляем страны
+                    if (response.Success)
+                    {
+                        GetCountries(search, 0, skip + take, sort, isDeleted, true);
+                        Message message = new("Успешно");
+                        message.Show();
+                    }
+                    else
+                        SetError(response?.Error?.Message ?? "Ошибка сервера", false);
+                }
+                else
+                    SetError("Ошибка сервера", true);
+            }
+            //Иначе возвращаем ошибку
+            else
+                SetError("Не указаны адреса api. Обратитесь в техническую поддержку", true);
+
+            //Разблокируем таблицу
+            CountriesDataGrid.IsEnabled = true;
+
+            //Обновляем страны
+            GetCountries(search, 0, skip + take, sort, isDeleted, true);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Countries. RestoredButton_Click. Ошибка: {0}", ex);
+        }*/
     }
 }

@@ -117,7 +117,7 @@ public partial class Administrator : UserControl
                 case "NewsItem":
                     {
                         //Формируем страницу новостей
-                        NewsManagment page = new(_baseService);
+                        NewsManagment page = new(_baseService, _accessRights);
 
                         //Меняем контент элемента на странице на страницу новостей
                         Element.Content = page;

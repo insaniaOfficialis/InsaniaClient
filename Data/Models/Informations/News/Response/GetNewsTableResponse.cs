@@ -1,4 +1,5 @@
 ﻿using Domain.Models.Base;
+using Domain.Models.Identification.Users.Internal;
 using System.Text.Json.Serialization;
 
 namespace Domain.Models.Informations.News.Response;
@@ -110,4 +111,19 @@ public class GetNewsTableResponseItem : BaseResponseListItem
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? TypeName { get => Type?.Name; }
+
+    /// <summary>
+    /// Редактирование
+    /// </summary>
+    public bool? Edit { get; set; }
+
+    /// <summary>
+    /// Удаление
+    /// </summary>
+    public bool? Delete { get; set; }
+
+    /// <summary>
+    /// Восстановление
+    /// </summary>
+    public bool? Restore { get; set; }
 }

@@ -69,6 +69,16 @@
                       Tag="Удалённые"
                       Style="{DynamicResource LightCheckBox}"
                       Click="DeletedRadioButton_Click"/>
+            <Button x:Name="AddButton"
+                    Style="{DynamicResource SytemButton}"
+                    Grid.Column="6"
+                    Grid.Row="1"
+                    Visibility="Collapsed"
+                    Click="AddButton_Click">
+                <ContentControl>
+                    <Image Source="/Dependens/Images/add.png"/>
+                </ContentControl>
+            </Button>
         </Grid>
         <DataGrid x:Name="NewsDataGrid"
                   SelectionUnit="Cell"
@@ -104,7 +114,100 @@
                                     Binding="{Binding Path=TypeName, UpdateSourceTrigger=PropertyChanged}"
                                     EditingElementStyle="{DynamicResource EditLightTextBox}">
                 </DataGridTextColumn>
-
+                <DataGridTemplateColumn x:Name="Deleted"
+                                        Header="Действия"
+                                        Visibility="Visible">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:Name="DeletedTemplate">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="10px"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="10px"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="10px"/>
+                                </Grid.ColumnDefinitions>
+                                <Button x:Name="EditButton"
+                                        Style="{DynamicResource SmallSytemButton}"
+                                        Height="25px"
+                                        Width="25px"
+                                        Grid.Column="1"
+                                        Visibility="Collapsed"
+                                        Click="EditButton_Click">
+                                    <ContentControl>
+                                        <Image Source="/Dependens/Images/edit.png"/>
+                                    </ContentControl>
+                                </Button>
+                                <Button x:Name="DeletedButton"
+                                        Style="{DynamicResource SmallSytemButton}"
+                                        Height="25px"
+                                        Width="25px"
+                                        Grid.Column="3"
+                                        Visibility="Collapsed"
+                                        Click="DeletedButton_Click">
+                                    <ContentControl>
+                                        <Image Source="/Dependens/Images/delete.png"/>
+                                    </ContentControl>
+                                </Button>
+                            </Grid>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding Edit}" Value="true">
+                                    <Setter TargetName="EditButton" Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Delete}" Value="true">
+                                    <Setter TargetName="DeletedButton" Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn x:Name="Restored"
+                                        Header="Действия"
+                                        Visibility="Collapsed">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="10px"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="10px"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="10px"/>
+                                </Grid.ColumnDefinitions>
+                                <Button x:Name="EditButton"
+                                        Style="{DynamicResource SmallSytemButton}"
+                                        Height="25px"
+                                        Width="25px"
+                                        Grid.Column="1"
+                                        Visibility="Collapsed"
+                                        Click="EditButton_Click">
+                                    <ContentControl>
+                                        <Image Source="/Dependens/Images/edit.png"/>
+                                    </ContentControl>
+                                </Button>
+                                <Button x:Name="RestoredButton"
+                                        Style="{DynamicResource SmallSytemButton}"
+                                        Height="25px"
+                                        Width="25px"
+                                        Grid.Column="3"
+                                        Visibility="Collapsed"
+                                        Click="RestoredButton_Click">
+                                    <ContentControl>
+                                        <Image Source="/Dependens/Images/restore.png"/>
+                                    </ContentControl>
+                                </Button>
+                            </Grid>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding Edit}" Value="true">
+                                    <Setter TargetName="EditButton" Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Restore}" Value="true">
+                                    <Setter TargetName="RestoredButton" Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
         <TextBlock x:Name="ErrorTextBlock"

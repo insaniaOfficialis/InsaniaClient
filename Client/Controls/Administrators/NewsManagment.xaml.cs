@@ -31,7 +31,6 @@ public partial class NewsManagment : UserControl
     private bool _isDeleted = false; //признак увдалённой
     private List<BaseSortRequest>? _sort = new(); //список сортировки
     private LoadCircle _load = new(); //элемент загрузки
-    //private List<string> _accessRights; //права достуа
     private AccessRightAction _accessRightAction = new();
 
     /// <summary>

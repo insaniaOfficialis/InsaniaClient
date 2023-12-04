@@ -1,0 +1,165 @@
+﻿<Window x:Class="Client.Controls.Administrators.News.SingleNewsManagment"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Height="1050px"
+        Width="1500px"
+        WindowStyle="SingleBorderWindow"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource CustomBlack}"
+        PreviewKeyDown="Window_PreviewKeyDown"
+        MouseDown="Window_MouseDown"
+        Loaded="Window_Loaded">
+    <Grid Margin="20px,20px,20px,20px">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50px"/>
+            <RowDefinition Height="50px"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50px"/>
+            <RowDefinition Height="50px"/>
+        </Grid.RowDefinitions>
+        <ContentControl x:Name="LoadContent"
+                        Visibility="Collapsed"
+                        Grid.RowSpan="4"
+                        Height="1050px"
+                        Width="1400px"
+                        Panel.ZIndex="1"/>
+        <StackPanel Orientation="Horizontal" >
+            <TextBox x:Name="TitleTextBox"
+                     Text="Заголовок"
+                     Width="300px"
+                     Style="{StaticResource SimplifiedLightTextBox}"
+                     GotFocus="TextBox_GotFocus"
+                     LostFocus="TextBox_LostFocus"/>
+            <Separator Opacity="0" Width="20px"/>
+            <TextBox x:Name="IntroductionTextBox"
+                     Text="Вступление"
+                     Width="500px"
+                     Style="{StaticResource SimplifiedLightTextBox}"
+                     GotFocus="TextBox_GotFocus"
+                     LostFocus="TextBox_LostFocus"/>
+            <Separator Opacity="0" Width="20px"/>
+            <TextBox x:Name="OrdinalNumberTextBox"
+                     Text="Порядковый номер"
+                     Width="250px"
+                     Style="{StaticResource SimplifiedLightTextBox}"
+                     GotFocus="TextBox_GotFocus"
+                     LostFocus="TextBox_LostFocus"/>
+            <Separator Opacity="0" Width="20px"/>
+            <ComboBox x:Name="TypeCombobox"
+                      Text="Тип"
+                      Width="300px"
+                      Style="{StaticResource LightComboBox}"
+                      ItemContainerStyle="{StaticResource LightComboBoxItem}"
+                      DisplayMemberPath="Name"
+                      SelectedValuePath="Id"/>
+        </StackPanel>
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="550px"/>
+                <RowDefinition Height="100px"/>
+                <RowDefinition Height="100px"/>
+            </Grid.RowDefinitions>
+            <DataGrid x:Name="NewsDataGrid"
+                      SelectionUnit="Cell"
+                      Margin="0"
+                      Style="{DynamicResource LightDataGridStyle}"
+                      ColumnHeaderStyle="{DynamicResource LightDataGridColumnHeaderStyle}"
+                      RowStyle="{DynamicResource LightDataGridRows}"
+                      CellStyle="{DynamicResource LightDataGridCells}"
+                      RowHeaderStyle="{DynamicResource LightDataGridRowHeaders}"
+                      Grid.Row="0">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Id"
+                                        Binding="{Binding Path=Id, UpdateSourceTrigger=PropertyChanged}"
+                                        EditingElementStyle="{DynamicResource EditLightTextBox}"/>
+                    <DataGridTextColumn Header="Текст"
+                                        Binding="{Binding Path=Text, UpdateSourceTrigger=PropertyChanged}"
+                                        EditingElementStyle="{DynamicResource EditLightTextBox}"/>
+                    <DataGridTextColumn Header="Порядковый номер"
+                                        Binding="{Binding Path=OrdinalNumber, UpdateSourceTrigger=PropertyChanged}"
+                                        EditingElementStyle="{DynamicResource EditLightTextBox}"/>
+                    <DataGridCheckBoxColumn Header="Удалён"
+                                            Binding="{Binding Path=IsDeleted, UpdateSourceTrigger=PropertyChanged}"
+                                            EditingElementStyle="{DynamicResource EditLightTextBox}"/>
+                    <DataGridTemplateColumn Header="Действия"
+                                            Visibility="Visible">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="10px"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10px"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10px"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button x:Name="EditButton"
+                                            Style="{DynamicResource SmallSytemButton}"
+                                            Height="25px"
+                                            Width="25px"
+                                            Grid.Column="1"
+                                            Visibility="Collapsed"                                            
+                                            Click="EditButton_Click">
+                                        <ContentControl>
+                                            <Image Source="/Dependens/Images/edit.png"/>
+                                        </ContentControl>
+                                    </Button>
+                                    <Button x:Name="DeletedButton"
+                                            Style="{DynamicResource SmallSytemButton}"
+                                            Height="25px"
+                                            Width="25px"
+                                            Grid.Column="3"
+                                            Visibility="Collapsed"
+                                            Click="DeletedButton_Click">
+                                        <ContentControl>
+                                            <Image Source="/Dependens/Images/delete.png"/>
+                                        </ContentControl>
+                                    </Button>
+                                    <Button x:Name="RestoredButton"
+                                            Style="{DynamicResource SmallSytemButton}"
+                                            Height="25px"
+                                            Width="25px"
+                                            Grid.Column="3"
+                                            Visibility="Collapsed"
+                                            Click="RestoredButton_Click">
+                                        <ContentControl>
+                                            <Image Source="/Dependens/Images/restore.png"/>
+                                        </ContentControl>
+                                    </Button>
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Edit}" Value="true">
+                                        <Setter TargetName="EditButton" Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Delete}" Value="true">
+                                        <Setter TargetName="DeletedButton" Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Restore}" Value="true">
+                                        <Setter TargetName="RestoredButton" Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <Button x:Name="AddButton"
+                    Style="{DynamicResource LightButton}"
+                    Grid.Row="2"
+                    Width="300px"
+                    Height="50px"
+                    Content="Добавить"/>
+        </Grid>
+        <TextBlock x:Name="ErrorText"
+                   Grid.Row="8"/>
+        <Button x:Name="SaveButton"
+                Style="{StaticResource LightButton}"
+                Grid.Row="9"
+                Width="300px"
+                Content="Сохранить"
+                Click="SaveButton_Click"/>
+    </Grid>
+</Window>

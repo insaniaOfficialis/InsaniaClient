@@ -1,7 +1,11 @@
 ﻿using Client.Controls.Bases;
 using Client.Services.Base;
+using Domain.Models.Base;
+using Queries.Informations.News.GetNewsTypes;
 using Serilog;
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,6 +24,8 @@ public partial class SingleNewsManagment : Window
     readonly JsonSerializerOptions _settings = new(); //настройки десериализации json
     public IBaseService _baseService; //базовый сервис
     private LoadCircle _load = new(); //элемент загрузки
+    private IGetNewsTypes _getNewsTypes; //получение типов новостей
+    private ObservableCollection<BaseResponseListItem> _newsTypes = new(); //коллекция типов новостей
 
     /// <summary>
     /// Создание новости
@@ -40,6 +46,9 @@ public partial class SingleNewsManagment : Window
 
             //Проверяем доступность api
             _baseService.CheckConnection();
+
+            //Формируем экземпляры сервисов
+            _getNewsTypes = new GetNewsTypes();
         }
         catch (Exception ex)
         {
@@ -359,73 +368,21 @@ public partial class SingleNewsManagment : Window
     }
 
     /// <summary>
-    /// Получение типов
-    /// </summary>
-    public async Task GetTypes()
-    {
-        /*try
-        {
-            //Объявляем переменную ссылки запроса
-            string path = null;
-
-            //Если в конфиге есть данные для формирования ссылки запроса
-            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
-                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
-                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Races"])
-                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Token"]))
-            {
-                //Формируем ссылку запроса
-                path = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
-                    ConfigurationManager.AppSettings["Races"] + "list";
-
-                //Формируем клиента и добавляем токен
-                using HttpClient client = new();
-
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["Token"]);
-
-                //Получаем данные по запросу
-                using var result = await client.GetAsync(path);
-
-                //Если получили успешный результат
-                if (result != null && result.StatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    //Десериализуем ответ и заполняем combobox
-                    var content = await result.Content.ReadAsStringAsync();
-
-                    BaseResponseList response = JsonSerializer
-                        .Deserialize<BaseResponseList>(content, _baseService.GetJsonSettings());
-
-                    RacesComboBox.ItemsSource = response.Items;
-                }
-                else
-                {
-                    if (result.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                        SetError("Некорректный токен", false);
-                    else
-                        SetError("Ошибка сервера", true);
-                }
-            }
-            else
-                SetError("Не указаны адреса api. Обратитесь в техническую поддержку", true);
-        }
-        catch (Exception ex)
-        {
-            SetError(ex.Message, true);
-        }*/
-    }
-
-    /// <summary>
     /// Событие загрузки окна
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void Window_Loaded(object sender, RoutedEventArgs e)
+    private async void Window_Loaded(object sender, RoutedEventArgs e)
     {
         try
         {
             //Включаем элемент загрузки
             LoadContent.Content = _load;
             LoadContent.Visibility = Visibility.Visible;
+
+            var newsTypes = GetNewsTypes();
+
+            await Task.WhenAll(newsTypes);
 
             //Ставим сортировки по умолчанию
             /*_sort.Add(new("id", false));
@@ -468,6 +425,28 @@ public partial class SingleNewsManagment : Window
             LoadContent.Content = null;
             LoadContent.Visibility = Visibility.Visible;
         }
+    }
+
+    /// <summary>
+    /// Получение типов новостей
+    /// </summary>
+    /// <returns></returns>
+    private async Task GetNewsTypes()
+    {
+        //Получаем типы новостей
+        var response = await _getNewsTypes.Handler();
+
+        //Наполняем коллекцию типов новостей
+        if (response != null && response.Items.Any())
+        {
+            foreach (var item in response.Items)
+            {
+                _newsTypes.Add(item);
+            }
+        }
+
+        //Привязываем источник данных для выпадающего списка
+        TypeCombobox.ItemsSource = _newsTypes;
     }
 
     private void EditButton_Click(object sender, RoutedEventArgs e)

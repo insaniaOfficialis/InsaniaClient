@@ -1,4 +1,5 @@
-﻿using Client.Controls.Bases;
+﻿using Client.Controls.Administrators.News;
+using Client.Controls.Bases;
 using Client.Services.Base;
 using Domain.Models.Base;
 using Domain.Models.Identification.Users.Internal;
@@ -32,6 +33,7 @@ public partial class NewsManagment : UserControl
     private List<BaseSortRequest>? _sort = new(); //список сортировки
     private LoadCircle _load = new(); //элемент загрузки
     private AccessRightAction _accessRightAction = new();
+    private SingleNewsManagment _singleNewsManagment; //страница управления новостью
 
     /// <summary>
     /// Конструктор страницы управления новостями
@@ -542,22 +544,22 @@ public partial class NewsManagment : UserControl
     /// <param name="sender"></param>
     /// <param name="e"></param>
     private void AddButton_Click(object sender, RoutedEventArgs e)
-    {/*
+    {
         try
         {
-            //Создаём пустое окно страны
-            _country = new();
+            //Создаём пустое окно управления новостью
+            _singleNewsManagment = new(_baseService);
 
-            //Отображаем окно страны
-            _country.ShowDialog();
+            //Отображаем окно новостью
+            _singleNewsManagment.ShowDialog();
 
-            //Обновляем страны
-            GetCountries(search, 0, skip + take, sort, isDeleted, true);
+            //Обновляем новости
+            //GetCountries(search, 0, skip + take, sort, isDeleted, true);
         }
         catch (Exception ex)
         {
-            _logger.Error("Countries. AddButton_Click. Ошибка: {0}", ex);
-        }*/
+            _logger.Error("NewsManagment. AddButton_Click. Ошибка: {0}", ex);
+        }
     }
 
     /// <summary>

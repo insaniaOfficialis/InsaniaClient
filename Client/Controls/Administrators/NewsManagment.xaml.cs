@@ -543,18 +543,39 @@ public partial class NewsManagment : UserControl
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void AddButton_Click(object sender, RoutedEventArgs e)
+    private async void AddButton_Click(object sender, RoutedEventArgs e)
     {
         try
         {
             //Создаём пустое окно управления новостью
             _singleNewsManagment = new(_baseService);
 
-            //Отображаем окно новостью
+            //Отображаем окно новости
             _singleNewsManagment.ShowDialog();
 
-            //Обновляем новости
-            //GetCountries(search, 0, skip + take, sort, isDeleted, true);
+            //Получаем новости
+            var response = await _getNewsTable.Handler(_search, _skip, _take, _sort, _isDeleted);
+
+            //Очищаем коллекцию новостей
+            _news.Clear();
+
+            //Наполняем коллекцию новостей
+            if (response != null && response.Items.Any())
+            {
+                foreach (var item in response.Items)
+                {
+                    if (_accessRightAction != null)
+                    {
+                        item.Edit = _accessRightAction.Edit;
+                        item.Delete = _accessRightAction.Delete;
+                        item.Restore = _accessRightAction.Restore;
+                    }
+                    _news.Add(item);
+                }
+            }
+
+            //Обновляем таблицу
+            NewsDataGrid.Items.Refresh();
         }
         catch (Exception ex)
         {
@@ -567,26 +588,47 @@ public partial class NewsManagment : UserControl
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void EditButton_Click(object sender, RoutedEventArgs e)
-    {/*
+    private async void EditButton_Click(object sender, RoutedEventArgs e)
+    {
         try
         {
-            //Получаем выбранную строку
-            CountriesResponseListItem item = CountriesDataGrid.SelectedItem as CountriesResponseListItem;
+            //Получаем выбранную новость
+            GetNewsTableResponseItem item = NewsDataGrid.SelectedItem as GetNewsTableResponseItem;
 
-            //Создаём заполненное окно страны
-            _country = new(item.Id ?? 0, item.Number, item.Name, item.Color, item.LanguageForNames);
+            //Создаём заполненное окно новости
+            _singleNewsManagment = new(_baseService, item.Id ?? 0, item.Title, item.Introduction, item.OrdinalNumber ?? 0, item.Type.Id ?? 0);
 
-            //Отображаем окно страны
-            _country.ShowDialog();
+            //Отображаем окно новости
+            _singleNewsManagment.ShowDialog();
 
-            //Обновляем страны
-            GetCountries(search, 0, skip + take, sort, isDeleted, true);
+            //Получаем новости
+            var response = await _getNewsTable.Handler(_search, _skip, _take, _sort, _isDeleted);
+
+            //Очищаем коллекцию новостей
+            _news.Clear();
+
+            //Наполняем коллекцию новостей
+            if (response != null && response.Items.Any())
+            {
+                foreach (var element in response.Items)
+                {
+                    if (_accessRightAction != null)
+                    {
+                        element.Edit = _accessRightAction.Edit;
+                        element.Delete = _accessRightAction.Delete;
+                        element.Restore = _accessRightAction.Restore;
+                    }
+                    _news.Add(element);
+                }
+            }
+
+            //Обновляем таблицу
+            NewsDataGrid.Items.Refresh();
         }
         catch (Exception ex)
         {
             _logger.Error("Countries. EditButton_Click. Ошибка: {0}", ex);
-        }*/
+        }
     }
 
     /// <summary>

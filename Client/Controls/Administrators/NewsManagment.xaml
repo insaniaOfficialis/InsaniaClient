@@ -81,7 +81,6 @@
             </Button>
         </Grid>
         <DataGrid x:Name="NewsDataGrid"
-                  SelectionUnit="Cell"
                   Style="{DynamicResource LightDataGridStyle}"
                   ColumnHeaderStyle="{DynamicResource LightDataGridColumnHeaderStyle}"
                   RowStyle="{DynamicResource LightDataGridRows}"

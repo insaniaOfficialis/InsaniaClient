@@ -32,7 +32,8 @@ public partial class NewsManagment : UserControl
     private bool _isDeleted = false; //признак увдалённой
     private List<BaseSortRequest>? _sort = new(); //список сортировки
     private LoadCircle _load = new(); //элемент загрузки
-    private AccessRightAction _accessRightAction = new();
+    private AccessRightAction _accessRightAction = new(); //дйствия прав доступа
+    private List<string> _accessRights = new(); //права доступа
     private SingleNewsManagment _singleNewsManagment; //страница управления новостью
 
     /// <summary>
@@ -71,6 +72,9 @@ public partial class NewsManagment : UserControl
             //Если есть право доступа "Восстановление новости"
             if (accessRights.Contains("Vosstanovlenie_novosti"))
                 _accessRightAction.Restore = true;
+
+            //Записываем права доступа
+            _accessRights = accessRights;
 
         }
         catch (Exception ex)
@@ -548,7 +552,7 @@ public partial class NewsManagment : UserControl
         try
         {
             //Создаём пустое окно управления новостью
-            _singleNewsManagment = new(_baseService);
+            _singleNewsManagment = new(_baseService, _accessRights);
 
             //Отображаем окно новости
             _singleNewsManagment.ShowDialog();
@@ -596,7 +600,8 @@ public partial class NewsManagment : UserControl
             GetNewsTableResponseItem item = NewsDataGrid.SelectedItem as GetNewsTableResponseItem;
 
             //Создаём заполненное окно новости
-            _singleNewsManagment = new(_baseService, item.Id ?? 0, item.Title, item.Introduction, item.OrdinalNumber ?? 0, item.Type.Id ?? 0);
+            _singleNewsManagment = new(_baseService, _accessRights, item.Id ?? 0, item.Title, item.Introduction,
+                item.OrdinalNumber ?? 0, item.Type.Id ?? 0);
 
             //Отображаем окно новости
             _singleNewsManagment.ShowDialog();

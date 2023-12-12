@@ -1,15 +1,7 @@
 ﻿using Client.Controls.Bases;
 using Client.Services.Base;
-using Domain.Models.Base;
-using Domain.Models.Identification.Users.Internal;
-using Domain.Models.Informations.NewsDetails.Response;
-using Queries.Informations.News.GetNewsDetailsFull;
-using Queries.Informations.News.GetNewsTypes;
 using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,28 +11,21 @@ using System.Windows.Input;
 namespace Client.Controls.Administrators.News;
 
 /// <summary>
-/// Логика взаимодействия для SingleNewsManagment.xaml
+/// Логика взаимодействия для NewsDetailManagment.xaml
 /// </summary>
-public partial class SingleNewsManagment : Window
+public partial class NewsDetailManagment : Window
 {
     long _id; //id записи
     public ILogger _logger { get { return Log.ForContext<SingleNewsManagment>(); } } //логгер для записи логов
     readonly JsonSerializerOptions _settings = new(); //настройки десериализации json
     public IBaseService _baseService; //базовый сервис
     private LoadCircle _load = new(); //элемент загрузки
-    private IGetNewsTypes _getNewsTypes; //получение типов новостей
-    private IGetNewsDetailsFull _getNewsDetailsFull; //получение детальных частей новости
-    private ObservableCollection<BaseResponseListItem> _newsTypes = new(); //коллекция типов новостей
-    private ObservableCollection<GetNewsDetailsFullResponseItem> _newsDetails = new(); //коллекция детальных частей новости
-    private AccessRightAction _accessRightAction = new(); //права доступа
-    private long? _typeId; //тип новости
 
     /// <summary>
-    /// Создание новости
+    /// Создание детальной части новости
     /// </summary>
     /// <param name="baseService"></param>
-    /// <param name="accessRights"></param>
-    public SingleNewsManagment(IBaseService baseService, List<string> accessRights)
+    public NewsDetailManagment(IBaseService baseService)
     {
         try
         {
@@ -55,26 +40,6 @@ public partial class SingleNewsManagment : Window
 
             //Проверяем доступность api
             _baseService.CheckConnection();
-
-            //Формируем экземпляры сервисов
-            _getNewsTypes = new GetNewsTypes();
-            _getNewsDetailsFull = new GetNewsDetailsFull();
-
-            //Если есть право доступа "Добавление новости"
-            if (accessRights.Contains("Dobavlenie_detal'noy_chasti_novosti"))
-                AddButton.Visibility = Visibility.Visible;
-
-            //Если есть право доступа "Редактирование новости"
-            if (accessRights.Contains("Redaktirovanie_detal'noy_chasti_novosti"))
-                _accessRightAction.Edit = true;
-
-            //Если есть право доступа "Удаление новости"
-            if (accessRights.Contains("Udalenie_detal'noy_chasti_novosti"))
-                _accessRightAction.Delete = true;
-
-            //Если есть право доступа "Восстановление новости"
-            if (accessRights.Contains("Vosstanovlenie_detal'noy_chasti_novosti"))
-                _accessRightAction.Restore = true;
         }
         catch (Exception ex)
         {
@@ -83,34 +48,43 @@ public partial class SingleNewsManagment : Window
     }
 
     /// <summary>
-    /// Редактирование новости
+    /// Редактирование детальной части новости
     /// </summary>
     /// <param name="baseService"></param>
-    /// <param name="accessRights"></param>
     /// <param name="id"></param>
-    /// <param name="title"></param>
-    /// <param name="introduction"></param>
+    /// <param name="text"></param>
     /// <param name="ordinalNumber"></param>
-    /// <param name="typeId"></param>
-    public SingleNewsManagment(IBaseService baseService, List<string> accessRights, long id, string title, string introduction,
-        long ordinalNumber, long typeId) : this(baseService, accessRights)
+    public NewsDetailManagment(IBaseService baseService, long id, string text,
+        long ordinalNumber) : this(baseService)
+    {
+            //Подставляем данные
+            _id = id;
+            TextTextBox.Text = text;
+            OrdinalNumberTextBox.Text = ordinalNumber.ToString();
+    }
+
+    /// <summary>
+    /// Событие нажатия клавиш
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
     {
         try
         {
-            //Заполняем поля ввода
-            TitleTextBox.Text = title;
-            IntroductionTextBox.Text = introduction;
-            OrdinalNumberTextBox.Text = ordinalNumber.ToString();
-            
-            //Заполняем тип
-            _typeId = typeId;
+            //Если нажата клавиша eacape
+            if (e.Key == Key.Escape)
+                //Закрываем окно
+                Close();
 
-            //Заполняем id
-            _id = id;
+            //Если нажата клавиша enter
+            if (e.Key == Key.Enter)
+                //Вызываем сохранение
+                Save();
         }
         catch (Exception ex)
         {
-            _logger.Error("SingleNewsManagment. Ошибка: {0}", ex);
+            _logger.Error("NewsDetailManagment. Window_PreviewKeyDown. Ошибка: {0}", ex);
         }
     }
 
@@ -127,19 +101,13 @@ public partial class SingleNewsManagment : Window
 
             switch (textbox.Name)
             {
-                case "TitleTextBox":
+                case "TextTextBox":
                     {
-                        if (TitleTextBox.Text == "Заголовок")
-                            TitleTextBox.Text = "";
+                        if (TextTextBox.Text == "Текст")
+                            TextTextBox.Text = "";
                     }
                     break;
-                case "IntroductionTextBox":
-                    {
-                        if (IntroductionTextBox.Text == "Вступление")
-                            IntroductionTextBox.Text = "";
-                    }
-                    break;
-                case "ColorTextBox":
+                case "OrdinalNumberTextBox":
                     {
                         if (OrdinalNumberTextBox.Text == "Порядковый номер")
                             OrdinalNumberTextBox.Text = "";
@@ -149,7 +117,7 @@ public partial class SingleNewsManagment : Window
         }
         catch (Exception ex)
         {
-            _logger.Error("SingleNewsManagment. TextBox_GotFocus. Ошибка: {0}", ex);
+            _logger.Error("NewsDetailManagment. TextBox_GotFocus. Ошибка: {0}", ex);
         }
     }
 
@@ -166,19 +134,13 @@ public partial class SingleNewsManagment : Window
 
             switch (textbox.Name)
             {
-                case "TitleTextBox":
+                case "TextTextBox":
                     {
-                        if (TitleTextBox.Text == "")
-                            TitleTextBox.Text = "Заголовок";
+                        if (TextTextBox.Text == "")
+                            TextTextBox.Text = "Текст";
                     }
                     break;
-                case "IntroductionTextBox":
-                    {
-                        if (IntroductionTextBox.Text == "")
-                            IntroductionTextBox.Text = "Вступление";
-                    }
-                    break;
-                case "ColorTextBox":
+                case "OrdinalNumberTextBox":
                     {
                         if (OrdinalNumberTextBox.Text == "")
                             OrdinalNumberTextBox.Text = "Порядковый номер";
@@ -188,9 +150,27 @@ public partial class SingleNewsManagment : Window
         }
         catch (Exception ex)
         {
-            _logger.Error("SingleNewsManagment. TextBox_LostFocus. Ошибка: {0}", ex);
+            _logger.Error("NewsDetailManagment. TextBox_LostFocus. Ошибка: {0}", ex);
         }
-    }    
+    }
+
+    /// <summary>
+    /// Событие нажатия кнопки сохранить
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void SaveButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            //Вызываем сохранение
+            Save();
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("NewsDetailManagment. SaveButton_Click. Ошибка: {0}", ex);
+        }
+    }
 
     /// <summary>
     /// Метод отображения ошибок
@@ -222,7 +202,7 @@ public partial class SingleNewsManagment : Window
         }
         catch (Exception ex)
         {
-            _logger.Error("SingleNewsManagment. SetError. Ошибка: {0}", ex);
+            _logger.Error("NewsDetailManagment. SetError. Ошибка: {0}", ex);
         }
     }
 
@@ -331,167 +311,5 @@ public partial class SingleNewsManagment : Window
             SetError("Не удалось сохранить. Обратитесь в техническую поддержку", true);
             _logger.Error("SingleNewsManagment. Save. Ошибка: {0}", ex);
         }*/
-    }
-
-    /// <summary>
-    /// Событие нажатия клавиши сохранить
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void SaveButton_Click(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            //Вызываем сохранение
-            Save();
-        }
-        catch (Exception ex)
-        {
-            _logger.Error("SingleNewsManagment. SaveButton_Click. Ошибка: {0}", ex);
-        }
-    }
-
-    /// <summary>
-    /// Событие нажатия клавиш
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
-    {
-        try
-        {
-            //Если нажата клавиша eacape
-            if (e.Key == Key.Escape)
-                //Закрываем окно
-                Close();
-
-            //Если нажата клавиша enter
-            if (e.Key == Key.Enter)
-                //Вызываем сохранение
-                Save();
-        }
-        catch (Exception ex)
-        {
-            _logger.Error("SingleNewsManagment. Window_PreviewKeyDown. Ошибка: {0}", ex);
-        }
-    }
-
-    /// <summary>
-    /// Событие перетягивания мыши
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void Window_MouseDown(object sender, MouseButtonEventArgs e)
-    {
-        try
-        {
-            //Если левая кнопка мыши
-            if (e.ChangedButton == MouseButton.Left)
-                //Включаем перетягивание
-                DragMove();
-        }
-        catch (Exception ex)
-        {
-            _logger.Error("SingleNewsManagment. Window_MouseDown. Ошибка: {0}", ex);
-        }
-    }
-
-    /// <summary>
-    /// Событие загрузки окна
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private async void Window_Loaded(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            //Включаем элемент загрузки
-            LoadContent.Content = _load;
-            LoadContent.Visibility = Visibility.Visible;
-
-            var newsTypes = GetNewsTypes();
-            var newsDetails = GetNewsDetails();
-
-            await Task.WhenAll(newsTypes, newsDetails);
-        }
-        catch (Exception ex)
-        {
-            SetError(ex.Message, true);
-        }
-        finally
-        {
-            //Отключаем элемент загрузки
-            LoadContent.Content = null;
-            LoadContent.Visibility = Visibility.Visible;
-        }
-    }
-
-    /// <summary>
-    /// Получение типов новостей
-    /// </summary>
-    /// <returns></returns>
-    private async Task GetNewsTypes()
-    {
-        //Получаем типы новостей
-        var response = await _getNewsTypes.Handler();
-
-        //Наполняем коллекцию типов новостей
-        if (response != null && response.Items.Any())
-        {
-            foreach (var item in response.Items)
-            {
-                _newsTypes.Add(item);
-            }
-        }
-
-        //Привязываем источник данных для выпадающего списка
-        TypeCombobox.ItemsSource = _newsTypes;
-
-        //Записываем тип, если он указан
-        if(_typeId != null)
-            TypeCombobox.SelectedValue = _typeId;
-    }
-
-    /// <summary>
-    /// Получение детальных частей новости
-    /// </summary>
-    /// <returns></returns>
-    private async Task GetNewsDetails()
-    {
-        //Получаем детальныe части новости
-        var response = await _getNewsDetailsFull.Handler(_id);
-
-        //Наполняем коллекцию детальных частей новости
-        if (response != null && response.Items.Count != 0)
-        {
-            foreach (var item in response.Items)
-            {
-                if (_accessRightAction != null)
-                {
-                    item.Edit = _accessRightAction.Edit;
-                    item.Delete = _accessRightAction.Delete;
-                    item.Restore = _accessRightAction.Restore;
-                }
-                _newsDetails.Add(item);
-            }
-        }
-
-        //Привязываем источник данных для таблицы
-        NewsDetailsDataGrid.ItemsSource = _newsDetails;
-    }
-
-    private void EditButton_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
-
-    private void DeletedButton_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
-
-    private void RestoredButton_Click(object sender, RoutedEventArgs e)
-    {
-
     }
 }

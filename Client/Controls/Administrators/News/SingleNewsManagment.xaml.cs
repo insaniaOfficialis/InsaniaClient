@@ -2,6 +2,7 @@
 using Client.Services.Base;
 using Domain.Models.Base;
 using Domain.Models.Identification.Users.Internal;
+using Domain.Models.Informations.News.Response;
 using Domain.Models.Informations.NewsDetails.Response;
 using Queries.Informations.News.GetNewsDetailsFull;
 using Queries.Informations.News.GetNewsTypes;
@@ -480,9 +481,59 @@ public partial class SingleNewsManagment : Window
         NewsDetailsDataGrid.ItemsSource = _newsDetails;
     }
 
-    private void EditButton_Click(object sender, RoutedEventArgs e)
+    /// <summary>
+    /// Событие нажатия на кнопку добавления детальной части новости
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void AddButton_Click(object sender, RoutedEventArgs e)
     {
+        try
+        {
+            //Формируем экземпляр окно управления детальной части новости
+            NewsDetailManagment newsDetailManagment = new(_baseService);
 
+            //Отображаем окно
+            newsDetailManagment.ShowDialog();
+
+            //Обновляем детальные части новости
+            _newsDetails.Clear();
+            await GetNewsDetails();
+        }
+        catch (Exception ex)
+        {
+            SetError(ex.Message, true);
+        }
+    }
+
+    /// <summary>
+    /// Событие нажатия на кнопку редактирования детальной части новости
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void EditButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            //Получаем данные из выбранной строки
+            GetNewsDetailsFullResponseItem item = NewsDetailsDataGrid.SelectedItem
+                as GetNewsDetailsFullResponseItem;
+
+            //Формируем экземпляр окно управления детальной части новости
+            NewsDetailManagment newsDetailManagment = new(_baseService, item.Id ?? 0,
+                item.Text, item.OrdinalNumber ?? 0);
+
+            //Отображаем окно
+            newsDetailManagment.ShowDialog();
+
+            //Обновляем детальные части новости
+            _newsDetails.Clear();
+            await GetNewsDetails();
+        }
+        catch(Exception ex)
+        {
+            SetError(ex.Message, true);
+        }
     }
 
     private void DeletedButton_Click(object sender, RoutedEventArgs e)

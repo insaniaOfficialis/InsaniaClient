@@ -184,7 +184,8 @@
                     Grid.Row="2"
                     Width="300px"
                     Height="50px"
-                    Content="Добавить"/>
+                    Content="Добавить"
+                    Click="AddButton_Click"/>
         </Grid>
         <TextBlock x:Name="ErrorText"
                    Grid.Row="8"/>

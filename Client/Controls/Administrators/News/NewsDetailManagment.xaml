@@ -4,17 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        MinHeight="350px"
+        MinHeight="800px"
         MinWidth="350px"
-        MaxHeight="350px"
+        MaxHeight="800px"
         MaxWidth="350px"
         WindowStyle="SingleBorderWindow"
-        WindowStartupLocation="CenterScreen"
+        WindowStartupLocation="CenterOwner"
         Background="{StaticResource CustomBlack}"
         PreviewKeyDown="Window_PreviewKeyDown">
     <Grid Margin="20px,20px,20px,20px">
         <Grid.RowDefinitions>
-            <RowDefinition Height="50px"/>
+            <RowDefinition Height="500px"/>
             <RowDefinition Height="10px"/>
             <RowDefinition Height="50px"/>
             <RowDefinition Height="10px"/>
@@ -31,6 +31,9 @@
                  Style="{StaticResource SimplifiedLightTextBox}"
                  Grid.Row="0"
                  Text="Текст"
+                 TextWrapping="Wrap"
+                 VerticalContentAlignment="Top"
+                 Padding="5px"
                  GotFocus="TextBox_GotFocus"
                  LostFocus="TextBox_LostFocus"/>
         <TextBox x:Name="OrdinalNumberTextBox"

@@ -188,10 +188,10 @@
                     Click="AddButton_Click"/>
         </Grid>
         <TextBlock x:Name="ErrorText"
-                   Grid.Row="8"/>
+                   Grid.Row="3"/>
         <Button x:Name="SaveButton"
                 Style="{StaticResource LightButton}"
-                Grid.Row="9"
+                Grid.Row="4"
                 Width="300px"
                 Content="Сохранить"
                 Click="SaveButton_Click"/>

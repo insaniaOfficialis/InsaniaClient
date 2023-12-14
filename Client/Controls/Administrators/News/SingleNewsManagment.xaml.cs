@@ -4,9 +4,12 @@ using Domain.Models.Base;
 using Domain.Models.Identification.Users.Internal;
 using Domain.Models.Informations.News.Response;
 using Domain.Models.Informations.NewsDetails.Response;
+using Queries.Informations.News.AddNews;
+using Queries.Informations.News.EditNews;
 using Queries.Informations.News.GetNewsDetailsFull;
 using Queries.Informations.News.GetNewsTypes;
 using Serilog;
+using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -24,13 +27,15 @@ namespace Client.Controls.Administrators.News;
 /// </summary>
 public partial class SingleNewsManagment : Window
 {
-    long _id; //id записи
+    long? _id; //id записи
     public ILogger _logger { get { return Log.ForContext<SingleNewsManagment>(); } } //логгер для записи логов
     readonly JsonSerializerOptions _settings = new(); //настройки десериализации json
     public IBaseService _baseService; //базовый сервис
     private LoadCircle _load = new(); //элемент загрузки
     private IGetNewsTypes _getNewsTypes; //получение типов новостей
     private IGetNewsDetailsFull _getNewsDetailsFull; //получение детальных частей новости
+    private IAddNews _addNews; //добавление новости
+    private IEditNews _editNews; //редактирование новости
     private ObservableCollection<BaseResponseListItem> _newsTypes = new(); //коллекция типов новостей
     private ObservableCollection<GetNewsDetailsFullResponseItem> _newsDetails = new(); //коллекция детальных частей новости
     private AccessRightAction _accessRightAction = new(); //права доступа
@@ -60,6 +65,8 @@ public partial class SingleNewsManagment : Window
             //Формируем экземпляры сервисов
             _getNewsTypes = new GetNewsTypes();
             _getNewsDetailsFull = new GetNewsDetailsFull();
+            _addNews = new AddNews();
+            _editNews = new EditNews();
 
             //Если есть право доступа "Добавление новости"
             if (accessRights.Contains("Dobavlenie_detal'noy_chasti_novosti"))
@@ -140,7 +147,7 @@ public partial class SingleNewsManagment : Window
                             IntroductionTextBox.Text = "";
                     }
                     break;
-                case "ColorTextBox":
+                case "OrdinalNumberTextBox":
                     {
                         if (OrdinalNumberTextBox.Text == "Порядковый номер")
                             OrdinalNumberTextBox.Text = "";
@@ -179,7 +186,7 @@ public partial class SingleNewsManagment : Window
                             IntroductionTextBox.Text = "Вступление";
                     }
                     break;
-                case "ColorTextBox":
+                case "OrdinalNumberTextBox":
                     {
                         if (OrdinalNumberTextBox.Text == "")
                             OrdinalNumberTextBox.Text = "Порядковый номер";
@@ -231,107 +238,41 @@ public partial class SingleNewsManagment : Window
     /// Метод сохранения
     /// </summary>
     private async void Save()
-    {/*
+    {
         try
         {
-            //Отключаем кнопку для нажатия
-            SaveButton.IsEnabled = false;
+            //Включаем элемент загрузки
+            LoadContent.Content = _load;
+            LoadContent.Visibility = Visibility.Visible;
 
-            //Убираем тест ошибки
-            ErrorText.Text = null;
-
-            //Проверяем ошибки
-            if (String.IsNullOrEmpty(RowNumberTextBox.Text) || RowNumberTextBox.Text == "Номер на карте")
-            {
-                SetError("Не указан номер на карте", false);
-                return;
-            }
-            if (String.IsNullOrEmpty(NameTextBox.Text) || NameTextBox.Text == "Наименование")
-            {
-                SetError("Не указано наименование", false);
-                return;
-            }
-            if (String.IsNullOrEmpty(ColorTextBox.Text) || ColorTextBox.Text == "Цвет на карте")
-            {
-                SetError("Не указана цвет на карте", false);
-                return;
-            }
-            if (ColorTextBox.Text.Length != 7 || !ColorTextBox.Text.StartsWith("#"))
-            {
-                SetError("Некорректно указан цвет на карте", false);
-                return;
-            }
-            if (String.IsNullOrEmpty(LanguageForNamesTextBox.Text) || LanguageForNamesTextBox.Text == "Язык для названий")
-            {
-                SetError("Не указан язык для названий", false);
-                return;
-            }
-
-            AddCountryRequest request = new(NameTextBox.Text, Convert.ToInt32(RowNumberTextBox.Text), ColorTextBox.Text, LanguageForNamesTextBox.Text);
-
-            //Если в конфиге есть данные для формирования ссылки запроса
-            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DefaultConnection"])
-                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Api"])
-                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Countries"])
-                && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["Token"]))
-            {
-                //Формируем ссылку запроса
-                string url = ConfigurationManager.AppSettings["DefaultConnection"] + ConfigurationManager.AppSettings["Api"] +
-                    ConfigurationManager.AppSettings["Countries"];
-
-                if (_id <= 0)
-                    url += "add";
-                else
-                    url += "update/" + _id;
-
-                //Формируем клиента, добавляем ему токен и тело запроса
-                using HttpClient client = new();
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["Token"]);
-                StringContent stringCintent = new(JsonSerializer.Serialize(request, _settings).ToString(), Encoding.UTF8, "application/json");
-
-                //Получаем результат запроса
-                HttpResponseMessage result;
-                if (_id <= 0)
-                    result = await client.PostAsync(url, stringCintent);
-                else
-                    result = await client.PutAsync(url, stringCintent);
-
-                //Если получили успешный результат
-                if (result != null)
-                {
-                    if (result.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                        SetError("Некорректный токен", false);
-
-                    //Десериализуем ответ
-                    var content = await result.Content.ReadAsStringAsync();
-
-                    BaseResponse response = JsonSerializer.Deserialize<BaseResponse>(content, _settings);
-
-                    //Если успешно, зыкрываем окно
-                    if (response.Success && response.Id != null)
-                    {
-                        Close();
-                        Message message = new("Успешно");
-                        message.Show();
-                    }
-                    else
-                        SetError(response?.Error?.Message ?? "Ошибка сервера", false);
-                }
-                else
-                    SetError("Ошибка сервера", true);
-            }
-            //Иначе возвращаем ошибку
+            //Если нет первичного ключа
+            if(_id == null)
+                //Отправляем запрос на добавление новости
+                await _addNews.Handler(TitleTextBox.Text, IntroductionTextBox.Text, TypeCombobox.SelectedValue as long?
+                    ,string.IsNullOrEmpty(OrdinalNumberTextBox.Text) ? null : Convert.ToInt64(OrdinalNumberTextBox.Text));
+            //Иначе
             else
-                SetError("Не указаны адреса api. Обратитесь в техническую поддержку", true);
+                //Отправляем запрос на редактирование новости
+                await _editNews.Handler(TitleTextBox.Text, IntroductionTextBox.Text, TypeCombobox.SelectedValue as long?
+                    ,string.IsNullOrEmpty(OrdinalNumberTextBox.Text) ? null : Convert.ToInt64(OrdinalNumberTextBox.Text), _id);
 
-            //Включаем кнопку для нажатия
-            SaveButton.IsEnabled = true;
+            //Закрываем окно и выводим сообщение об успешности
+            Close();
+            Message message = new("Успешно");
+            message.Show();
+
         }
         catch (Exception ex)
         {
             SetError("Не удалось сохранить. Обратитесь в техническую поддержку", true);
             _logger.Error("SingleNewsManagment. Save. Ошибка: {0}", ex);
-        }*/
+        }
+        finally
+        {
+            //Отключаем элемент загрузки
+            LoadContent.Content = null;
+            LoadContent.Visibility = Visibility.Visible;
+        }
     }
 
     /// <summary>
@@ -411,9 +352,16 @@ public partial class SingleNewsManagment : Window
             LoadContent.Visibility = Visibility.Visible;
 
             var newsTypes = GetNewsTypes();
-            var newsDetails = GetNewsDetails();
 
-            await Task.WhenAll(newsTypes, newsDetails);
+            //Если нет первичного ключа
+            if (_id != null)
+            {
+                var newsDetails = GetNewsDetails();
+
+                await Task.WhenAll(newsTypes, newsDetails);
+            }
+            else
+                await newsTypes;
         }
         catch (Exception ex)
         {
